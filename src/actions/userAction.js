@@ -51,10 +51,10 @@ import axios from "axios";
 export const login = (loginform) => async (dispatch) => {
   try {
     dispatch({ type: LOGIN_REQUEST });
-
+    const baseURL = process.env.REACT_APP_API_URL;
     const config = {
       headers: { "Content-Type": "application/json" },
-      baseURL: "http://localhost:8080",
+      baseURL: baseURL,
       withCredentials: true,
     };
 
@@ -70,10 +70,10 @@ export const login = (loginform) => async (dispatch) => {
 export const register = (userData) => async (dispatch) => {
   try {
     dispatch({ type: REGISTER_USER_REQUEST });
-
+    const baseURL = process.env.REACT_APP_API_URL;
     const config = {
       headers: { "Content-Type": "application/json" },
-      baseURL: "http://localhost:8080",
+      baseURL: baseURL,
     };
 
     const { data } = await axios.post(`/v1/register`, userData, config);

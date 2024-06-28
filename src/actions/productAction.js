@@ -36,9 +36,9 @@ import {
 export const getProduct = (query) => async (dispatch) => {
   try {
     dispatch({ type: ALL_PRODUCT_REQUEST });
-
+    const baseURL = process.env.REACT_APP_API_URL;
     const config = {
-      baseURL: "http://localhost:8080",
+      baseURL: baseURL,
       headers: {
         "Content-Type": "application/json",
       },

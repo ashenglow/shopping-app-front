@@ -5,9 +5,9 @@ import {
   removeAccessTokenFromStorage,
 } from "../hooks/accessTokenHook";
 import { history } from "./history";
-
+const baseURL = process.env.REACT_APP_API_URL;
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: baseURL,
   withCredentials: true, //크로스 도메인 요청 시 쿠키 전송 허용
 });
 let isRefreshing = false;
