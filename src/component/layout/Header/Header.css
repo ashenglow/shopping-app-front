@@ -1,0 +1,84 @@
+.menuBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1vmax;
+}
+
+.leftButtons {
+  display: flex;
+  align-items: center;
+}
+
+.homeIconBtn,
+.navbarIconBtn {
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.homeIcon,
+.navbarIcon {
+  width: 100%;
+  height: 100%;
+}
+
+.rightButtons {
+  display: flex;
+  align-items: center;
+}
+
+.icon-button-container {
+  display: inline-block;
+  position: relative;
+}
+
+.userOptionBtn,
+.loginBtn {
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 
+@media (max-width: 480px) {
+  .homeIconBtn,
+  .menuBurgerBox {
+    width: 2vmax;
+    height: 2vmax;
+    max-width: 2.5vmax; 
+    max-height: 2.5vmax; 
+  }
+
+  .menuBurgerItem {
+    height: 0.3vmax;
+    width: 1.8vmax;
+  }
+
+  .menuBurgerItem1,
+  .menuBurgerItem3 {
+    top: 0.8vmax;
+  }
+}
+
+@media (min-width: 900px) {
+  .homeIconBtn,
+  .menuBurgerBox {
+    width: 4vmax; 
+    height: 4vmax; 
+    max-width: 4.5vmax; 
+    max-height: 4.5vmax; 
+  }
+
+  .menuBurgerItem {
+    height: 0.6vmax; 
+    width: 3.5vmax; 
+  }
+
+  .menuBurgerItem1,
+  .menuBurgerItem3 {
+    top: 1.7vmax; 
+  }
+} */

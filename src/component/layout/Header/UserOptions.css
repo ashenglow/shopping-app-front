@@ -1,0 +1,10 @@
+.nav-text {
+  margin-left: 0.5vmax;
+}
+.cart-length {
+  background-color: "red";
+  color: "white";
+  border-radius: "50%";
+  padding: "0.1vmax 0.3vmax";
+  margin-left: "0.5vmax";
+}

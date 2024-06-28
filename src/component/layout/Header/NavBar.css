@@ -1,0 +1,104 @@
+.nav-container {
+  display: none; /* Initially hidden */
+  flex-direction: column;
+  position: absolute;
+  top: 100%; /* Directly below the icon button */
+  left: 0;
+  width: 15vmax;
+  transition: transform 0.3s ease-in-out;
+  z-index: 9; /* Ensure it is above other content */
+}
+.nav-open {
+  display: block;
+
+  transform: translateY(0);
+}
+
+.nav-closed {
+  display: none;
+}
+
+.nav {
+  padding: 1vmax;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: "Roboto";
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: white;
+}
+.nav1,
+.nav2,
+.nav3,
+.nav4 {
+  /* Ensure items take full width */
+  box-sizing: border-box;
+}
+
+.nav1 {
+  left: 0%;
+}
+
+.nav2 {
+  left: 25%;
+}
+
+.nav3 {
+  left: 50%;
+}
+
+.nav4 {
+  left: 75%;
+}
+
+.logoReactNavbar {
+  cursor: pointer;
+  width: 20vmax;
+  height: auto;
+  transition: all 0.5s;
+}
+
+.nav-link {
+  width: 100%;
+  padding: 1vmax 0;
+  color: rgba(35, 35, 35, 0.8);
+  font-size: 1.3vmax;
+  margin: 1vmax;
+  text-decoration: none;
+  text-align: center;
+  transition: color 0.3s;
+}
+
+.nav-link:hover {
+  color: #eb4034;
+}
+
+.profile-icon,
+.search-icon,
+.cart-icon {
+  color: rgba(35, 35, 35, 0.8);
+  transition: color 0.3s;
+}
+
+.profile-icon:hover,
+.search-icon:hover,
+.cart-icon:hover {
+  color: #eb4034;
+}
+
+.cart-icon {
+  margin: 1vmax;
+}
+
+.menu-icon {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.nav img {
+  max-width: 100%; /* Ensure the logo fits within the container */
+  height: auto; /* Maintain aspect ratio */
+}
