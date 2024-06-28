@@ -2,12 +2,18 @@ name: Deploy React App to S3
 
 on:
   push:
-    branches:
-      - main # or your default branch name
+    branches: [ "main" ]
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+     id-token: write
+     contents: read
 
     steps:
       - name: Checkout code
