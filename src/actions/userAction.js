@@ -58,7 +58,7 @@ export const login = (loginform) => async (dispatch) => {
       withCredentials: true,
     };
 
-    const { data } = await axios.post(`/v1/login`, loginform, config);
+    const { data } = await axios.post(`/api/v1/login`, loginform, config);
     localStorage.setItem("accessToken", data.accessToken);
     dispatch({ type: LOGIN_SUCCESS, payload: data });
   } catch (error) {
@@ -76,7 +76,7 @@ export const register = (userData) => async (dispatch) => {
       baseURL: baseURL,
     };
 
-    const { data } = await axios.post(`/v1/register`, userData, config);
+    const { data } = await axios.post(`/api/v1/register`, userData, config);
 
     dispatch({ type: REGISTER_USER_SUCCESS, payload: data });
   } catch (error) {
@@ -103,7 +103,7 @@ export const loadUser = () => async (dispatch) => {
 export const refresh = () => async (dispatch) => {
   try {
     dispatch({ type: REFRESH_TOKEN_REQUEST });
-    const { data } = await axiosInstance.get(`/v1/refresh`);
+    const { data } = await axiosInstance.get(`/api/v1/refresh`);
     localStorage.setItem("accessToken", data.accessToken);
     dispatch({ type: REFRESH_TOKEN_SUCCESS, payload: data });
   } catch (error) {
@@ -117,7 +117,7 @@ export const refresh = () => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   try {
     //get이라서 안되나..?
-    const { data } = await axiosInstance.post(`/v1/logout`);
+    const { data } = await axiosInstance.post(`/api/v1/logout`);
     localStorage.removeItem("user"); // Clear user from local storage if applicable
     sessionStorage.removeItem("user");
     dispatch({ type: LOGOUT_SUCCESS, payload: data });

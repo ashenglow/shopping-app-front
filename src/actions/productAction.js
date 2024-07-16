@@ -51,10 +51,10 @@ export const getProduct = (query) => async (dispatch) => {
     // params.append("ratings", ratings);
     // const query = params.toString();
 
-    let url = `/public/v1/products`;
+    let url = `/api/public/v1/products`;
 
     if (query) {
-      url = `/public/v1/products?${query}`;
+      url = `/api/public/v1/products?${query}`;
     }
     console.log("Request URL: ", url);
 
@@ -204,7 +204,7 @@ export const getProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
-    const { data } = await axios.get(`/public/v1/product/${id}`);
+    const { data } = await axios.get(`/api/public/v1/product/${id}`);
 
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,
@@ -250,7 +250,7 @@ export const getAllReviews = (id) => async (dispatch) => {
   try {
     dispatch({ type: ALL_REVIEW_REQUEST });
 
-    const { data } = await axiosInstance.get(`/public/v1/reviews?id=${id}`);
+    const { data } = await axiosInstance.get(`/api/public/v1/reviews?id=${id}`);
 
     dispatch({
       type: ALL_REVIEW_SUCCESS,
