@@ -30,6 +30,11 @@ jobs:
       - name: Create env file
         run: |
           echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" >> .env
+          
+      - name: Clear build cache
+        run: |
+          rm -rf build
+          rm -rf node_modules/.cache    
 
       - name: Build React app
         run: CI=false npm run build
