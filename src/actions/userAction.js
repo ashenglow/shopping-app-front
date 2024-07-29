@@ -92,7 +92,7 @@ export const loadUser = () => async (dispatch) => {
   try {
     dispatch({ type: LOAD_USER_REQUEST });
 
-    const { data } = await axiosInstance.get(`/api/v1/me`);
+    const { data } = await axiosInstance.get(`/api/auth/v1/me`);
 
     dispatch({ type: LOAD_USER_SUCCESS, payload: data });
   } catch (error) {
@@ -137,7 +137,7 @@ export const getProfileEdit = () => async (dispatch) => {
   try {
     dispatch({ type: PROFILE_EDIT_REQUEST });
 
-    const { data } = await axiosInstance.get(`/api/v1/member/update`);
+    const { data } = await axiosInstance.get(`/api/auth/v1/member/update`);
 
     dispatch({ type: PROFILE_EDIT_SUCCESS, payload: data });
   } catch (error) {
@@ -153,7 +153,7 @@ export const updateProfile = (userData) => async (dispatch) => {
     const config = { headers: { "Content-Type": "application/json" } };
 
     const { data } = await axiosInstance.post(
-      `/api/v1/member/update`,
+      `/api/auth/v1/member/update`,
       userData,
       config
     );

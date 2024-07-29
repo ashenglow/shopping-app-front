@@ -228,7 +228,7 @@ export const newReview = (id, reviewData) => async (dispatch) => {
     };
 
     const { data } = await axiosInstance.put(
-      `/api/v1/product/${id}/review`,
+      `/api/auth/v1/product/${id}/review`,
       reviewData,
       config
     );
@@ -270,7 +270,7 @@ export const deleteReviews = (reviewId) => async (dispatch) => {
     dispatch({ type: DELETE_REVIEW_REQUEST });
 
     const { data } = await axiosInstance.delete(
-      `/api/v1/review/delete?id=${reviewId}`
+      `/api/auth/v1/review/delete?id=${reviewId}`
     );
 
     dispatch({

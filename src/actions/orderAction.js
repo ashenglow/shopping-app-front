@@ -33,7 +33,7 @@ export const createOrder = (memberId, order) => async (dispatch) => {
       },
     };
     const { data } = await axiosInstance.post(
-      `/api/v1/order/new/${memberId}`,
+      `/api/v1/auth/order/new/${memberId}`,
       order,
       config
     );
@@ -52,7 +52,7 @@ export const myOrders = () => async (dispatch) => {
   try {
     dispatch({ type: MY_ORDERS_REQUEST });
 
-    const { data } = await axiosInstance.get("/api/v1/orders/me");
+    const { data } = await axiosInstance.get("/api/auth/v1/orders/me");
 
     dispatch({ type: MY_ORDERS_SUCCESS, payload: data.content });
   } catch (error) {
@@ -109,7 +109,9 @@ export const deleteOrder = (id) => async (dispatch) => {
   try {
     dispatch({ type: DELETE_ORDER_REQUEST });
 
-    const { data } = await axiosInstance.delete(`/api/v1/order/${id}/cancel`);
+    const { data } = await axiosInstance.delete(
+      `/api/auth/v1/order/${id}/cancel`
+    );
 
     dispatch({ type: DELETE_ORDER_SUCCESS, payload: data.success });
   } catch (error) {
@@ -125,7 +127,7 @@ export const getOrderDetails = (orderId) => async (dispatch) => {
   try {
     dispatch({ type: ORDER_DETAILS_REQUEST });
 
-    const { data } = await axiosInstance.get(`/api/v1/order/${orderId}`);
+    const { data } = await axiosInstance.get(`/api/auth/v1/order/${orderId}`);
     console.log(data);
     dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data });
   } catch (error) {

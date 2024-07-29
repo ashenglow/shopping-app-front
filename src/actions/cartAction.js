@@ -27,7 +27,7 @@ export const addItemsToCart = (itemId, count) => async (dispatch) => {
   dispatch({ type: ADD_TO_CART_REQUEST });
   try {
     const { data } = await axiosInstance.post(
-      `/api/v1/cart/${itemId}`,
+      `/api/auth/v1/cart/${itemId}`,
       count,
       config
     );
@@ -64,7 +64,10 @@ export const getCartItems = (memberId) => async (dispatch) => {
 export const removeItemsFromCart = (itemId) => async (dispatch) => {
   dispatch({ type: REMOVE_CART_ITEM_REQUEST });
   try {
-    const { data } = await axiosInstance.delete(`/api/v1/cart/${itemId}`, {});
+    const { data } = await axiosInstance.delete(
+      `/api/auth/v1/cart/${itemId}`,
+      {}
+    );
     dispatch({
       type: REMOVE_CART_ITEM_SUCCESS,
       payload: data,
@@ -107,7 +110,7 @@ export const updateCartItem =
     try {
       // Send the update request to the server
       const { data } = await axiosInstance.put(
-        `/api/v1/cart/update/${itemId}`,
+        `/api/auth/v1/cart/update/${itemId}`,
         count
       );
       // Handle the successful response from the server
