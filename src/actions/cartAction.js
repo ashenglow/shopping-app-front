@@ -47,7 +47,7 @@ export const addItemsToCart = (itemId, count) => async (dispatch) => {
 export const getCartItems = (memberId) => async (dispatch) => {
   dispatch({ type: GET_CART_ITEMS_REQUEST });
   try {
-    const { data } = await axiosInstance.get(`/api/v1/mycart/${memberId}`);
+    const { data } = await axiosInstance.get(`/api/auth/v1/mycart/${memberId}`);
     dispatch({
       type: GET_CART_ITEMS_SUCCESS,
       payload: data,
