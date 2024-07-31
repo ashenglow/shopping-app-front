@@ -23,6 +23,10 @@ const Cart = ({ history }) => {
 
   const increaseQuantity = (itemId, count) => {
     const updatedItem = cartItems.find((item) => item.id === itemId);
+    if (!updatedItem) {
+      console.error(`Item with id ${itemId} not found`);
+      return;
+    }
     const newQty = count + 1;
     const increasedItem = { ...updatedItem, quantity: newQty };
 
@@ -35,6 +39,10 @@ const Cart = ({ history }) => {
       return;
     }
     const updatedItem = cartItems.find((item) => item.id === itemId);
+    if (!updatedItem) {
+      console.error(`Item with id ${itemId} not found`);
+      return;
+    }
     const decreasedItem = { ...updatedItem, quantity: newQty };
     dispatch(updateCartItem(itemId, decreasedItem, newQty));
   };
