@@ -102,7 +102,7 @@ export const cartReducer = (state = initialState, action) => {
       //action.payload is updatedItem from frontend
       const updatedCartItems = state.cartItems.map((i) =>
         i.id === action.payload.id
-          ? { ...i, count: action.payload.updatingItem.count }
+          ? { ...i, count: action.payload.newCount }
           : i
       );
       return {
@@ -119,7 +119,9 @@ export const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         cartItems: state.cartItems.map((item) =>
-          item.id === action.payload.id ? action.payload.updatedItem : item
+          item.id === action.payload.id
+            ? { ...item, count: action.payload.newCount }
+            : item
         ),
         updatingItems: {
           ...state.updatingItems,

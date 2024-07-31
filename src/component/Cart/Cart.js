@@ -28,9 +28,8 @@ const Cart = ({ history }) => {
       return;
     }
     const newQty = count + 1;
-    const increasedItem = { ...updatedItem, quantity: newQty };
 
-    dispatch(updateCartItem(itemId, increasedItem, newQty));
+    dispatch(updateCartItem(itemId, updatedItem, newQty));
   };
 
   const decreaseQuantity = (itemId, count) => {
@@ -43,8 +42,8 @@ const Cart = ({ history }) => {
       console.error(`Item with id ${itemId} not found`);
       return;
     }
-    const decreasedItem = { ...updatedItem, quantity: newQty };
-    dispatch(updateCartItem(itemId, decreasedItem, newQty));
+
+    dispatch(updateCartItem(itemId, updatedItem, newQty));
   };
 
   const deleteCartItems = (itemId) => {
