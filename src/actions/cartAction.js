@@ -103,7 +103,7 @@ export const updateCartItem =
     dispatch({
       type: UPDATE_CART_ITEM_OPTIMISTIC,
       payload: {
-        id: updatedItem.id,
+        id: itemId,
         updatingItem: updatedItem,
       },
     });
@@ -121,13 +121,13 @@ export const updateCartItem =
       // Handle the successful response from the server
       dispatch({
         type: UPDATE_CART_ITEM_SUCCESS,
-        payload: updatedItem.id,
+        payload: itemId,
       });
     } catch (error) {
       // Handle the error response from the server
       dispatch({
         type: UPDATE_CART_ITEM_FAILURE,
-        payload: updatedItem.id,
+        payload: itemId,
       });
     }
   };
