@@ -83,6 +83,10 @@ const Cart = ({ history }) => {
     dispatch(getCartItems(userInfo.id));
   }, [dispatch, userInfo.id]);
 
+  useEffect(() => {
+    console.log("updatingItems:", updatingItems);
+  }, [updatingItems]);
+
   return (
     <div>
       {loading ? (
@@ -121,10 +125,7 @@ const Cart = ({ history }) => {
                       />
                       <div className="cartInput">
                         <button
-                          disabled={
-                            item.count <= 1 ||
-                            (updatingItems && updatingItems[item.id])
-                          }
+                          disabled={item.count <= 1 || updatingItems[item.id]}
                           onClick={() => decreaseQuantity(item.id, item.count)}
                         >
                           -
@@ -133,7 +134,7 @@ const Cart = ({ history }) => {
                         <button
                           disabled={
                             item.count >= item.stockQuantity ||
-                            (updatingItems && updatingItems[item.id])
+                            updatingItems[item.id]
                           }
                           onClick={() => increaseQuantity(item.id, item.count)}
                         >
