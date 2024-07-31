@@ -115,6 +115,7 @@ export const cartReducer = (state = initialState, action) => {
       };
 
     case UPDATE_CART_ITEM_SUCCESS:
+      console.log("UPDATE_CART_ITEM_SUCCESS", action.payload);
       //action.payload is updatedItemId from backend
       return {
         ...state,
@@ -125,11 +126,12 @@ export const cartReducer = (state = initialState, action) => {
         ),
         updatingItems: {
           ...state.updatingItems,
-          [action.payload]: false,
+          [action.payload.id]: false,
         },
       };
 
     case UPDATE_CART_ITEM_FAILURE:
+      console.log("UPDATE_CART_ITEM_FAILURE", action.payload);
       const failedItemId = action.payload;
       const prevCartItems = state.cartItems.filter(
         (i) => i.id !== failedItemId
