@@ -104,7 +104,9 @@ const Cart = ({ history }) => {
                       <CartItemCard
                         item={item}
                         deleteCartItems={deleteCartItems}
-                        isUpdating={updatingItems[item.id]}
+                        isUpdating={
+                          updatingItems ? updatingItems[item.id] : false
+                        }
                         isSelected={selectedItems.some(
                           (selectedItem) => selectedItem.id === item.id
                         )}
