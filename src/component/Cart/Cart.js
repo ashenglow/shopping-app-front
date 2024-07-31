@@ -122,14 +122,20 @@ const Cart = ({ history }) => {
                       />
                       <div className="cartInput">
                         <button
-                          disabled={item.count <= 1}
+                          disabled={
+                            item.count <= 1 ||
+                            (updatingItems && updatingItems[item.id])
+                          }
                           onClick={() => decreaseQuantity(item.id, item.count)}
                         >
                           -
                         </button>
                         <input type="number" value={item.count} readOnly />
                         <button
-                          disabled={item.count >= item.stockQuantity}
+                          disabled={
+                            item.count >= item.stockQuantity ||
+                            (updatingItems && updatingItems[item.id])
+                          }
                           onClick={() => increaseQuantity(item.id, item.count)}
                         >
                           +
