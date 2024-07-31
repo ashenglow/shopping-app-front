@@ -98,20 +98,20 @@ export const saveShippingInfo = (data) => async (dispatch) => {
 
 // UPDATE CART ITEM
 export const updateCartItem =
-  (itemId, updatedItem, count) => async (dispatch) => {
+  (itemId, updatedItem, newCount) => async (dispatch) => {
     //[updatedItem.product]: updatedItem, dynamic key
     dispatch({
       type: UPDATE_CART_ITEM_OPTIMISTIC,
       payload: {
         id: itemId,
-        updatingItem: updatedItem,
+        newCount,
       },
     });
     try {
       // Send the update request to the server
       const { data } = await axiosInstance.put(
         `/api/auth/v1/cart/update/${itemId}`,
-        { count: count },
+        { count: newCount },
         {
           headers: {
             "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export const updateCartItem =
       // Handle the successful response from the server
       dispatch({
         type: UPDATE_CART_ITEM_SUCCESS,
-        payload: { id: itemId, updatedItem: data },
+        payload: { id: itemId, newCount },
       });
     } catch (error) {
       // Handle the error response from the server
