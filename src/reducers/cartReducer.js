@@ -100,11 +100,12 @@ export const cartReducer = (state = initialState, action) => {
 
     case UPDATE_CART_ITEM_OPTIMISTIC:
       //action.payload is updatedItem from frontend
+      const updatedCartItems = state.cartItems.map((i) =>
+        i.id === action.payload.id ? action.payload.updatingItem : i
+      );
       return {
         ...state,
-        cartItems: state.cartItems.map((i) =>
-          i.id === action.payload.id ? action.payload.updatingItem : i
-        ),
+        cartItems: updatedCartItems,
         updatingItems: {
           ...state.updatingItems,
           [action.payload.id]: true,
