@@ -111,7 +111,12 @@ export const updateCartItem =
       // Send the update request to the server
       const { data } = await axiosInstance.put(
         `/api/auth/v1/cart/update/${itemId}`,
-        count
+        { count: count },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       // Handle the successful response from the server
       dispatch({
