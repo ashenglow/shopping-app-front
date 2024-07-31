@@ -114,12 +114,12 @@ export const cartReducer = (state = initialState, action) => {
 
     case UPDATE_CART_ITEM_SUCCESS:
       //action.payload is updatedItemId from backend
-      const updatedItemId = action.payload;
-      const newUpdatingItems = { ...state.updatingItems };
-      delete newUpdatingItems[updatedItemId];
       return {
         ...state,
-        updatingItems: newUpdatingItems,
+        updatingItems: {
+          ...state.updatingItems,
+          [action.payload]: false,
+        },
       };
 
     case UPDATE_CART_ITEM_FAILURE:
