@@ -16,12 +16,18 @@ import Loader from "../layout/Loader/Loader";
 const Cart = ({ history }) => {
   const dispatch = useDispatch();
   const userInfo = useUserInfo();
-  const { cartItems, updatingItems, loading } = useSelector(
-    (state) => state.cart
-  );
+  const {
+    cartItems,
+    updatingItems = {},
+    loading,
+  } = useSelector((state) => state.cart);
   const [selectedItems, setSelectedItems] = useState([]);
+  const isItemUpdating = (itemId) => {
+    return updatingItems && updatingItems[itemId] === true;
+  };
 
   const increaseQuantity = (itemId, count) => {
+    if (isItemUpdating(itemId)) return;
     const updatedItem = cartItems.find((item) => item.id === itemId);
     if (!updatedItem) {
       console.error(`Item with id ${itemId} not found`);
@@ -33,6 +39,7 @@ const Cart = ({ history }) => {
   };
 
   const decreaseQuantity = (itemId, count) => {
+    if (isItemUpdating(itemId)) return;
     const newQty = count - 1;
     if (newQty < 1) {
       return;
@@ -125,7 +132,7 @@ const Cart = ({ history }) => {
                       />
                       <div className="cartInput">
                         <button
-                          disabled={item.count <= 1 || updatingItems[item.id]}
+                          disabled={item.count <= 1 || isItemUpdating(item.id)}
                           onClick={() => decreaseQuantity(item.id, item.count)}
                         >
                           -
@@ -134,7 +141,7 @@ const Cart = ({ history }) => {
                         <button
                           disabled={
                             item.count >= item.stockQuantity ||
-                            updatingItems[item.id]
+                            isItemUpdating(item.id)
                           }
                           onClick={() => increaseQuantity(item.id, item.count)}
                         >

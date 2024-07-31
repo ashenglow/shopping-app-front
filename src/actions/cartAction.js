@@ -127,7 +127,7 @@ export const updateCartItem =
       // Handle the error response from the server
       dispatch({
         type: UPDATE_CART_ITEM_FAILURE,
-        payload: itemId,
+        payload: { id: itemId, error: error.response?.data?.message },
       });
     }
   };

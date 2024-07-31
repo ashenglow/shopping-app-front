@@ -100,14 +100,13 @@ export const cartReducer = (state = initialState, action) => {
 
     case UPDATE_CART_ITEM_OPTIMISTIC:
       //action.payload is updatedItem from frontend
-      const updatedCartItems = state.cartItems.map((i) =>
-        i.id === action.payload.id
-          ? { ...i, count: action.payload.newCount }
-          : i
-      );
       return {
         ...state,
-        cartItems: updatedCartItems,
+        cartItems: state.cartItems.map((i) =>
+          i.id === action.payload.id
+            ? { ...i, count: action.payload.newCount }
+            : i
+        ),
         updatingItems: {
           ...state.updatingItems,
           [action.payload.id]: true,
@@ -132,19 +131,16 @@ export const cartReducer = (state = initialState, action) => {
 
     case UPDATE_CART_ITEM_FAILURE:
       console.log("UPDATE_CART_ITEM_FAILURE", action.payload);
-      const failedItemId = action.payload;
-      const prevCartItems = state.cartItems.filter(
-        (i) => i.id !== failedItemId
-      );
-      const failedItem = state.cartItems.find((i) => i.id === failedItemId);
-
       return {
         ...state,
-        cartItems: [...prevCartItems, failedItem],
+        cartItems: state.cartItems.map((item) =>
+          item.id === action.payload.id ? { ...item, count: item.count } : item
+        ),
         updatingItems: {
           ...state.updatingItems,
-          [failedItemId]: failedItem,
+          [action.payload.id]: false, // Make sure this is set to false
         },
+        error: action.payload.error,
       };
 
     default:
