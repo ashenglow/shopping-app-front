@@ -74,7 +74,7 @@ const Cart = ({ history }) => {
 
   useEffect(() => {
     dispatch(getCartItems(userInfo.id));
-  }, []);
+  }, [dispatch, userInfo.id]);
 
   return (
     <div>
@@ -104,9 +104,7 @@ const Cart = ({ history }) => {
                       <CartItemCard
                         item={item}
                         deleteCartItems={deleteCartItems}
-                        isUpdating={
-                          updatingItems ? updatingItems[item.id] : false
-                        }
+                        isUpdating={updatingItems[item.id]}
                         isSelected={selectedItems.some(
                           (selectedItem) => selectedItem.id === item.id
                         )}
@@ -114,18 +112,14 @@ const Cart = ({ history }) => {
                       />
                       <div className="cartInput">
                         <button
-                          disabled={
-                            updatingItems ? updatingItems[item.id] : false
-                          }
+                          disabled={item.count <= 1}
                           onClick={() => decreaseQuantity(item.id, item.count)}
                         >
                           -
                         </button>
                         <input type="number" value={item.count} readOnly />
                         <button
-                          disabled={
-                            updatingItems ? updatingItems[item.id] : false
-                          }
+                          disabled={item.count >= item.stockQuantity}
                           onClick={() => increaseQuantity(item.id, item.count)}
                         >
                           +
