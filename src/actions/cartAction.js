@@ -121,7 +121,7 @@ export const updateCartItem =
       // Handle the successful response from the server
       dispatch({
         type: UPDATE_CART_ITEM_SUCCESS,
-        payload: itemId,
+        payload: { id: itemId, updatedItem: data },
       });
     } catch (error) {
       // Handle the error response from the server

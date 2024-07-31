@@ -118,6 +118,9 @@ export const cartReducer = (state = initialState, action) => {
       //action.payload is updatedItemId from backend
       return {
         ...state,
+        cartItems: state.cartItems.map((item) =>
+          item.id === action.payload.id ? action.payload.updatedItem : item
+        ),
         updatingItems: {
           ...state.updatingItems,
           [action.payload]: false,
