@@ -66,10 +66,13 @@ export const cartReducer = (state = initialState, action) => {
       };
     case REMOVE_CART_ITEM_SUCCESS:
       return {
+        // ...state,
+        // cartItems: state.cartItems.map((i) =>
+        //   i.id === action.payload ? {} : i
+        // ),
+        // loading: false,
         ...state,
-        cartItems: state.cartItems.map((i) =>
-          i.id === action.payload ? {} : i
-        ),
+        cartItems: state.cartItems.filter((i) => i.id !== action.payload),
         loading: false,
       };
     case REMOVE_CART_ITEM_FAILURE:
