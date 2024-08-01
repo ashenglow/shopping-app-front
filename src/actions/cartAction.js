@@ -55,7 +55,7 @@ export const getCartItems = (memberId) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: GET_CART_ITEMS_FAILURE,
-      payload: error.response?.data?.message,
+      payload: error.response?.data?.message || "Error getting item",
     });
   }
 };
@@ -75,7 +75,7 @@ export const removeItemsFromCart = (itemId) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: REMOVE_CART_ITEM_FAILURE,
-      payload: error.response.data.message,
+      payload: error.response?.data?.message || "Error removing item",
     });
   }
 };

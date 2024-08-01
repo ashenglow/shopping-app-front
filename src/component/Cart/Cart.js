@@ -116,7 +116,7 @@ const Cart = ({ history }) => {
                   <p>Subtotal</p>
                 </div>
 
-                {cartItems &&
+                {cartItems && cartItems.length > 0 ? (
                   cartItems.map((item) => (
                     <div className="cartContainer" key={item.id}>
                       <CartItemCard
@@ -152,7 +152,10 @@ const Cart = ({ history }) => {
                         item.price * item.count
                       }`}</p>
                     </div>
-                  ))}
+                  ))
+                ) : (
+                  <p>Your cart is empty</p>
+                )}
 
                 <div className="cartGrossProfit">
                   <div></div>
