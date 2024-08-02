@@ -2,11 +2,7 @@ import "./ProductDetails.css";
 import React, { Fragment, useEffect, useState, useContext } from "react";
 import Carousel from "react-material-ui-carousel";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  clearErrors,
-  getProductDetails,
-  newReview,
-} from "../../actions/productAction";
+import { getProductDetails, newReview } from "../../actions/productAction";
 import ReviewCard from "./ReviewCard.js";
 import Loader from "../layout/Loader/Loader";
 import { useAlert } from "react-alert";
@@ -24,18 +20,18 @@ import { NEW_REVIEW_RESET } from "../../constants/productConstants";
 import { loadUser } from "../../actions/userAction";
 import { useUserInfo } from "../../utils/userContext";
 import ConfirmPopup from "../layout/ConfirmPopup/ConfirmPopup";
+import { clearError } from "../../actions/errorAction";
 
 const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
   const userInfo = useUserInfo();
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
-  const { product, loading, error } = useSelector(
-    (state) => state.productDetails
-  );
+  const { product, loading } = useSelector((state) => state.productDetails);
 
-  const { success, error: reviewError } = useSelector(
-    (state) => state.newReview
+  const { success } = useSelector((state) => state.newReview);
+  const { message: errorMessage, type: errorType } = useSelector(
+    (state) => state.error
   );
 
   const options = {
@@ -61,7 +57,13 @@ const ProductDetails = ({ match }) => {
   };
 
   const addToCartHandler = () => {
-    dispatch(addItemsToCart(match.params.id, count));
+    try {
+      dispatch(addItemsToCart(match.params.id, count));
+      setShowConfirmPopup(true);
+      setTimeout(() => setShowConfirmPopup(false), 2000);
+    } catch (err) {
+      alert.error("Failed to add item to cart");
+    }
   };
 
   const submitReviewToggle = () => {
@@ -79,6 +81,12 @@ const ProductDetails = ({ match }) => {
     dispatch(newReview(match.params.id, formData));
     setOpen(false);
   };
+  useEffect(() => {
+    if (errorMessage) {
+      alert.error(errorMessage);
+      dispatch(clearError());
+    }
+  }, [dispatch, errorMessage, alert]);
 
   //get product details
   useEffect(() => {
@@ -87,23 +95,12 @@ const ProductDetails = ({ match }) => {
 
   //add review
   useEffect(() => {
-    if (error) {
-      alert.error(error);
-      dispatch(clearErrors());
-    }
-
-    if (reviewError) {
-      alert.error(reviewError);
-      dispatch(clearErrors());
-    }
-
     if (success) {
       dispatch({ type: NEW_REVIEW_RESET });
-      setShowConfirmPopup(true);
-      setTimeout(() => setShowConfirmPopup(false), 2000);
+      alert.success("Review posted successfully");
       // dispatch(getProductDetails(match.params.id));
     }
-  }, [dispatch, error, alert, reviewError, success, match.params.id]);
+  }, [dispatch, alert, success, match.params.id]);
 
   return (
     <Fragment>

@@ -2,20 +2,23 @@ import React, { Fragment, Suspense, useEffect } from "react";
 import "./Home.css";
 import ProductCard from "./ProductCard.js";
 import MetaData from "../layout/MetaData";
-import { clearErrors, getProduct } from "../../actions/productAction";
+import { getProduct } from "../../actions/productAction";
 import { useSelector, useDispatch } from "react-redux";
 import Loader from "../layout/Loader/Loader";
 import { useAlert } from "react-alert";
+import { clearError } from "../../actions/errorActions";
 
 const Home = () => {
   const alert = useAlert();
   const dispatch = useDispatch();
-  const { loading, error, products } = useSelector((state) => state.products);
-
+  const { loading, products } = useSelector((state) => state.products);
+  const { message: errorMessage, type: errorType } = useSelector(
+    (state) => state.error
+  );
   useEffect(() => {
-    if (error) {
-      alert.error(error);
-      dispatch(clearErrors());
+    if (errorMessage) {
+      alert.error(errorMessage);
+      dispatch(clearError());
     }
     const params = new URLSearchParams();
     params.append("page", 0);
@@ -26,7 +29,7 @@ const Home = () => {
     const query = params.toString();
 
     dispatch(getProduct(query));
-  }, [dispatch, error, alert]);
+  }, [dispatch, errorMessage, alert]);
   // useEffect(() => {
   //   if (error) {
   //     alert.error(error);

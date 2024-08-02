@@ -28,7 +28,7 @@ import {
   orderReducer,
 } from "./reducers/orderReducer";
 import authReducer from "./reducers/authReducer";
-
+import { errorReducer } from "./reducers/errorReducer";
 const reducer = combineReducers({
   products: productsReducer,
   productDetails: productDetailsReducer,
@@ -48,6 +48,7 @@ const reducer = combineReducers({
   userDetails: userDetailsReducer,
   productReviews: productReviewsReducer,
   review: reviewReducer,
+  error: errorReducer,
   auth: authReducer,
 });
 

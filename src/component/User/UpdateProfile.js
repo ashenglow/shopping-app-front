@@ -4,25 +4,22 @@ import Loader from "../layout/Loader/Loader";
 import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import FaceIcon from "@material-ui/icons/Face";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  clearErrors,
-  updateProfile,
-  getProfileEdit,
-} from "../../actions/userAction";
+import { updateProfile, getProfileEdit } from "../../actions/userAction";
 import { useAlert } from "react-alert";
 import { UPDATE_PROFILE_RESET } from "../../constants/userConstants";
 import MetaData from "../layout/MetaData";
 import { useUserInfo } from "../../utils/userContext";
+import { clearError } from "../../actions/errorActions";
 
 const UpdateProfile = ({ history }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
 
   const userInfo = useUserInfo();
-
-  const { error, isUpdated, loading, profile } = useSelector(
-    (state) => state.profile
+  const { message: errorMessage, type: errorType } = useSelector(
+    (state) => state.error
   );
+  const { isUpdated, loading, profile } = useSelector((state) => state.profile);
   const [id, setId] = useState(userInfo.id);
   const [password, setPassword] = useState("");
   // const [confirmPassword, setConfirmPassword] = useState("");
@@ -63,6 +60,12 @@ const UpdateProfile = ({ history }) => {
 
   //   reader.readAsDataURL(e.target.files[0]);
   // };
+  useEffect(() => {
+    if (errorMessage) {
+      alert.error(errorMessage);
+      dispatch(clearError());
+    }
+  }, [dispatch, errorMessage, alert]);
 
   useEffect(() => {
     if (profile) {
@@ -70,11 +73,6 @@ const UpdateProfile = ({ history }) => {
       setUsername(profile.name);
       setPassword(profile.password);
       setAddress(profile.address);
-    }
-
-    if (error) {
-      alert.error(error);
-      dispatch(clearErrors());
     }
 
     if (isUpdated) {
@@ -85,7 +83,7 @@ const UpdateProfile = ({ history }) => {
         type: UPDATE_PROFILE_RESET,
       });
     }
-  }, [dispatch, error, alert, history, profile, isUpdated]);
+  }, [dispatch, alert, history, profile, isUpdated]);
   return (
     <Fragment>
       {loading ? (

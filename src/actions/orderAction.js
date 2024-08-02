@@ -21,6 +21,7 @@ import {
 } from "../constants/orderConstants";
 
 import axiosInstance from "../utils/axiosInstance";
+import { setError } from "./errorAction";
 
 // Create Order
 export const createOrder = (memberId, order) => async (dispatch) => {
@@ -40,10 +41,9 @@ export const createOrder = (memberId, order) => async (dispatch) => {
 
     dispatch({ type: CREATE_ORDER_SUCCESS, payload: data });
   } catch (error) {
-    dispatch({
-      type: CREATE_ORDER_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error creating order";
+    dispatch(setError(errorMessage, CREATE_ORDER_FAIL));
   }
 };
 
@@ -56,10 +56,9 @@ export const myOrders = () => async (dispatch) => {
 
     dispatch({ type: MY_ORDERS_SUCCESS, payload: data.content });
   } catch (error) {
-    dispatch({
-      type: MY_ORDERS_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error getting orders";
+    dispatch(setError(errorMessage, MY_ORDERS_FAIL));
   }
 };
 
@@ -72,10 +71,9 @@ export const getAllOrders = () => async (dispatch) => {
 
     dispatch({ type: ALL_ORDERS_SUCCESS, payload: data.orders });
   } catch (error) {
-    dispatch({
-      type: ALL_ORDERS_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error getting orders";
+    dispatch(setError(errorMessage, ALL_ORDERS_FAIL));
   }
 };
 
@@ -115,10 +113,9 @@ export const deleteOrder = (id) => async (dispatch) => {
 
     dispatch({ type: DELETE_ORDER_SUCCESS, payload: data.success });
   } catch (error) {
-    dispatch({
-      type: DELETE_ORDER_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error deleting order";
+    dispatch(setError(errorMessage, DELETE_ORDER_FAIL));
   }
 };
 
@@ -131,14 +128,12 @@ export const getOrderDetails = (orderId) => async (dispatch) => {
     console.log(data);
     dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data });
   } catch (error) {
-    dispatch({
-      type: ORDER_DETAILS_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage = error.response?.data?.message || "Error getting order";
+    dispatch(setError(errorMessage, ORDER_DETAILS_FAIL));
   }
 };
 
-// Clearing Errors
-export const clearErrors = () => async (dispatch) => {
-  dispatch({ type: CLEAR_ERRORS });
-};
+// // Clearing Errors
+// export const clearErrors = () => async (dispatch) => {
+//   dispatch({ type: CLEAR_ERRORS });
+// };

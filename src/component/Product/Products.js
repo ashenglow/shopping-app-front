@@ -8,8 +8,8 @@ import Typography from "@mui/material/Typography";
 import MetaData from "../layout/MetaData";
 import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { clearErrors, getProduct } from "../../actions/productAction";
-
+import { getProduct } from "../../actions/productAction";
+import { clearError } from "../../actions/errorActions";
 const categories = ["TAKJU", "YAKJU", "SOJU", "BEER", "WINE"];
 
 const debounce = (func, wait) => {
@@ -30,13 +30,14 @@ const Products = ({ match }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [price, setPrice] = useState([0, 25000]);
   const [category, setCategory] = useState("");
-
+  const { message: errorMessage, type: errorType } = useSelector(
+    (state) => state.error
+  );
   const [ratings, setRatings] = useState(0);
 
   const {
     products,
     loading,
-    error,
     productsCount,
     resultPerPage,
     filteredProductsCount,
@@ -59,14 +60,13 @@ const Products = ({ match }) => {
     debouncedPriceHandler(event, newPrice);
   };
   // let count = filteredProductsCount;
-
   useEffect(() => {
-    if (error) {
-      console.log("Error:", error); // Debugging
-      alert.error(error);
-      dispatch(clearErrors());
+    if (errorMessage) {
+      alert.error(errorMessage);
+      dispatch(clearError());
     }
-
+  }, [dispatch, errorMessage, alert]);
+  useEffect(() => {
     console.log("Params:", { currentPage, price, category, ratings });
     // Log the parameters to debug
     const params = new URLSearchParams();
@@ -78,7 +78,7 @@ const Products = ({ match }) => {
     const query = params.toString();
 
     dispatch(getProduct(query));
-  }, [dispatch, currentPage, price, category, ratings, alert, error]);
+  }, [dispatch, currentPage, price, category, ratings, alert]);
 
   return (
     <Fragment>

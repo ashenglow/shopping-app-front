@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useContext } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import CheckoutSteps from "../Cart/CheckoutSteps";
 import { useSelector, useDispatch } from "react-redux";
 import MetaData from "../layout/MetaData";
@@ -17,8 +17,9 @@ import "./payment.css";
 import CreditCardIcon from "@material-ui/icons/CreditCard";
 import EventIcon from "@material-ui/icons/Event";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
-import { createOrder, clearErrors } from "../../actions/orderAction";
+import { createOrder } from "../../actions/orderAction";
 import { useUserInfo } from "../../utils/userContext";
+import { clearError } from "../../actions/errorActions";
 
 const Payment = ({ history }) => {
   const orderInfo = JSON.parse(sessionStorage.getItem("orderInfo"));
@@ -30,9 +31,9 @@ const Payment = ({ history }) => {
   const payBtn = useRef(null);
   const userInfo = useUserInfo();
   const { delivery, cartItems } = useSelector((state) => state.cart);
-
-  const { error } = useSelector((state) => state.newOrder);
-
+  const { message: errorMessage } = useSelector((state) => state.error);
+  const { error: orderError } = useSelector((state) => state.newOrder);
+  const [stripeError, setStripeError] = useState(null);
   const paymentData = {
     amount: Math.round(orderInfo.totalPrice * 100),
   };
@@ -50,7 +51,7 @@ const Payment = ({ history }) => {
     e.preventDefault();
 
     payBtn.current.disabled = true;
-
+    setStripeError(null);
     try {
       const config = {
         headers: {
@@ -86,8 +87,7 @@ const Payment = ({ history }) => {
 
       if (result.error) {
         payBtn.current.disabled = false;
-
-        alert.error(result.error.message);
+        setStripeError(result.error.message);
       } else {
         if (result.paymentIntent.status === "succeeded") {
           order.paymentInfo = {
@@ -99,27 +99,34 @@ const Payment = ({ history }) => {
 
           history.push("/success");
         } else {
-          alert.error("There's some issue while processing payment ");
+          setStripeError("There's some issue while processing payment");
         }
       }
     } catch (error) {
       payBtn.current.disabled = false;
-      alert.error(error.response.data.message);
+      setStripeError(
+        error.response?.data?.message ||
+          "An error occurred during payment processing"
+      );
     }
   };
-
   useEffect(() => {
-    if (error) {
-      alert.error(error);
-      dispatch(clearErrors());
+    if (errorMessage) {
+      alert.error(errorMessage);
+      dispatch(clearError());
     }
-  }, [dispatch, error, alert]);
+    if (orderError) {
+      alert.error(orderError);
+      dispatch(clearError()); // Assuming you've updated orderAction to use the new error handling
+    }
+  }, [dispatch, errorMessage, orderError, alert]);
 
   return (
     <Fragment>
       <MetaData title="Payment" />
       <CheckoutSteps activeStep={2} />
       <div className="paymentContainer">
+        {stripeError && <div className="stripeError">{stripeError}</div>}
         <form className="paymentForm" onSubmit={(e) => submitHandler(e)}>
           <Typography>Card Info</Typography>
           <div>
