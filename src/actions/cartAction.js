@@ -16,6 +16,7 @@ import {
   GET_CART_ITEMS_FAILURE,
 } from "../constants/cartConstants";
 import axiosInstance from "../utils/axiosInstance";
+import { setError } from "./errorAction";
 
 // Add to Cart
 export const addItemsToCart = (itemId, count) => async (dispatch) => {
@@ -36,10 +37,8 @@ export const addItemsToCart = (itemId, count) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    dispatch({
-      type: ADD_TO_CART_FAILURE,
-      payload: error.response?.data?.message,
-    });
+    const errorMessage = error.response?.data?.message || "Error adding item";
+    dispatch(setError(errorMessage, ADD_TO_CART_FAILURE));
   }
 };
 
@@ -53,10 +52,8 @@ export const getCartItems = (memberId) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    dispatch({
-      type: GET_CART_ITEMS_FAILURE,
-      payload: error.response?.data?.message || "Error getting item",
-    });
+    const errorMessage = error.response?.data?.message || "Error getting item";
+    dispatch(setError(errorMessage, GET_CART_ITEMS_FAILURE));
   }
 };
 
@@ -73,10 +70,8 @@ export const removeItemsFromCart = (itemId) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    dispatch({
-      type: REMOVE_CART_ITEM_FAILURE,
-      payload: error.response?.data?.message || "Error removing item",
-    });
+    const errorMessage = error.response?.data?.message || "Error removing item";
+    dispatch(setError(errorMessage, REMOVE_CART_ITEM_FAILURE));
   }
 };
 
@@ -89,10 +84,8 @@ export const saveShippingInfo = (data) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    dispatch({
-      type: SAVE_SHIPPING_INFO_FAILURE,
-      payload: error.response.data.message,
-    });
+    const errorMessage = error.response?.data?.message || "Error saving info";
+    dispatch(setError(errorMessage, SAVE_SHIPPING_INFO_FAILURE));
   }
 };
 
@@ -125,9 +118,8 @@ export const updateCartItem =
       });
     } catch (error) {
       // Handle the error response from the server
-      dispatch({
-        type: UPDATE_CART_ITEM_FAILURE,
-        payload: { id: itemId, error: error.response?.data?.message },
-      });
+      const errorMessage =
+        error.response?.data?.message || "Error updating item";
+      dispatch(setError(errorMessage, UPDATE_CART_ITEM_FAILURE));
     }
   };

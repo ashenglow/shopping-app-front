@@ -11,43 +11,38 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import SideBar from "./Sidebar";
 import { getAllUsers, clearErrors, deleteUser } from "../../actions/userAction";
 import { DELETE_USER_RESET } from "../../constants/userConstants";
-
+import { clearError } from "../../actions/errorAction";
 const UsersList = ({ history }) => {
   const dispatch = useDispatch();
 
   const alert = useAlert();
+  const { message: errorMessage, type: errorType } = useSelector(
+    (state) => state.error
+  );
+  const { users } = useSelector((state) => state.allUsers);
 
-  const { error, users } = useSelector((state) => state.allUsers);
-
-  const {
-    error: deleteError,
-    isDeleted,
-    message,
-  } = useSelector((state) => state.profile);
+  const { isDeleted, message: userMessage } = useSelector(
+    (state) => state.profile
+  );
 
   const deleteUserHandler = (id) => {
     dispatch(deleteUser(id));
   };
 
   useEffect(() => {
-    if (error) {
-      alert.error(error);
-      dispatch(clearErrors());
-    }
-
-    if (deleteError) {
-      alert.error(deleteError);
-      dispatch(clearErrors());
+    if (errorMessage) {
+      alert.error(errorMessage);
+      dispatch(clearError());
     }
 
     if (isDeleted) {
-      alert.success(message);
+      alert.success(userMessage);
       history.push("/admin/users");
       dispatch({ type: DELETE_USER_RESET });
     }
 
     dispatch(getAllUsers());
-  }, [dispatch, alert, error, deleteError, history, isDeleted, message]);
+  }, [dispatch, alert, history, isDeleted, errorMessage, userMessage]);
 
   const columns = [
     { field: "id", headerName: "User ID", minWidth: 180, flex: 0.8 },

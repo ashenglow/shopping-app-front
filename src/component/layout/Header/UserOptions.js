@@ -10,10 +10,11 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useHistory } from "react-router-dom";
 import { useAlert } from "react-alert";
-import { clearErrors, logout } from "../../../actions/userAction";
+import { logout } from "../../../actions/userAction";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader/Loader";
 import useIconsize from "../../../utils/useIconsize";
+import { clearError } from "../../actions/errorActions";
 
 const UserOptions = ({ open, onClose, anchorEl }) => {
   const { user } = useSelector((state) => state.user);
@@ -23,7 +24,9 @@ const UserOptions = ({ open, onClose, anchorEl }) => {
   const history = useHistory();
   const alert = useAlert();
   const dispatch = useDispatch();
-
+  const { message: errorMessage, type: errorType } = useSelector(
+    (state) => state.error
+  );
   const dashboard = () => {
     history.push("/admin/dashboard");
     onClose();

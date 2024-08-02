@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useContext } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import "./myOrders.css";
 import { useSelector, useDispatch } from "react-redux";
-import { clearErrors, myOrders } from "../../actions/orderAction";
+import { myOrders } from "../../actions/orderAction";
 import Loader from "../layout/Loader/Loader";
 import { Link } from "react-router-dom";
 import { useAlert } from "react-alert";
@@ -10,6 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import MetaData from "../layout/MetaData";
 import LaunchIcon from "@material-ui/icons/Launch";
 import { useUserInfo } from "../../utils/userContext";
+import { clearError } from "../../actions/errorActions";
 
 const MyOrders = () => {
   const dispatch = useDispatch();
@@ -17,8 +18,10 @@ const MyOrders = () => {
   const alert = useAlert();
 
   const userInfo = useUserInfo();
-  const { loading, error, orders } = useSelector((state) => state.myOrders);
-
+  const { loading, orders } = useSelector((state) => state.myOrders);
+  const { message: errorMessage, type: errorType } = useSelector(
+    (state) => state.error
+  );
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 300, flex: 1 },
 
@@ -76,13 +79,11 @@ const MyOrders = () => {
     });
 
   useEffect(() => {
-    if (error) {
-      alert.error(error);
-      dispatch(clearErrors());
+    if (errorMessage) {
+      alert.error(errorMessage);
+      dispatch(clearError());
     }
-
-    dispatch(myOrders());
-  }, [dispatch, alert, error]);
+  }, [dispatch, errorMessage, alert]);
 
   return (
     <Fragment>

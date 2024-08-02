@@ -12,10 +12,13 @@ import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
 import { Link } from "react-router-dom";
 import { useUserInfo } from "../../utils/userContext";
 import Loader from "../layout/Loader/Loader";
-
+import { clearError } from "../../actions/errorActions";
 const Cart = ({ history }) => {
   const dispatch = useDispatch();
   const userInfo = useUserInfo();
+  const { message: errorMessage, type: errorType } = useSelector(
+    (state) => state.error
+  );
   const {
     cartItems,
     updatingItems = {},
@@ -93,6 +96,13 @@ const Cart = ({ history }) => {
   useEffect(() => {
     console.log("updatingItems:", updatingItems);
   }, [updatingItems]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      alert.error(errorMessage);
+      dispatch(clearError());
+    }
+  }, [dispatch, errorMessage, alert]);
 
   return (
     <div>

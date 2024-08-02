@@ -6,14 +6,17 @@ import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import FaceIcon from "@material-ui/icons/Face";
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrors, login, register } from "../../actions/userAction";
+import { login, register } from "../../actions/userAction";
 import { useAlert } from "react-alert";
+import { clearError } from "../../actions/errorActions";
 
 const LoginSignUp = ({ history, location }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
   const { user, loading, isAuthenticated } = useSelector((state) => state.user);
-
+  const { message: errorMessage, type: errorType } = useSelector(
+    (state) => state.error
+  );
   const loginTab = useRef(null);
   const registerTab = useRef(null);
   const switcherTab = useRef(null);
@@ -87,6 +90,10 @@ const LoginSignUp = ({ history, location }) => {
   };
 
   useEffect(() => {
+    if (errorMessage) {
+      alert.error(errorMessage);
+      dispatch(clearError());
+    }
     if (!loading && isAuthenticated) {
       if (isLogin) {
         history.push(redirectLogin);
@@ -94,7 +101,15 @@ const LoginSignUp = ({ history, location }) => {
         history.push(redirectRegister);
       }
     }
-  }, [dispatch, alert, history, isAuthenticated, loading, isLogin]);
+  }, [
+    dispatch,
+    alert,
+    history,
+    isAuthenticated,
+    loading,
+    isLogin,
+    errorMessage,
+  ]);
   //sAuthenticated, 배열에서 뺌
 
   const switchTabs = (e, tab) => {

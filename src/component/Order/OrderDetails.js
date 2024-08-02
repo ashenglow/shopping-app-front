@@ -4,26 +4,30 @@ import { useSelector, useDispatch } from "react-redux";
 import MetaData from "../layout/MetaData";
 import { Link, useParams } from "react-router-dom";
 import { Typography } from "@material-ui/core";
-import { getOrderDetails, clearErrors } from "../../actions/orderAction";
+import { getOrderDetails } from "../../actions/orderAction";
 import Loader from "../layout/Loader/Loader";
 import { useAlert } from "react-alert";
 import { useUserInfo } from "../../utils/userContext";
+import { clearError } from "../../actions/errorActions";
 
 const OrderDetails = () => {
-  const { order, error, loading } = useSelector((state) => state.orderDetails);
+  const { order, loading } = useSelector((state) => state.orderDetails);
   const dispatch = useDispatch();
   const alert = useAlert();
   const { id } = useParams();
+  const { message: errorMessage, type: errorType } = useSelector(
+    (state) => state.error
+  );
   // const orderId = parseInt(id);
 
   useEffect(() => {
-    if (error) {
-      alert.error(error);
-      dispatch(clearErrors());
+    if (errorMessage) {
+      alert.error(errorMessage);
+      dispatch(clearError());
     }
 
     dispatch(getOrderDetails(id));
-  }, [dispatch, alert, error, id]);
+  }, [dispatch, alert, errorMessage, id]);
   return (
     <Fragment>
       {loading ? (

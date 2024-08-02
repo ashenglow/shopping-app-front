@@ -31,6 +31,7 @@ import {
   CLEAR_ERRORS,
   // SET_INITIAL_PRODUCTS,
 } from "../constants/productConstants";
+import { setError } from "./errorAction";
 
 // Get All Products
 export const getProduct = (query) => async (dispatch) => {
@@ -65,14 +66,9 @@ export const getProduct = (query) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    console.error(
-      "Error: ",
-      error.response ? error.response.data.message : error.message
-    ); // Log the error
-    dispatch({
-      type: ALL_PRODUCT_FAIL,
-      payload: error.response ? error.response.data.message : error.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error getting products";
+    dispatch(setError(errorMessage, ALL_PRODUCT_FAIL));
   }
 };
 
@@ -144,10 +140,9 @@ export const createProduct = (productData) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    dispatch({
-      type: NEW_PRODUCT_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error creating product";
+    dispatch(setError(errorMessage, NEW_PRODUCT_FAIL));
   }
 };
 
@@ -192,10 +187,9 @@ export const deleteProduct = (id) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    dispatch({
-      type: DELETE_PRODUCT_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error deleting product";
+    dispatch(setError(errorMessage, DELETE_PRODUCT_FAIL));
   }
 };
 
@@ -211,10 +205,9 @@ export const getProductDetails = (id) => async (dispatch) => {
       payload: data.data,
     });
   } catch (error) {
-    dispatch({
-      type: PRODUCT_DETAILS_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error getting product details";
+    dispatch(setError(errorMessage, PRODUCT_DETAILS_FAIL));
   }
 };
 
@@ -238,10 +231,9 @@ export const newReview = (id, reviewData) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    dispatch({
-      type: NEW_REVIEW_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error creating review";
+    dispatch(setError(errorMessage, NEW_REVIEW_FAIL));
   }
 };
 
@@ -257,10 +249,9 @@ export const getAllReviews = (id) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    dispatch({
-      type: ALL_REVIEW_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error getting reviews";
+    dispatch(setError(errorMessage, ALL_REVIEW_FAIL));
   }
 };
 
@@ -278,14 +269,13 @@ export const deleteReviews = (reviewId) => async (dispatch) => {
       payload: data,
     });
   } catch (error) {
-    dispatch({
-      type: DELETE_REVIEW_FAIL,
-      payload: error.response.data.message,
-    });
+    const errorMessage =
+      error.response?.data?.message || "Error deleting review";
+    dispatch(setError(errorMessage, DELETE_REVIEW_FAIL));
   }
 };
 
 // Clearing Errors
-export const clearErrors = () => async (dispatch) => {
-  dispatch({ type: CLEAR_ERRORS });
-};
+// export const clearErrors = () => async (dispatch) => {
+//   dispatch({ type: CLEAR_ERRORS });
+// };
