@@ -59,6 +59,7 @@ function App() {
     if (user) {
       console.log("User:", user);
       console.log("isAuthenticated:", isAuthenticated);
+      console.log("REACT_APP_API_URL:", process.env.REACT_APP_API_URL);
     }
   }, [isAuthenticated, user]);
 

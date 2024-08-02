@@ -59,7 +59,11 @@ export const login = (loginform) => async (dispatch) => {
       withCredentials: true,
     };
 
-    const { data } = await axios.post(`/api/v1/login`, loginform, config);
+    const { data } = await axios.post(
+      `${baseURL}/api/v1/login`,
+      loginform,
+      config
+    );
     localStorage.setItem("accessToken", data.accessToken);
     dispatch({ type: LOGIN_SUCCESS, payload: data });
   } catch (error) {
@@ -78,7 +82,11 @@ export const register = (userData) => async (dispatch) => {
       baseURL: baseURL,
     };
 
-    const { data } = await axios.post(`/api/v1/register`, userData, config);
+    const { data } = await axios.post(
+      `${baseURL}/api/v1/register`,
+      userData,
+      config
+    );
 
     dispatch({ type: REGISTER_USER_SUCCESS, payload: data });
   } catch (error) {

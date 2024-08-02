@@ -10,7 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import MetaData from "../layout/MetaData";
 import LaunchIcon from "@material-ui/icons/Launch";
 import { useUserInfo } from "../../utils/userContext";
-import { clearError } from "../../actions/errorActions";
+import { clearError } from "../../actions/errorAction";
 
 const MyOrders = () => {
   const dispatch = useDispatch();

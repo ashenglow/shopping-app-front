@@ -19,7 +19,7 @@ import EventIcon from "@material-ui/icons/Event";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import { createOrder } from "../../actions/orderAction";
 import { useUserInfo } from "../../utils/userContext";
-import { clearError } from "../../actions/errorActions";
+import { clearError } from "../../actions/errorAction";
 
 const Payment = ({ history }) => {
   const orderInfo = JSON.parse(sessionStorage.getItem("orderInfo"));
