@@ -9,7 +9,7 @@ import MetaData from "../layout/MetaData";
 import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getProduct } from "../../actions/productAction";
-import { clearError } from "../../actions/errorActions";
+import { clearError } from "../../actions/errorAction";
 const categories = ["TAKJU", "YAKJU", "SOJU", "BEER", "WINE"];
 
 const debounce = (func, wait) => {

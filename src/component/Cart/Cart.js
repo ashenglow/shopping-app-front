@@ -12,7 +12,7 @@ import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
 import { Link } from "react-router-dom";
 import { useUserInfo } from "../../utils/userContext";
 import Loader from "../layout/Loader/Loader";
-import { clearError } from "../../actions/errorActions";
+import { clearError } from "../../actions/errorAction";
 const Cart = ({ history }) => {
   const dispatch = useDispatch();
   const userInfo = useUserInfo();

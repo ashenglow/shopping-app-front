@@ -6,7 +6,7 @@ import { getProduct } from "../../actions/productAction";
 import { useSelector, useDispatch } from "react-redux";
 import Loader from "../layout/Loader/Loader";
 import { useAlert } from "react-alert";
-import { clearError } from "../../actions/errorActions";
+import { clearError } from "../../actions/errorAction";
 
 const Home = () => {
   const alert = useAlert();

@@ -57,9 +57,9 @@ export const getProduct = (query) => async (dispatch) => {
     if (query) {
       url = `/api/public/v1/products?${query}`;
     }
-    console.log("Request URL: ", url);
 
-    const { data } = await axios.get(url, config);
+    const fullUrl = `${baseURL}${url}`;
+    const { data } = await axios.get(fullUrl, config);
 
     dispatch({
       type: ALL_PRODUCT_SUCCESS,
@@ -197,8 +197,16 @@ export const deleteProduct = (id) => async (dispatch) => {
 export const getProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
+    const baseURL = process.env.REACT_APP_API_URL;
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    let url = `/api/public/v1/product/${id}`;
+    const fullUrl = `${baseURL}${url}`;
 
-    const { data } = await axios.get(`/api/public/v1/product/${id}`);
+    const { data } = await axios.get(fullUrl);
 
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,

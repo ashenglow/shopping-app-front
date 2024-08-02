@@ -15,6 +15,7 @@ let refreshSubscribers = [];
 
 axiosInstance.interceptors.request.use(
   (config) => {
+    console.log("Axios instance baseURL:", axiosInstance.defaults.baseURL);
     const accessToken = getAccessTokenFromStorage();
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
