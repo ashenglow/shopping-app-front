@@ -23,11 +23,13 @@ import { Rating } from "@mui/material";
 import { NEW_REVIEW_RESET } from "../../constants/productConstants";
 import { loadUser } from "../../actions/userAction";
 import { useUserInfo } from "../../utils/userContext";
+import ConfirmPopup from "../layout/ConfirmPopup/ConfirmPopup";
 
 const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
   const userInfo = useUserInfo();
+  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const { product, loading, error } = useSelector(
     (state) => state.productDetails
   );
@@ -97,6 +99,8 @@ const ProductDetails = ({ match }) => {
 
     if (success) {
       dispatch({ type: NEW_REVIEW_RESET });
+      setShowConfirmPopup(true);
+      setTimeout(() => setShowConfirmPopup(false), 2000);
       // dispatch(getProductDetails(match.params.id));
     }
   }, [dispatch, error, alert, reviewError, success, match.params.id]);
@@ -149,6 +153,7 @@ const ProductDetails = ({ match }) => {
                   >
                     Add to Cart
                   </button>
+                  {showConfirmPopup && <ConfirmPopup message="Added to cart" />}
                 </div>
 
                 <p>
