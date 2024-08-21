@@ -77,6 +77,9 @@ const MyOrders = () => {
         amount: item.totalPrice,
       });
     });
+  useEffect(() => {
+    dispatch(myOrders());
+  }, [dispatch, alert, errorType, errorMessage]);
 
   useEffect(() => {
     if (errorMessage) {
@@ -85,28 +88,26 @@ const MyOrders = () => {
     }
   }, [dispatch, errorMessage, alert]);
 
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <Fragment>
       {/* <MetaData title={`${userInfo.name} - Orders`} /> */}
 
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className="myOrdersContainer">
-          <div className="myOrdersPageBox">
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              pageSize={10}
-              disableSelectionOnClick
-              className="myOrdersTable"
-              autoHeight
-            />
+      <div className="myOrdersContainer">
+        <div className="myOrdersPageBox">
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            pageSize={10}
+            disableSelectionOnClick
+            className="myOrdersTable"
+            autoHeight
+          />
 
-            {/* <Typography id="myOrdersHeading">{userInfo.name}'s Orders</Typography> */}
-          </div>
+          {/* <Typography id="myOrdersHeading">{userInfo.name}'s Orders</Typography> */}
         </div>
-      )}
+      </div>
     </Fragment>
   );
 };
