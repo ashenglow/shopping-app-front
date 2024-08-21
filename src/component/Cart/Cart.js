@@ -66,13 +66,15 @@ const Cart = ({ history }) => {
     }
     const selectedItemsData = selectedItems.map((item) => ({
       itemId: item.id,
+      itemName: item.name,
       count: item.count,
+      stockQuantity: item.stockQuantity,
       image: item.images[0].url,
       price: item.price,
     }));
     history.push({
       pathname: "/order/confirm",
-      state: { selectedItems: selectedItemsData },
+      state: { selectedItems: selectedItemsData, userId: userInfo.id },
     });
   };
 

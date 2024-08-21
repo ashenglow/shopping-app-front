@@ -24,18 +24,18 @@ import axiosInstance from "../utils/axiosInstance";
 import { setError } from "./errorAction";
 
 // Create Order
-export const createOrder = (memberId, order) => async (dispatch) => {
-  try {
-    dispatch({ type: CREATE_ORDER_REQUEST });
+export const createOrder = (memberId, orderItems) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  dispatch({ type: CREATE_ORDER_REQUEST });
 
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+  try {
     const { data } = await axiosInstance.post(
-      `/api/v1/auth/order/new/${memberId}`,
-      order,
+      `/api/auth/v1/order/new/${memberId}`,
+      orderItems,
       config
     );
 
