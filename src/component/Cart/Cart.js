@@ -12,7 +12,7 @@ import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
 import { Link } from "react-router-dom";
 import { useUserInfo } from "../../utils/userContext";
 import Loader from "../layout/Loader/Loader";
-import { clearError } from "../../actions/errorActions";
+import { clearError } from "../../actions/errorAction";
 const Cart = ({ history }) => {
   const dispatch = useDispatch();
   const userInfo = useUserInfo();
@@ -66,13 +66,15 @@ const Cart = ({ history }) => {
     }
     const selectedItemsData = selectedItems.map((item) => ({
       itemId: item.id,
+      itemName: item.name,
       count: item.count,
+      stockQuantity: item.stockQuantity,
       image: item.images[0].url,
       price: item.price,
     }));
     history.push({
       pathname: "/order/confirm",
-      state: { selectedItems: selectedItemsData },
+      state: { selectedItems: selectedItemsData, userId: userInfo.id },
     });
   };
 

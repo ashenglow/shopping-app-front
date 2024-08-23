@@ -29,6 +29,7 @@ import {
 } from "./reducers/orderReducer";
 import authReducer from "./reducers/authReducer";
 import { errorReducer } from "./reducers/errorReducer";
+import { paymentReducer } from "./reducers/paymentReducer";
 const reducer = combineReducers({
   products: productsReducer,
   productDetails: productDetailsReducer,
@@ -49,6 +50,7 @@ const reducer = combineReducers({
   productReviews: productReviewsReducer,
   review: reviewReducer,
   error: errorReducer,
+  payment: paymentReducer,
   auth: authReducer,
 });
 

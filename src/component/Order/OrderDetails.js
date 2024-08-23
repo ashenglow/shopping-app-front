@@ -8,7 +8,7 @@ import { getOrderDetails } from "../../actions/orderAction";
 import Loader from "../layout/Loader/Loader";
 import { useAlert } from "react-alert";
 import { useUserInfo } from "../../utils/userContext";
-import { clearError } from "../../actions/errorActions";
+import { clearError } from "../../actions/errorAction";
 
 const OrderDetails = () => {
   const { order, loading } = useSelector((state) => state.orderDetails);
