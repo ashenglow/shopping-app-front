@@ -9,6 +9,7 @@ import { UserInfoProvider } from "./utils/userContext";
 import { positions, transitions, Provider as AlertProvider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 import { history } from "./utils/history";
+import { ErrorProvider } from "./utils/ErrorContext";
 
 const options = {
   timeout: 5000,
@@ -20,9 +21,11 @@ ReactDOM.render(
   <Router history={history}>
     <Provider store={store}>
       <UserInfoProvider>
-        <AlertProvider template={AlertTemplate} {...options}>
-          <App />
-        </AlertProvider>
+        <ErrorProvider>
+          <AlertProvider template={AlertTemplate} {...options}>
+            <App />
+          </AlertProvider>
+        </ErrorProvider>
       </UserInfoProvider>
     </Provider>
   </Router>,
