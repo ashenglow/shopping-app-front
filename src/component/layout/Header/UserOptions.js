@@ -14,7 +14,7 @@ import { logout } from "../../../actions/userAction";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader/Loader";
 import useIconsize from "../../../utils/useIconsize";
-import { clearError } from "../../actions/errorActions";
+import { clearError } from "../../../actions/errorAction";
 
 const UserOptions = ({ open, onClose, anchorEl }) => {
   const { user } = useSelector((state) => state.user);
