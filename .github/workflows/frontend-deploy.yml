@@ -2,7 +2,9 @@ name: Deploy React App to S3
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
 
 permissions:
   id-token: write
@@ -12,8 +14,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-     id-token: write
-     contents: read
+      id-token: write
+      contents: read
 
     steps:
       - name: Checkout code
@@ -30,11 +32,11 @@ jobs:
       - name: Create env file
         run: |
           echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" >> .env
-          
+
       - name: Clear build cache
         run: |
           rm -rf build
-          rm -rf node_modules/.cache    
+          rm -rf node_modules/.cache
 
       - name: Build React app
         run: CI=false npm run build
