@@ -45,6 +45,7 @@ import UserOptions from "./component/layout/Header/UserOptions";
 import { history } from "./utils/history";
 import { UserContext } from "./utils/userContext";
 function App() {
+  //test
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   useEffect(() => {
