@@ -159,7 +159,7 @@ export const updateProfile = (userData) => async (dispatch) => {
 
     const { data } = await axiosInstance.post(
       `/api/auth/v1/member/update`,
-      userData,
+      JSON.stringify(userData),
       config
     );
 
