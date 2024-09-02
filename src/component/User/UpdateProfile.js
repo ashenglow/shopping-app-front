@@ -11,39 +11,71 @@ import MetaData from "../layout/MetaData";
 import { useUserInfo } from "../../utils/userContext";
 import { clearError } from "../../actions/errorAction";
 
-const UpdateProfile = ({ history }) => {
+const UpdateProfile = ({ history, location }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
+  const { memberId } = location.state || {};
 
-  const userInfo = useUserInfo();
   const { message: errorMessage, type: errorType } = useSelector(
     (state) => state.error
   );
   const { isUpdated, loading, profile } = useSelector((state) => state.profile);
-  const [id, setId] = useState(userInfo.id);
-  const [password, setPassword] = useState("");
-  // const [confirmPassword, setConfirmPassword] = useState("");
-  const [address, setAddress] = useState({
-    city: "",
-    street: "",
-    zipcode: "",
+  const [formData, setFormData] = useState({
+    id: memberId,
+    password: "",
+    address: {
+      city: "",
+      street: "",
+      zipcode: "",
+    },
+    username: "",
   });
-  const [username, setUsername] = useState(userInfo.name);
-  const [avatar, setAvatar] = useState();
+  const [initialFormData, setInitialFormData] = useState({});
   const [avatarPreview, setAvatarPreview] = useState("/Profile.png");
 
-  const updateAddressChange = (e) => {
-    setAddress({ ...address, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (["city", "street", "zipcode"].includes(name)) {
+      setFormData((prevState) => ({
+        ...prevState,
+        address: {
+          ...prevState.address,
+          [name]: value,
+        },
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
 
   const updateProfileSubmit = (e) => {
     e.preventDefault();
-    const formData = {
-      id,
-      username,
-      password,
-      address,
-    };
+    const changedData = {};
+    Object.keys(formData).forEach((key) => {
+      if (key === "address") {
+        changedData.address = {};
+        Object.keys(formData.address).forEach((addressKey) => {
+          if (
+            formData.address[addressKey] !== initialFormData.address[addressKey]
+          ) {
+            changedData.address[addressKey] = formData.address[addressKey];
+          }
+        });
+        if (Object.keys(changedData.address).length === 0) {
+          delete changedData.address;
+        }
+      } else if (formData[key] !== initialFormData[key]) {
+        changedData[key] = formData[key];
+      }
+    });
+    if (Object.keys(changedData).length > 0) {
+      dispatch(updateProfile({ id: formData.id, ...changedData }));
+    } else {
+      alert.info("No changes detected");
+    }
     // myForm.set("avatar", avatar);
     dispatch(updateProfile(formData));
   };
@@ -65,25 +97,32 @@ const UpdateProfile = ({ history }) => {
       alert.error(errorMessage);
       dispatch(clearError());
     }
-  }, [dispatch, errorMessage, alert]);
 
-  useEffect(() => {
-    if (profile) {
-      setId(profile.id);
-      setUsername(profile.name);
-      setPassword(profile.password);
-      setAddress(profile.address);
+    if (!profile && profile.id !== memberId) {
+      dispatch(getProfileEdit(memberId));
+    } else {
+      const newFormData = {
+        id: profile.id,
+        username: profile.username,
+        password: "",
+        address: {
+          city: profile.address?.city || "",
+          street: profile.address?.street || "",
+          zipcode: profile.address?.zipcode || "",
+        },
+      };
+      setFormData(newFormData);
+      setInitialFormData(newFormData);
     }
-
     if (isUpdated) {
       alert.success("Profile Updated Successfully");
       history.push("/account");
-
       dispatch({
         type: UPDATE_PROFILE_RESET,
       });
     }
-  }, [dispatch, alert, history, profile, isUpdated]);
+  }, [dispatch, alert, errorMessage, history, profile, isUpdated]);
+
   return (
     <Fragment>
       {loading ? (
@@ -103,21 +142,21 @@ const UpdateProfile = ({ history }) => {
                   <FaceIcon />
                   <input
                     type="text"
-                    placeholder={username}
+                    placeholder="Username"
                     required
-                    disabled
                     name="username"
-                    value={username}
+                    value={formData.username}
+                    onChange={handleChange}
                   />
                 </div>
                 <div className="updateProfilePassword">
                   <input
                     type="password"
-                    placeholder="Password"
+                    placeholder="New Password (leave blank to keep current)"
                     required
                     name="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={formData.password}
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -128,8 +167,8 @@ const UpdateProfile = ({ history }) => {
                     placeholder="City"
                     required
                     name="city"
-                    value={address.city}
-                    onChange={updateAddressChange}
+                    value={formData.address.city}
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -140,8 +179,8 @@ const UpdateProfile = ({ history }) => {
                     placeholder="Street"
                     required
                     name="street"
-                    value={address.street}
-                    onChange={updateAddressChange}
+                    value={formData.address.street}
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -152,8 +191,8 @@ const UpdateProfile = ({ history }) => {
                     placeholder="Zipcode"
                     required
                     name="zipcode"
-                    value={address.zipcode}
-                    onChange={updateAddressChange}
+                    value={formData.address.zipcode}
+                    onChange={handleChange}
                   />
                 </div>
                 {/* <div id="updateProfileImage">
