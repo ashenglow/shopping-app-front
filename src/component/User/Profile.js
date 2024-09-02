@@ -30,7 +30,7 @@ const Profile = ({ history }) => {
               <Link
                 to={{
                   pathname: "/member/update",
-                  state: { name: user.name, userId: user.id },
+                  state: { memberId: user.id },
                 }}
               >
                 Edit Profile
