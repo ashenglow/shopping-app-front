@@ -5,9 +5,11 @@ import { Link } from "react-router-dom";
 
 const NotFound = () => {
   return (
-    <div className="PageNotFound">
-      <Typography>Page Not Found </Typography>
-      <Link to="/">Home</Link>
+    <div className="container">
+      <div className="PageNotFound">
+        <Typography>Page Not Found </Typography>
+        <Link to="/">Home</Link>
+      </div>
     </div>
   );
 };

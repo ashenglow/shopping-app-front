@@ -145,58 +145,62 @@ const ConfirmOrder = () => {
     };
   }, [dispatch]);
 
-  return loading ? (
-    <Loader />
-  ) : (
-    <Fragment>
-      <MetaData title="Confirm Order" />
-      <CheckoutSteps activeStep={1} />
-      <div className="confirmOrderPage">
-        <div>
-          <div className="confirmshippingArea">
-            <Typography>Shipping Info</Typography>
-            <div className="confirmshippingAreaBox">
-              <div>
-                {/* <p>Name:</p>
+  return (
+    <div className="container">
+      {loading ? (
+        <Loader />
+      ) : (
+        <Fragment>
+          <MetaData title="Confirm Order" />
+          <CheckoutSteps activeStep={1} />
+          <div className="confirmOrderPage">
+            <div>
+              <div className="confirmshippingArea">
+                <Typography>Shipping Info</Typography>
+                <div className="confirmshippingAreaBox">
+                  <div>
+                    {/* <p>Name:</p>
                 <span>{userInfo.name}</span> */}
-              </div>
-              {/* <div>
+                  </div>
+                  {/* <div>
                 <p>Phone:</p>
                 <span>{shippingInfo.phoneNo}</span>
               </div> */}
-              {/* <div>
+                  {/* <div>
                 <p>Address:</p>
                 <span>{address}</span>
               </div> */}
-            </div>
-          </div>
-          <div className="confirmCartItems">
-            <Typography>Your Cart Items:</Typography>
-            <div className="confirmCartItemsContainer">
-              {selectedItems &&
-                selectedItems.map((item) => (
-                  <div key={item.itemId}>
-                    <img src={item.image} alt="Product" />
-                    <Link to={`/product/${item.itemId}`}>{item.name}</Link>{" "}
-                    <span>
-                      {item.count} X ₹{item.price} ={" "}
-                      <b>₹{item.price * item.count}</b>
-                    </span>
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
-        {/*  */}
-        <div>
-          <div className="orderSummary">
-            <Typography>Order Summery</Typography>
-            <div>
-              <div>
-                <p>Subtotal:</p>
-                <span>₹{subtotal}</span>
+                </div>
               </div>
-              {/* <div>
+              <div className="confirmCartItems">
+                <Typography>Your Cart Items:</Typography>
+                <div className="confirmCartItemsContainer">
+                  {selectedItems &&
+                    selectedItems.map((item) => (
+                      <div key={item.itemId}>
+                        <img src={item.image} alt="Product" />
+                        <Link to={`/product/${item.itemId}`}>
+                          {item.name}
+                        </Link>{" "}
+                        <span>
+                          {item.count} X ₹{item.price} ={" "}
+                          <b>₹{item.price * item.count}</b>
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+            {/*  */}
+            <div>
+              <div className="orderSummary">
+                <Typography>Order Summery</Typography>
+                <div>
+                  <div>
+                    <p>Subtotal:</p>
+                    <span>₹{subtotal}</span>
+                  </div>
+                  {/* <div>
                 <p>Shipping Charges:</p>
                 <span>₹{shippingCharges}</span>
               </div>
@@ -204,37 +208,39 @@ const ConfirmOrder = () => {
                 <p>GST:</p>
                 <span>₹{tax}</span>
               </div> */}
-            </div>
+                </div>
 
-            <div className="orderSummaryTotal">
-              <p>
-                <b>Total:</b>
-              </p>
-              <span>₹{totalPrice}</span>
-            </div>
+                <div className="orderSummaryTotal">
+                  <p>
+                    <b>Total:</b>
+                  </p>
+                  <span>₹{totalPrice}</span>
+                </div>
 
-            <button
-              onClick={handlePayment}
-              disabled={loading || isPaymentInitiated}
-            >
-              {isPaymentInitiated
-                ? "Payment Processing..."
-                : "Proceed To Payment"}
-            </button>
+                <button
+                  onClick={handlePayment}
+                  disabled={loading || isPaymentInitiated}
+                >
+                  {isPaymentInitiated
+                    ? "Payment Processing..."
+                    : "Proceed To Payment"}
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      {showPaymentPopup && (
-        <PaymentPopup
-          paymentUrl={paymentUrl}
-          onApproval={handlePaymentApproval}
-          onClose={() => {
-            setShowPaymentPopup(false);
-            setIsPaymentInitiated(false);
-          }}
-        />
+          {showPaymentPopup && (
+            <PaymentPopup
+              paymentUrl={paymentUrl}
+              onApproval={handlePaymentApproval}
+              onClose={() => {
+                setShowPaymentPopup(false);
+                setIsPaymentInitiated(false);
+              }}
+            />
+          )}
+        </Fragment>
       )}
-    </Fragment>
+    </div>
   );
 };
 

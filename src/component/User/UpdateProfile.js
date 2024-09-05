@@ -124,7 +124,7 @@ const UpdateProfile = ({ history, location }) => {
   }, [dispatch, alert, errorMessage, history, profile, isUpdated]);
 
   return (
-    <Fragment>
+    <div className="container">
       {loading ? (
         <Loader />
       ) : (
@@ -214,7 +214,7 @@ const UpdateProfile = ({ history, location }) => {
           </div>
         </Fragment>
       )}
-    </Fragment>
+    </div>
   );
 };
 

@@ -54,16 +54,20 @@ const KakaoPayment = ({ orderInfo, userId }) => {
     };
     dispatch(initiatePayment(paymentInfo));
   };
-  return loading ? (
-    <Loader />
-  ) : (
-    <Fragment>
-      <div>
-        <button onClick={handlePayment} disabled={loading}>
-          Pay with Kakao
-        </button>
-      </div>
-    </Fragment>
+  return (
+    <div className="container">
+      {loading ? (
+        <Loader />
+      ) : (
+        <Fragment>
+          <div>
+            <button onClick={handlePayment} disabled={loading}>
+              Pay with Kakao
+            </button>
+          </div>
+        </Fragment>
+      )}
+    </div>
   );
 };
 
