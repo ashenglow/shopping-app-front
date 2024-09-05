@@ -130,7 +130,7 @@ const LoginSignUp = ({ history, location }) => {
   };
 
   return (
-    <Fragment>
+    <div className="container">
       {loading ? (
         <Loader />
       ) : (
@@ -250,7 +250,7 @@ const LoginSignUp = ({ history, location }) => {
           </div>
         </Fragment>
       )}
-    </Fragment>
+    </div>
   );
 };
 

@@ -37,31 +37,32 @@ const Shipping = ({ history }) => {
   };
 
   return (
-    <Fragment>
-      <MetaData title="Shipping Details" />
+    <div className="container">
+      <Fragment>
+        <MetaData title="Shipping Details" />
 
-      <CheckoutSteps activeStep={0} />
+        <CheckoutSteps activeStep={0} />
 
-      <div className="shippingContainer">
-        <div className="shippingBox">
-          <h2 className="shippingHeading">Shipping Details</h2>
+        <div className="shippingContainer">
+          <div className="shippingBox">
+            <h2 className="shippingHeading">Shipping Details</h2>
 
-          <form
-            className="shippingForm"
-            encType="multipart/form-data"
-            onSubmit={shippingSubmit}
-          >
-            <div>
-              <HomeIcon />
-              <input
-                type="text"
-                placeholder="Address"
-                required
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-            </div>
-            {/* 
+            <form
+              className="shippingForm"
+              encType="multipart/form-data"
+              onSubmit={shippingSubmit}
+            >
+              <div>
+                <HomeIcon />
+                <input
+                  type="text"
+                  placeholder="Address"
+                  required
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                />
+              </div>
+              {/* 
             <div>
               <LocationCityIcon />
               <input
@@ -84,7 +85,7 @@ const Shipping = ({ history }) => {
               />
             </div> */}
 
-            {/* <div>
+              {/* <div>
               <PhoneIcon />
               <input
                 type="number"
@@ -95,7 +96,7 @@ const Shipping = ({ history }) => {
                 size="10"
               />
             </div> */}
-            {/* 
+              {/* 
             <div>
               <PublicIcon />
 
@@ -114,7 +115,7 @@ const Shipping = ({ history }) => {
               </select>
             </div> */}
 
-            {/* {country && (
+              {/* {country && (
               <div>
                 <TransferWithinAStationIcon />
 
@@ -134,16 +135,17 @@ const Shipping = ({ history }) => {
               </div>
             )} */}
 
-            <input
-              type="submit"
-              value="Continue"
-              className="shippingBtn"
-              // disabled={state ? false : true}
-            />
-          </form>
+              <input
+                type="submit"
+                value="Continue"
+                className="shippingBtn"
+                // disabled={state ? false : true}
+              />
+            </form>
+          </div>
         </div>
-      </div>
-    </Fragment>
+      </Fragment>
+    </div>
   );
 };
 

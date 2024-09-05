@@ -18,13 +18,15 @@ const CartItemCard = ({
       ? item.images[0].url
       : "https://placehold.co/600x400?text=Image\nNot+Available";
   return (
-    <div className="CartItemCard">
-      <input type="checkbox" checked={isSelected} onChange={onSelect} />
-      <img src={imageUrl} alt={item.name || "Product"} />
-      <div>
-        <Link to={`/product/${item.id}`}>{item.name}</Link>
-        <span>{`Price: ₹${item.price}`}</span>
-        <p onClick={() => deleteCartItems(item.id)}>Remove</p>
+    <div className="container">
+      <div className="CartItemCard">
+        <input type="checkbox" checked={isSelected} onChange={onSelect} />
+        <img src={imageUrl} alt={item.name || "Product"} />
+        <div>
+          <Link to={`/product/${item.id}`}>{item.name}</Link>
+          <span>{`Price: ₹${item.price}`}</span>
+          <p onClick={() => deleteCartItems(item.id)}>Remove</p>
+        </div>
       </div>
     </div>
   );

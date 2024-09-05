@@ -107,7 +107,7 @@ const Cart = ({ history }) => {
   }, [dispatch, errorMessage, alert]);
 
   return (
-    <div>
+    <div className="container">
       {loading ? (
         <Loader />
       ) : (

@@ -17,7 +17,7 @@ const Profile = ({ history }) => {
   }, [dispatch, user]);
 
   return (
-    <Fragment>
+    <div className="container">
       {loading ? (
         <Loader />
       ) : (
@@ -49,7 +49,7 @@ const Profile = ({ history }) => {
           </div>
         </Fragment>
       )}
-    </Fragment>
+    </div>
   );
 };
 

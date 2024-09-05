@@ -88,27 +88,31 @@ const MyOrders = () => {
     }
   }, [dispatch, errorMessage, alert]);
 
-  return loading ? (
-    <Loader />
-  ) : (
-    <Fragment>
-      {/* <MetaData title={`${userInfo.name} - Orders`} /> */}
+  return (
+    <div className="container">
+      {loading ? (
+        <Loader />
+      ) : (
+        <Fragment>
+          {/* <MetaData title={`${userInfo.name} - Orders`} /> */}
 
-      <div className="myOrdersContainer">
-        <div className="myOrdersPageBox">
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            pageSize={10}
-            disableSelectionOnClick
-            className="myOrdersTable"
-            autoHeight
-          />
+          <div className="myOrdersContainer">
+            <div className="myOrdersPageBox">
+              <DataGrid
+                rows={rows}
+                columns={columns}
+                pageSize={10}
+                disableSelectionOnClick
+                className="myOrdersTable"
+                autoHeight
+              />
 
-          {/* <Typography id="myOrdersHeading">{userInfo.name}'s Orders</Typography> */}
-        </div>
-      </div>
-    </Fragment>
+              {/* <Typography id="myOrdersHeading">{userInfo.name}'s Orders</Typography> */}
+            </div>
+          </div>
+        </Fragment>
+      )}
+    </div>
   );
 };
 
