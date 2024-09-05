@@ -42,6 +42,7 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.3.0",
     "svgo": "^3.3.0",
+    "swagger-ui-react": "^5.17.14",
     "web-vitals": "^1.1.2",
     "webfontloader": "^1.6.28"
   },

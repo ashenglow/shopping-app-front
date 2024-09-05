@@ -81,7 +81,7 @@ const Products = ({ match }) => {
   }, [dispatch, currentPage, price, category, ratings, alert]);
 
   return (
-    <Fragment>
+    <div className="container">
       {loading ? (
         <Loader />
       ) : (
@@ -156,7 +156,7 @@ const Products = ({ match }) => {
           </div>
         </Fragment>
       )}
-    </Fragment>
+    </div>
   );
 };
 

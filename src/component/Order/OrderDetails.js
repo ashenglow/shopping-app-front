@@ -29,7 +29,7 @@ const OrderDetails = () => {
     dispatch(getOrderDetails(id));
   }, [dispatch, alert, errorMessage, id]);
   return (
-    <Fragment>
+    <div className="container">
       {loading ? (
         <Loader />
       ) : (
@@ -124,7 +124,7 @@ const OrderDetails = () => {
           </Fragment>
         )
       )}
-    </Fragment>
+    </div>
   );
 };
 

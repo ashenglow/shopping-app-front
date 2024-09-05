@@ -9,20 +9,22 @@ const ProductCard = ({ product }) => {
     precision: 0.5,
   };
   return (
-    <Link className="productCard" to={`/product/${product.id}`}>
-      <img src={product.images[0].url} alt={product.name} />
-      <p>{product.name}</p>
-      <div>
+    <div className="container">
+      <Link className="productCard" to={`/product/${product.id}`}>
+        <img src={product.images[0].url} alt={product.name} />
+        <p>{product.name}</p>
         <div>
-          <Rating size="small" {...options} />{" "}
+          <div>
+            <Rating size="small" {...options} />{" "}
+          </div>
+          <span className="productCardSpan">
+            {" "}
+            ({product.numOfReviews} Reviews)
+          </span>
         </div>
-        <span className="productCardSpan">
-          {" "}
-          ({product.numOfReviews} Reviews)
-        </span>
-      </div>
-      <span>{`₹${product.price}`}</span>
-    </Link>
+        <span>{`₹${product.price}`}</span>
+      </Link>
+    </div>
   );
 };
 

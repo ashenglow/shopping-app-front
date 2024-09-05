@@ -6,11 +6,13 @@ import { Link } from "react-router-dom";
 
 const OrderSuccess = () => {
   return (
-    <div className="orderSuccess">
-      <CheckCircleIcon />
+    <div className="container">
+      <div className="orderSuccess">
+        <CheckCircleIcon />
 
-      <Typography>Your Order has been Placed successfully </Typography>
-      <Link to="/orders">View Orders</Link>
+        <Typography>Your Order has been Placed successfully </Typography>
+        <Link to="/orders">View Orders</Link>
+      </div>
     </div>
   );
 };

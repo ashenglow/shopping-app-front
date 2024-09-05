@@ -103,7 +103,7 @@ const ProductDetails = ({ match }) => {
   }, [dispatch, alert, success, match.params.id]);
 
   return (
-    <Fragment>
+    <div className="container">
       {loading ? (
         <Loader />
       ) : (
@@ -220,7 +220,7 @@ const ProductDetails = ({ match }) => {
           )}
         </Fragment>
       )}
-    </Fragment>
+    </div>
   );
 };
 
