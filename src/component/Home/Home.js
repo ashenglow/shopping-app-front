@@ -20,12 +20,13 @@ const Home = () => {
       alert.error(errorMessage);
       dispatch(clearError());
     }
-    const params = new URLSearchParams();
-    params.append("page", 0);
-    params.append("minPrice", 0);
-    params.append("maxPrice", 25000);
-    params.append("category", "");
-    params.append("ratings", 0);
+    const params = new URLSearchParams({
+      page: 0,
+      minPrice: 0,
+      maxPrice: 25000,
+      category: "",
+      ratings: 0,
+    });
     const query = params.toString();
 
     dispatch(getProduct(query));
@@ -45,24 +46,26 @@ const Home = () => {
         <Loader />
       ) : (
         <Fragment>
-          <MetaData title="ECOMMERCE" />
+          <MetaData title="SOOL STORE" description="Welcome to SOOL STORE" />
+          <div className="home-wrapper">
+            <div className="banner">
+              <p>Welcome to SOOL STORE</p>
+              <h1>FIND AMAZING PRODUCTS BELOW</h1>
 
-          <div className="banner">
-            <p>Welcome to Ecommerce</p>
-            <h1>FIND AMAZING PRODUCTS BELOW</h1>
+              <a href="#container">
+                <button>Scroll</button>
+              </a>
+            </div>
+            <div className="home-content" id="container">
+              <h2 className="homeHeading">Featured Products</h2>
 
-            <a href="#container">
-              <button>Scroll</button>
-            </a>
-          </div>
-
-          <h2 className="homeHeading">Featured Products</h2>
-
-          <div className="container" id="container">
-            {products &&
-              products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              <div className="products-container">
+                {products &&
+                  products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+              </div>
+            </div>
           </div>
         </Fragment>
       )}
