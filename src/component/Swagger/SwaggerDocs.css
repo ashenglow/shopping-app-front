@@ -9,10 +9,3 @@
   height: 100%;
   border: none;
 }
-
-/* Remove body margin and padding */
-body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
