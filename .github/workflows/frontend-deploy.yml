@@ -3,14 +3,10 @@ name: Deploy React App to S3
 on:
   push:
     branches:
-      - "feature/**"
-      - "dev"
-      - "main"
+      - main  # Only trigger on pushes to main branch
   pull_request:
     branches:
-      - "dev"
-      - "main"
-  workflow_dispatch:
+      - main  # Only trigger on pull requests to main branch
 
 permissions:
   id-token: write
