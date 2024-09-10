@@ -32,6 +32,7 @@ import {
   // SET_INITIAL_PRODUCTS,
 } from "../constants/productConstants";
 import { setError } from "./errorAction";
+import { updatePagination } from "../component/layout/MUI-comp/Pagination/paginationSlice";
 
 // Get All Products
 export const getProduct = (query) => async (dispatch) => {
@@ -65,6 +66,13 @@ export const getProduct = (query) => async (dispatch) => {
       type: ALL_PRODUCT_SUCCESS,
       payload: data,
     });
+
+    dispatch(updatePagination({
+      currentPage: query.page,
+      totalPages: Math.ceil(data.productsCount / data.resultPerPage),
+      pageSize: data.resultPerPage,
+      totalItems: data.productsCount,
+    }))
   } catch (error) {
     const errorMessage =
       error.response?.data?.message || "Error getting products";

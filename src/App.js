@@ -53,7 +53,15 @@ function App() {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ["Roboto", "Droid Sans", "Chilanka"],
+        families: [  
+          "Open Sans", 
+          "Noto Sans",
+          "Roboto",
+          "Poppins",
+          "Sora",
+          "Hahmlet",
+          "Montserrat",
+          "Noto Sans KR",],
       },
     });
   }, []);
