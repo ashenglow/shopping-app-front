@@ -9,7 +9,8 @@ import { UserInfoProvider } from "./utils/userContext";
 import { positions, transitions, Provider as AlertProvider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 import { history } from "./utils/history";
-
+import { ThemeProvider } from '@mui/material/styles';
+import theme from "./utils/theme";
 const options = {
   timeout: 5000,
   position: positions.BOTTOM_CENTER,
@@ -21,7 +22,9 @@ ReactDOM.render(
     <Provider store={store}>
       <UserInfoProvider>
         <AlertProvider template={AlertTemplate} {...options}>
+          <ThemeProvider theme={theme}>
           <App />
+          </ThemeProvider>
         </AlertProvider>
       </UserInfoProvider>
     </Provider>

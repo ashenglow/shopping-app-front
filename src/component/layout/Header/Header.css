@@ -1,84 +1,74 @@
-.menuBox {
+.header {
+  position: relative;
+  z-index: 1000;
+}
+
+.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1vmax;
+  padding: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.leftButtons {
+.menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333333;
+}
+
+
+
+.nav-icons {
   display: flex;
-  align-items: center;
+  gap: 1rem;
 }
 
-.homeIconBtn,
-.navbarIconBtn {
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.icon-button {
+  color: #333333;
+  text-decoration: none;
 }
 
-.homeIcon,
-.navbarIcon {
-  width: 100%;
+.drawer {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
   height: 100%;
+  background-color: #ffffff;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease;
 }
 
-.rightButtons {
-  display: flex;
-  align-items: center;
+.drawer.open {
+  left: 0;
 }
 
-.icon-button-container {
-  display: inline-block;
-  position: relative;
+.drawer-menu {
+  list-style-type: none;
+  padding: 2rem 1rem;
+  margin: 0;
 }
 
-.userOptionBtn,
-.loginBtn {
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.drawer-menu li {
+  margin-bottom: 1rem;
 }
 
-/* 
-@media (max-width: 480px) {
-  .homeIconBtn,
-  .menuBurgerBox {
-    width: 2vmax;
-    height: 2vmax;
-    max-width: 2.5vmax; 
-    max-height: 2.5vmax; 
-  }
-
-  .menuBurgerItem {
-    height: 0.3vmax;
-    width: 1.8vmax;
-  }
-
-  .menuBurgerItem1,
-  .menuBurgerItem3 {
-    top: 0.8vmax;
-  }
+.drawer-menu a {
+  color: #333333;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
 }
 
-@media (min-width: 900px) {
-  .homeIconBtn,
-  .menuBurgerBox {
-    width: 4vmax; 
-    height: 4vmax; 
-    max-width: 4.5vmax; 
-    max-height: 4.5vmax; 
-  }
+.drawer-menu a:hover {
+  color: #007bff;
+}
 
-  .menuBurgerItem {
-    height: 0.6vmax; 
-    width: 3.5vmax; 
+@media (max-width: 768px) {
+  .site-title {
+    font-size: 1.2rem;
   }
-
-  .menuBurgerItem1,
-  .menuBurgerItem3 {
-    top: 1.7vmax; 
-  }
-} */
+}

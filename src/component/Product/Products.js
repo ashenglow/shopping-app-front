@@ -1,16 +1,16 @@
+import React, { Fragment, useEffect, useState,useCallback  } from "react";
 import "./Products.css";
 import Loader from "../layout/Loader/Loader";
 import ProductCard from "../Home/ProductCard";
-import Pagination from "react-js-pagination";
-import Slider from "@mui/material/Slider";
 import { useAlert } from "react-alert";
-import Typography from "@mui/material/Typography";
 import MetaData from "../layout/MetaData";
-import React, { Fragment, useEffect, useState, useCallback } from "react";
+import { Box, Typography, Slider, Grid, Container, useMediaQuery } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { getProduct } from "../../actions/productAction";
 import { clearError } from "../../actions/errorAction";
-const categories = ["TAKJU", "YAKJU", "SOJU", "BEER", "WINE"];
+import { useTheme } from "@mui/material/styles";
+import CategoryChips from "../layout/MUI-comp/CategoryChips";
+import MuiPagination from "../layout/MUI-comp/Pagination/MuiPagination";
 
 const debounce = (func, wait) => {
   let timeout;
@@ -24,9 +24,9 @@ const debounce = (func, wait) => {
 
 const Products = ({ match }) => {
   const dispatch = useDispatch();
-
   const alert = useAlert();
-
+const theme = useTheme();
+const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [currentPage, setCurrentPage] = useState(0);
   const [price, setPrice] = useState([0, 25000]);
   const [category, setCategory] = useState("");
@@ -34,6 +34,8 @@ const Products = ({ match }) => {
     (state) => state.error
   );
   const [ratings, setRatings] = useState(0);
+  const categories = ["TAKJU", "YAKJU", "SOJU", "BEER", "WINE"];
+
 
   const {
     products,
@@ -43,10 +45,12 @@ const Products = ({ match }) => {
     filteredProductsCount,
   } = useSelector((state) => state.products);
 
+  const totalPages = Math.ceil(productsCount / resultPerPage);
+
   const keyword = "";
 
-  const setCurrentPageNo = (e) => {
-    setCurrentPage(e - 1);
+  const setCurrentPageNo = (e, page) => {
+    setCurrentPage(page - 1);
   };
 
   const debouncedPriceHandler = useCallback(
@@ -80,6 +84,35 @@ const Products = ({ match }) => {
     dispatch(getProduct(query));
   }, [dispatch, currentPage, price, category, ratings, alert]);
 
+  const FilterSection = () => (
+    <Box sx={{ mb: 4 }}>
+      <Typography variant="h6" gutterBottom>
+        Price
+      </Typography>
+      <Slider
+        value={price}
+        onChange={priceHandler}
+        valueLabelDisplay="auto"
+        aria-labelledby="range-slider"
+        min={0}
+        max={25000}
+      />
+      <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+        Ratings
+      </Typography>
+      <Slider
+        value={ratings}
+        onChange={(event, newRating) => setRatings(newRating)}
+        aria-labelledby="continuous-slider"
+        valueLabelDisplay="auto"
+        step={1}
+        marks
+        min={0}
+        max={5}
+      />
+    </Box>
+  );
+
   return (
     <div className="container">
       {loading ? (
@@ -87,73 +120,53 @@ const Products = ({ match }) => {
       ) : (
         <Fragment>
           <MetaData title="PRODUCTS -- ECOMMERCE" />
-          <h2 className="productsHeading">Products</h2>
-
-          <div className="products">
-            {products &&
-              products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-          </div>
-
-          <div className="filterBox">
-            <Typography>Price</Typography>
-            <Slider
-              value={price}
-              onChange={priceHandler}
-              valueLabelDisplay="auto"
-              aria-labelledby="range-slider"
-              min={0}
-              max={25000}
-            />
-
-            <Typography>Categories</Typography>
-            <ul className="categoryBox">
-              <li className="category-link" onClick={() => setCategory("")}>
-                ALL
-              </li>
-              {categories.map((category) => (
-                <li
-                  className="category-link"
-                  key={category}
-                  onClick={() => setCategory(category)}
-                >
-                  {category}
-                </li>
-              ))}
-            </ul>
-
-            <fieldset>
-              <Typography component="legend">Ratings Above</Typography>
-              <Slider
-                value={ratings}
-                onChange={(e, newRating) => {
-                  setRatings(newRating);
-                }}
-                aria-labelledby="continuous-slider"
-                valueLabelDisplay="auto"
-                min={0}
-                max={5}
-              />
-            </fieldset>
-          </div>
-
-          <div className="paginationBox">
-            <Pagination
-              activePage={currentPage + 1}
-              itemsCountPerPage={resultPerPage}
-              totalItemsCount={productsCount}
-              onChange={setCurrentPageNo}
-              nextPageText="Next"
-              prevPageText="Prev"
-              firstPageText="1st"
-              lastPageText="Last"
-              itemClass="page-item"
-              linkClass="page-link"
-              activeClass="pageItemActive"
-              activeLinkClass="pageLinkActive"
-            />
-          </div>
+          <Container maxWidth="lg">
+        <Box sx={{ py: 4 }}>
+          <Typography variant="h4" gutterBottom>
+            Products
+          </Typography>
+          <Grid container spacing={4}>
+            {!isMobile && (
+              <Grid item xs={12} md={3}>
+                <FilterSection />
+              </Grid>
+            )}
+            <Grid item xs={12} md={isMobile ? 12 : 9}>
+              <Box sx={{ mb: 4 }}>
+                <CategoryChips
+                  categories={categories}
+                  selectedCategory={category}
+                  onSelectCategory={setCategory}
+                />
+              </Box>
+              {isMobile && <FilterSection />}
+              {loading ? (
+                <Loader />
+              ) : (
+                <Fragment>
+                  <Grid container spacing={2} justifyContent={isMobile ? "center" : "flex-start"}>
+                    {products &&
+                      products.map((product) => (
+                        <Grid item xs={12} sm={isMobile ? 12 : 6} md={4} lg={3} key={product.id}>
+                          <ProductCard product={product} />
+                        </Grid>
+                      ))}
+                  </Grid>
+                </Fragment>
+              )}
+              {resultPerPage < filteredProductsCount && (
+                <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                  <MuiPagination
+                    count={totalPages}
+                    page={currentPage + 1}
+                    onChange={setCurrentPageNo}
+                  />
+                </Box>
+              )}
+            </Grid>
+          </Grid>
+        </Box>
+      </Container>
         </Fragment>
       )}
     </div>
