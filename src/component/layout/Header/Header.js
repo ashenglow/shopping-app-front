@@ -22,7 +22,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PersonIcon from '@mui/icons-material/Person';
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  backgroundColor: '#ffffff',
+  backgroundColor: 'rgba(255, 255, 255, 0.7)',
   color: theme.palette.text.primary,
 }));
 
