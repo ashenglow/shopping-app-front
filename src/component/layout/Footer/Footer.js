@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { 
   Box, 
   Container, 
@@ -13,8 +13,11 @@ import { styled } from '@mui/system';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from '../../../actions/userAction';
+import { showNotification } from '../MUI-comp/MuiNotification/notificationSlice';
+import { clearError } from '../../../actions/errorAction';
+import { Redirect} from 'react-router-dom';
 const StyledFooter = styled('footer')(({ theme }) => ({
   backgroundColor: '#000000',
   color: 'white',
@@ -64,18 +67,28 @@ const Footer = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
+  const { errorMessage } = useSelector((state) => state.error);
+const { isAuthenticated } = useSelector((state) => state.user);
   const handleLoginAdmin = () => {
-    dispatch(login({ username: "admin", password: "1234" }));
+    dispatch(login({ username: "admin", password: "1234" }))
+   
   };
 
   const handleLoginUser = () => {
     dispatch(login({ username: "user2", password: "1234" }));
+    
   };
 
   const handleLogout = () => {
     dispatch(logout());
   };
+
+  useEffect(() => {
+    if (errorMessage) {
+      dispatch(clearError());
+    }
+
+  }, [dispatch, errorMessage]);
 
   return (
     <StyledFooter>

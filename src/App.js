@@ -47,6 +47,8 @@ import SwaggerDocs from "./component/Swagger/SwaggerDocs";
 import { history } from "./utils/history";
 import { UserContext } from "./utils/userContext";
 import ScrollToTop from "./utils/ScrollToTop.js";
+import FlexibleNotification from "./component/layout/MUI-comp/MuiNotification/FlexibleNotification.js";
+
 function App() {
   //test
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -219,10 +221,11 @@ function App() {
               <Redirect to="/" />
             </Switch>
 
-            <Footer />
           </>
         </Route>
       </Switch>
+      <Route render={({location}) => {return location.pathname !== '/login' && <Footer />}} />
+<FlexibleNotification />
     </Router>
   );
 }

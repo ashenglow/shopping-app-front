@@ -1,10 +1,12 @@
 import axios from "axios";
+import store from "../store";
 import {
   getAccessTokenFromStorage,
   setAccessTokenToStorage,
   removeAccessTokenFromStorage,
 } from "../hooks/accessTokenHook";
 import { history } from "./history";
+import { showNotification } from "../actions/notificationAction";
 const baseURL = process.env.REACT_APP_API_URL;
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -32,74 +34,66 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   //응답 에러 처리
   async (error) => {
-    try {
+  
       const originalRequest = error.config;
 
       // Handle network errors
       if (!error.response) {
-        showLoginAlert("Network error. Please try again later.");
+        store.dispatch(showNotification("Network Error. Please check your network.", "error" ));
         return Promise.reject(error);
       }
       // Handle 401 Unauthorized errors
       if (error.response.status === 401 && !originalRequest._retry) {
         console.log("refresh token call");
-        originalRequest._retry = true;
+        
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
             refreshSubscribers.push({ resolve, reject });
-          }).then(() => axiosInstance(originalRequest));
+          }).then((token) => {
+            originalRequest.headers["Authorization"] = `Bearer ${token}`;
+            return axiosInstance(originalRequest);
+          }).catch((err) => {
+            return Promise.reject(err);
+          });
         }
+        
 
+        originalRequest._retry = true;
         isRefreshing = true;
 
         try {
           const response = await axiosInstance.post("/v1/refresh");
           const newAccessToken = response.data.accessToken;
-          refreshSubscribers.forEach((sub) => sub.resolve());
           setAccessTokenToStorage(newAccessToken);
+
+          axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + newAccessToken;
+
+          refreshSubscribers.forEach(({ resolve}) => resolve(newAccessToken));
+          refreshSubscribers = [];
+          
+          isRefreshing = false;
           return axiosInstance(originalRequest);
         } catch (refreshErr) {
-          // Check for specific errors indicating invalid refresh token
-          if (
-            refreshErr.response?.status === 403 ||
-            refreshErr.response?.data?.error === "refresh_token_invalid" ||
-            refreshErr.response?.headers["x-token-error"] ===
-              "refresh_token_invalid"
-          ) {
-            refreshSubscribers.forEach((sub) => sub.reject(error));
-            // Invalid or missing refresh token
-            removeAccessTokenFromStorage();
-            showLoginAlert("Your session has expired. Please log in again.");
-            return Promise.reject(refreshErr);
-          }
-          // Handle other refresh errors
-          showLoginAlert("Error refreshing your session. Please log in again.");
-          return Promise.reject(refreshErr);
-        } finally {
-          isRefreshing = false;
-          refreshSubscribers = [];
+         refreshSubscribers.forEach(({ reject }) => reject(refreshErr));
+         refreshSubscribers = [];
+         removeAccessTokenFromStorage();
+         store.dispatch(showNotification("Your session expired. Please login again.", "error" ));
+         history.push("/login");
+
+         isRefreshing = false;
+         return Promise.reject(refreshErr);
         }
-      }
+      }else if(error.response.status >= 400 && error.response.status < 500) {
+          store.dispatch(showNotification(error.response?.data?.message || "An error occurred", "error" ));
+        } else if(error.response.status >= 500) {
+          store.dispatch(showNotification( "Server error. Please try again later.", "error" ));
+        }
+      
       // Handle other errors (non-401 or 401 without retry)
 
       return Promise.reject(error);
-    } catch (interceptorErr) {
-      // Handle any unexpected errors in the interceptor itself
-      console.error("Error in axios interceptor:", interceptorErr);
-      showLoginAlert("An unexpected error occurred. Please log in again.");
-      return Promise.reject(interceptorErr);
-    }
-  }
+    } 
+  
 );
-
-const showLoginAlert = (message) => {
-  const confirmLogin = window.confirm(
-    message + "\n\nClick OK to go to the login page."
-  );
-  if (confirmLogin) {
-    // Use history.push for React Router navigation
-    history.push("/login");
-  }
-};
 
 export default axiosInstance;

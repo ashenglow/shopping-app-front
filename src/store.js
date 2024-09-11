@@ -30,6 +30,8 @@ import {
 import authReducer from "./reducers/authReducer";
 import { errorReducer } from "./reducers/errorReducer";
 import { paymentReducer } from "./reducers/paymentReducer";
+import { notificationReducer } from "./reducers/notificationReducer";
+
 const reducer = combineReducers({
   products: productsReducer,
   productDetails: productDetailsReducer,
@@ -52,6 +54,8 @@ const reducer = combineReducers({
   error: errorReducer,
   payment: paymentReducer,
   auth: authReducer,
+  notification: notificationReducer,
+
 });
 
 let initialState = {
