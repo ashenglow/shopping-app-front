@@ -17,6 +17,24 @@
   justify-content: center;
   color: white;
   position: relative;
+  
+}
+
+.banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4); /* Adjust the last value (0.5) to control darkness */
+  z-index: 1;
+}
+.banner > h1,
+.banner > p,
+.banner > a {
+  position: relative;
+  z-index: 2;
 }
 
 .banner > h1 {

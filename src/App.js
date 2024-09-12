@@ -46,6 +46,9 @@ import UserOptions from "./component/layout/Header/UserOptions";
 import SwaggerDocs from "./component/Swagger/SwaggerDocs";
 import { history } from "./utils/history";
 import { UserContext } from "./utils/userContext";
+import ScrollToTop from "./utils/ScrollToTop.js";
+import FlexibleNotification from "./component/layout/MUI-comp/MuiNotification/FlexibleNotification.js";
+
 function App() {
   //test
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -78,6 +81,7 @@ function App() {
 
   return (
     <Router history={history}>
+      <ScrollToTop />
       <Switch>
         {/* API Docs Route */}
         <Route exact path="/api-docs">
@@ -217,10 +221,11 @@ function App() {
               <Redirect to="/" />
             </Switch>
 
-            <Footer />
           </>
         </Route>
       </Switch>
+      <Route render={({location}) => {return location.pathname !== '/login' && <Footer />}} />
+<FlexibleNotification />
     </Router>
   );
 }
