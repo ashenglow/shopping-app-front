@@ -55,6 +55,7 @@ const userInitialState = {
   isAuthenticated: false, // Set isAuthenticated to false initially
   role: null,
   accessToken: null,
+  error: null,
 };
 
 export const userReducer = (state = userInitialState, action) => {
@@ -101,10 +102,7 @@ export const userReducer = (state = userInitialState, action) => {
 
     case LOGOUT_SUCCESS:
       return {
-        ...state,
-        user: null,
-        isAuthenticated: false,
-        loading: false,
+        ...userInitialState,
       };
     case LOGIN_FAIL:
     case REGISTER_USER_FAIL:

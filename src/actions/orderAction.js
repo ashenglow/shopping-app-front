@@ -18,6 +18,7 @@ import {
   ORDER_DETAILS_SUCCESS,
   ORDER_DETAILS_FAIL,
   CLEAR_ERRORS,
+  CLEAR_ORDER_STATE,
 } from "../constants/orderConstants";
 
 import axiosInstance from "../utils/axiosInstance";
@@ -133,6 +134,9 @@ export const getOrderDetails = (orderId) => async (dispatch) => {
   }
 };
 
+export const clearOrderState  = () => ({
+  type: CLEAR_ORDER_STATE,
+});
 // // Clearing Errors
 // export const clearErrors = () => async (dispatch) => {
 //   dispatch({ type: CLEAR_ERRORS });

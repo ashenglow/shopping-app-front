@@ -31,15 +31,7 @@ const Home = () => {
 
     dispatch(getProduct(query));
   }, [dispatch, errorMessage, alert]);
-  // useEffect(() => {
-  //   if (error) {
-  //     alert.error(error);
-  //     dispatch(clearErrors());
-  //   }
 
-  //   dispatch(getProduct());
-  //   console.log(products);
-  // }, [dispatch, alert, error]);
   return (
     <Fragment>
       {loading ? (

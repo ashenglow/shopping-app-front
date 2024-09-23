@@ -1,257 +1,224 @@
 import React, { Fragment, useRef, useState, useEffect } from "react";
 import "./LoginSignUp.css";
 import Loader from "../layout/Loader/Loader";
-import { Link } from "react-router-dom";
-import MailOutlineIcon from "@material-ui/icons/MailOutline";
-import LockOpenIcon from "@material-ui/icons/LockOpen";
-import FaceIcon from "@material-ui/icons/Face";
+import { useHistory, Redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login, register } from "../../actions/userAction";
 import { useAlert } from "react-alert";
 import { clearError } from "../../actions/errorAction";
+import {
+  Container,
+  Paper,
+  Tabs,
+  Tab,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Avatar,
+  CircularProgress
+} from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { styled } from '@mui/system';
 
-const LoginSignUp = ({ history, location }) => {
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  marginTop: theme.spacing(8),
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: theme.spacing(4),
+}));
+
+const StyledAvatar = styled(Avatar)(({ theme }) => ({
+  margin: theme.spacing(1),
+  backgroundColor: theme.palette.secondary.main,
+}));
+
+const StyledForm = styled('form')(({ theme }) => ({
+  width: '100%',
+  marginTop: theme.spacing(1),
+}));
+
+const LoginSignUp = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
-  const { user, loading, isAuthenticated } = useSelector((state) => state.user);
-  const { message: errorMessage, type: errorType } = useSelector(
-    (state) => state.error
-  );
-  const loginTab = useRef(null);
-  const registerTab = useRef(null);
-  const switcherTab = useRef(null);
-
-  const redirectLogin = "/account";
-  const redirectRegister = "/";
-
-  const [loginUser, setLoginUser] = useState({
-    loginUsername: "",
-    loginPassword: "",
-  });
-  const [isLogin, setIsLogin] = useState(false);
-  const [address, setAddress] = useState({
-    city: "",
-    street: "",
-    zipcode: "",
-  });
-
+  const history = useHistory();
+  const { loading, isAuthenticated } = useSelector((state) => state.user);
+  const { message: errorMessage } = useSelector((state) => state.error);
+  const [tabValue, setTabValue] = useState(0);
+  const [loginUser, setLoginUser] = useState({ username: '', password: '' });
   const [registerUser, setRegisterUser] = useState({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
+    address: { city: '', street: '', zipcode: '' }
   });
-
-  const { username, password } = registerUser;
-  const { loginUsername, loginPassword } = loginUser;
-
-  const [avatar, setAvatar] = useState("/Profile.png");
-  const [avatarPreview, setAvatarPreview] = useState("/Profile.png");
-
-  const loginSubmit = (e) => {
-    e.preventDefault();
-    const loginData = {
-      username: loginUsername,
-      password: loginPassword,
-    };
-    setIsLogin(true);
-    dispatch(login(loginData));
-  };
-  const loginDataChange = (e) => {
-    setLoginUser({ ...loginUser, [e.target.name]: e.target.value });
-    setAddress({ ...address, [e.target.name]: e.target.value });
-  };
-  const registerSubmit = (e) => {
-    e.preventDefault();
-    // myForm.set("avatar", avatar);
-    const formData = {
-      username,
-      password,
-      address,
-    };
-    setIsLogin(false);
-    dispatch(register(formData));
-  };
-
-  const registerDataChange = (e) => {
-    if (e.target.name === "avatar") {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setAvatarPreview(reader.result);
-          setAvatar(reader.result);
-        }
-      };
-
-      reader.readAsDataURL(e.target.files[0]);
-    } else {
-      setRegisterUser({ ...registerUser, [e.target.name]: e.target.value });
-      setAddress({ ...address, [e.target.name]: e.target.value });
-    }
-  };
 
   useEffect(() => {
     if (errorMessage) {
       alert.error(errorMessage);
       dispatch(clearError());
     }
-    if (!loading && isAuthenticated) {
-      if (isLogin) {
-        history.push(redirectLogin);
-      } else {
-        history.push(redirectRegister);
-      }
+    if (isAuthenticated) {
+      history.push(tabValue === 0 ? '/account' : '/');
     }
-  }, [
-    dispatch,
-    alert,
-    history,
-    isAuthenticated,
-    loading,
-    isLogin,
-    errorMessage,
-  ]);
-  //sAuthenticated, 배열에서 뺌
+  }, [dispatch, alert, history, errorMessage, isAuthenticated, tabValue]);
 
-  const switchTabs = (e, tab) => {
-    if (tab === "login") {
-      switcherTab.current.classList.add("shiftToNeutral");
-      switcherTab.current.classList.remove("shiftToRight");
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
-      registerTab.current.classList.remove("shiftToNeutralForm");
-      loginTab.current.classList.remove("shiftToLeft");
-    }
-    if (tab === "register") {
-      switcherTab.current.classList.add("shiftToRight");
-      switcherTab.current.classList.remove("shiftToNeutral");
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    dispatch(login(loginUser));
+  };
 
-      registerTab.current.classList.add("shiftToNeutralForm");
-      loginTab.current.classList.add("shiftToLeft");
+  const handleRegisterSubmit = (e) => {
+    e.preventDefault();
+    dispatch(register(registerUser));
+  };
+
+  const handleLoginChange = (e) => {
+    setLoginUser({ ...loginUser, [e.target.name]: e.target.value });
+  };
+
+  const handleRegisterChange = (e) => {
+    if (e.target.name.includes('.')) {
+      const [parent, child] = e.target.name.split('.');
+      setRegisterUser({
+        ...registerUser,
+        [parent]: { ...registerUser[parent], [child]: e.target.value }
+      });
+    } else {
+      setRegisterUser({ ...registerUser, [e.target.name]: e.target.value });
     }
   };
 
+
   return (
-    <div className="container">
-      {loading ? (
-        <Loader />
-      ) : (
-        <Fragment>
-          <div className="LoginSignUpContainer">
-            <div className="LoginSignUpBox">
-              <div>
-                <div className="login_signUp_toggle">
-                  <p onClick={(e) => switchTabs(e, "login")}>LOGIN</p>
-                  <p onClick={(e) => switchTabs(e, "register")}>REGISTER</p>
-                </div>
-                <button ref={switcherTab}></button>
-              </div>
-              <form className="loginForm" ref={loginTab} onSubmit={loginSubmit}>
-                <div className="username">
-                  <input
-                    type="text"
-                    placeholder="username"
-                    required
-                    name="loginUsername"
-                    value={loginUsername}
-                    onChange={loginDataChange}
-                  />
-                </div>
-                <div className="loginPassword">
-                  <LockOpenIcon />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    required
-                    name="loginPassword"
-                    value={loginPassword}
-                    onChange={loginDataChange}
-                  />
-                </div>
-                <Link to="/password/forgot">Forget Password ?</Link>
-                <input type="submit" value="Login" className="loginBtn" />
-              </form>
-              <form
-                className="signUpForm"
-                ref={registerTab}
-                encType="multipart/form-data"
-                onSubmit={registerSubmit}
-              >
-                <div className="signUpName">
-                  <FaceIcon />
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    required
-                    name="username"
-                    value={username}
-                    onChange={registerDataChange}
-                  />
-                </div>
-
-                <div className="signUpPassword">
-                  <LockOpenIcon />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    required
-                    name="password"
-                    value={password}
-                    onChange={registerDataChange}
-                  />
-                </div>
-
-                <div className="signUpCity">
-                  <FaceIcon />
-                  <input
-                    type="text"
-                    placeholder="City"
-                    required
-                    name="city"
-                    value={address.city}
-                    onChange={registerDataChange}
-                  />
-                </div>
-
-                <div className="signUpStreet">
-                  <FaceIcon />
-                  <input
-                    type="text"
-                    placeholder="Street"
-                    required
-                    name="street"
-                    value={address.street}
-                    onChange={registerDataChange}
-                  />
-                </div>
-
-                <div className="signUpZipcode">
-                  <FaceIcon />
-                  <input
-                    type="text"
-                    placeholder="Zipcode"
-                    required
-                    name="zipcode"
-                    value={address.zipcode}
-                    onChange={registerDataChange}
-                  />
-                </div>
-
-                <div id="registerImage">
-                  <img src={avatarPreview} alt="Avatar Preview" />
-                  <input
-                    type="file"
-                    name="avatar"
-                    accept="image/*"
-                    onChange={registerDataChange}
-                  />
-                </div>
-                <input type="submit" value="Register" className="signUpBtn" />
-              </form>
-            </div>
-          </div>
-        </Fragment>
-      )}
-    </div>
+    <Container component="main" maxWidth="xs">
+      <StyledPaper>
+        <StyledAvatar>
+          <LockOutlinedIcon />
+        </StyledAvatar>
+        <Typography component="h1" variant="h5">
+          {tabValue === 0 ? 'Sign In' : 'Sign Up'}
+        </Typography>
+        <Tabs value={tabValue} onChange={handleTabChange} centered>
+          <Tab label="Login" />
+          <Tab label="Register" />
+        </Tabs>
+        {tabValue === 0 && (
+          <StyledForm onSubmit={handleLoginSubmit}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
+              autoFocus
+              value={loginUser.username}
+              onChange={handleLoginChange}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={loginUser.password}
+              onChange={handleLoginChange}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              {loading ? <CircularProgress size={24} /> : "Sign In"}
+            </Button>
+          </StyledForm>
+        )}
+        {tabValue === 1 && (
+          <StyledForm onSubmit={handleRegisterSubmit}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
+              autoFocus
+              value={registerUser.username}
+              onChange={handleRegisterChange}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={registerUser.password}
+              onChange={handleRegisterChange}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="address.city"
+              label="City"
+              value={registerUser.address.city}
+              onChange={handleRegisterChange}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="address.street"
+              label="Street"
+              value={registerUser.address.street}
+              onChange={handleRegisterChange}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="address.zipcode"
+              label="Zipcode"
+              value={registerUser.address.zipcode}
+              onChange={handleRegisterChange}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              {loading ? <CircularProgress size={24} /> : "Sign Up"}
+            </Button>
+          </StyledForm>
+        )}
+      </StyledPaper>
+    </Container>
   );
 };
+
 
 export default LoginSignUp;

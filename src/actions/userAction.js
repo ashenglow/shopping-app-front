@@ -47,6 +47,7 @@ import {
 import axiosInstance from "../utils/axiosInstance";
 import axios from "axios";
 import { setError } from "./errorAction";
+import { showNotification, hideNotification } from "./notificationAction";
 
 // Login
 export const login = (loginform) => async (dispatch) => {
@@ -66,9 +67,12 @@ export const login = (loginform) => async (dispatch) => {
     );
     localStorage.setItem("accessToken", data.accessToken);
     dispatch({ type: LOGIN_SUCCESS, payload: data });
+    dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Login failed";
+    dispatch({ type: LOGIN_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, LOGIN_FAIL));
+ 
   }
 };
 
@@ -89,9 +93,12 @@ export const register = (userData) => async (dispatch) => {
     );
 
     dispatch({ type: REGISTER_USER_SUCCESS, payload: data });
+    dispatch(showNotification("Register Successful", "success" ));
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Register failed";
+    dispatch({ type: REGISTER_USER_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, REGISTER_USER_FAIL));
+    dispatch(showNotification(errorMessage, "error" ));
   }
 };
 
@@ -105,6 +112,7 @@ export const loadUser = () => async (dispatch) => {
     dispatch({ type: LOAD_USER_SUCCESS, payload: data });
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Error loading user";
+    dispatch({ type: LOAD_USER_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, LOAD_USER_FAIL));
   }
 };
@@ -118,20 +126,23 @@ export const refresh = () => async (dispatch) => {
   } catch (error) {
     const errorMessage =
       error.response?.data?.message || "Error refreshing token";
+      dispatch({ type: REFRESH_TOKEN_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, REFRESH_TOKEN_FAIL));
   }
 };
 // Logout User
 export const logout = () => async (dispatch) => {
   try {
-    //get이라서 안되나..?
+ dispatch({ type: LOGOUT_REQUEST });
     const { data } = await axiosInstance.post(`/api/v1/logout`);
-    localStorage.removeItem("user"); // Clear user from local storage if applicable
-    sessionStorage.removeItem("user");
+
+    localStorage.removeItem("accessToken");
+    // Clear the axiosInstance defaults headers
+    delete axiosInstance.defaults.headers.common["Authorization"];
     dispatch({ type: LOGOUT_SUCCESS, payload: data });
   } catch (error) {
-    const errorMessage = error.response?.data?.message || "Error logging out";
-    dispatch(setError(errorMessage, LOGOUT_FAIL));
+    dispatch({ type: LOGOUT_FAIL, payload: error.response?.data?.message || "Logout failed" });
+
   }
 };
 
@@ -146,6 +157,7 @@ export const getProfileEdit = () => async (dispatch) => {
   } catch (error) {
     const errorMessage =
       error.response?.data?.message || "Error getting profile edit";
+    dispatch({ type: PROFILE_EDIT_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, PROFILE_EDIT_FAIL));
   }
 };
@@ -164,10 +176,13 @@ export const updateProfile = (userData) => async (dispatch) => {
     );
 
     dispatch({ type: UPDATE_PROFILE_SUCCESS, payload: data });
+    dispatch(showNotification( "Profile Updated",  "success" ));
   } catch (error) {
     const errorMessage =
       error.response?.data?.message || "Error updating profile";
+    dispatch({ type: UPDATE_PROFILE_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, UPDATE_PROFILE_FAIL));
+    dispatch(showNotification(errorMessage,  "error" ));
   }
 };
 
@@ -247,6 +262,7 @@ export const getAllUsers = () => async (dispatch) => {
   } catch (error) {
     const errorMessage =
       error.response?.data?.message || "Error getting all users";
+    dispatch({ type: ALL_USERS_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, ALL_USERS_FAIL));
   }
 };
@@ -295,6 +311,7 @@ export const deleteUser = (id) => async (dispatch) => {
     dispatch({ type: DELETE_USER_SUCCESS, payload: data });
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Error deleting user";
+    dispatch({ type: DELETE_USER_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, DELETE_USER_FAIL));
   }
 };
