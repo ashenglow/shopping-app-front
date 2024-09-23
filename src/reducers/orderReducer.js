@@ -20,9 +20,17 @@ import {
   ORDER_DETAILS_SUCCESS,
   ORDER_DETAILS_FAIL,
   CLEAR_ERRORS,
+  CLEAR_ORDER_STATE,
 } from "../constants/orderConstants";
+const newOrderInitialState = {
+  loading: false,
+  isUpdated: false,
+  orderId: null,
+  error: null,
+};  
 
-export const newOrderReducer = (state = {}, action) => {
+
+export const newOrderReducer = (state = newOrderInitialState, action) => {
   switch (action.type) {
     case CREATE_ORDER_REQUEST:
       return {
@@ -33,6 +41,7 @@ export const newOrderReducer = (state = {}, action) => {
 
     case CREATE_ORDER_SUCCESS:
       return {
+        ...state,
         loading: false,
         orderId: action.payload,
         isUpdated: true,
@@ -40,6 +49,7 @@ export const newOrderReducer = (state = {}, action) => {
 
     case CREATE_ORDER_FAIL:
       return {
+        ...state,
         loading: false,
         error: action.payload,
       };
@@ -48,6 +58,8 @@ export const newOrderReducer = (state = {}, action) => {
         ...state,
         error: null,
       };
+    case CLEAR_ORDER_STATE:
+      return newOrderInitialState;
 
     default:
       return state;

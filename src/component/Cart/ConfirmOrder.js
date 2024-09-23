@@ -7,7 +7,7 @@ import MetaData from "../layout/MetaData";
 import { Link } from "react-router-dom";
 import { Typography } from "@material-ui/core";
 import { useUserInfo } from "../../utils/userContext";
-import { createOrder } from "../../actions/orderAction";
+import { createOrder, clearOrderState } from "../../actions/orderAction";
 import { useDispatch } from "react-redux";
 import { useAlert } from "react-alert";
 import Loader from "../layout/Loader/Loader";
@@ -20,8 +20,8 @@ import {
 import PaymentPopup from "../layout/PaymentPopup/PaymentPopup";
 
 const ConfirmOrder = () => {
-  const { isUpdated, orderId } = useSelector((state) => state.newOrder);
-  const { loading, error, paymentUrl, paymentResult } = useSelector(
+  const { loading: orderLoading, error: orderError,isUpdated, orderId } = useSelector((state) => state.newOrder);
+  const { loading: paymentLoading, error: paymentError, paymentUrl, paymentResult } = useSelector(
     (state) => state.payment
   );
   const dispatch = useDispatch();
@@ -74,6 +74,7 @@ const ConfirmOrder = () => {
     };
     dispatch(initiatePayment(paymentInfo));
     setIsPaymentInitiated(true);
+    setShowPaymentPopup(true);
   }, [dispatch, selectedItems, userId, isPaymentInitiated]);
 
   const handlePaymentApproval = useCallback(
@@ -96,54 +97,44 @@ const ConfirmOrder = () => {
     [dispatch, userId, alert]
   );
 
-  const handleOrderCreation = useCallback(() => {
-    if (isOrderCreated) return;
-    const orderItems = selectedItems.map((item) => ({
-      itemId: item.itemId,
-      count: item.count,
-      price: item.price,
-    }));
-    dispatch(createOrder(userId, orderItems));
-    setIsOrderCreated(true);
-  }, [dispatch, selectedItems, userId, isOrderCreated]);
+
 
   useEffect(() => {
-    if (paymentUrl && !showPaymentPopup) {
-      setShowPaymentPopup(true);
-    }
-  }, [paymentUrl, showPaymentPopup]);
+    if (paymentResult ) {
+      const orderItems = selectedItems.map((item) => ({
+        itemId: item.itemId,
+        count: item.count,
+        price: item.price,
+      }));
+      dispatch(createOrder(userId, orderItems));
 
-  useEffect(() => {
-    if (paymentResult && !isOrderCreated) {
-      handleOrderCreation();
     }
-  }, [paymentResult, handleOrderCreation, isOrderCreated]);
+  }, [paymentResult, dispatch, userId, selectedItems ]);
 
   useEffect(() => {
     if (isUpdated && orderId) {
       alert.success("Order created successfully");
+      setShowPaymentPopup(false);
       history.push(`/order/${orderId}`);
       dispatch(clearPaymentState());
+      dispatch(clearOrderState());
       localStorage.removeItem("transactionId");
     }
   }, [isUpdated, history, orderId, alert, dispatch]);
 
   useEffect(() => {
-    if (error) {
-      alert.error(error);
+    if (paymentError || orderError) {
+      alert.error(paymentError || orderError);
       setIsPaymentInitiated(false);
-      setIsOrderCreated(false);
+      setShowPaymentPopup(false);
       dispatch(clearPaymentState());
+      dispatch(clearOrderState());
     }
-  }, [error, alert, dispatch]);
+ 
+  }, [paymentError, orderError, alert, dispatch]);
 
-  useEffect(() => {
-    return () => {
-      dispatch(clearPaymentState());
-      setIsPaymentInitiated(false);
-      setIsOrderCreated(false);
-    };
-  }, [dispatch]);
+
+  const loading = paymentLoading || orderLoading;
 
   return (
     <div className="container">
@@ -234,8 +225,8 @@ const ConfirmOrder = () => {
               onApproval={handlePaymentApproval}
               onClose={() => {
                 setShowPaymentPopup(false);
-                setIsPaymentInitiated(false);
               }}
+              showPaymentPopup={showPaymentPopup}
             />
           )}
         </Fragment>

@@ -13,8 +13,23 @@ const axiosInstance = axios.create({
   withCredentials: true, //크로스 도메인 요청 시 쿠키 전송 허용
 });
 let isRefreshing = false;
-let refreshSubscribers = [];
+let failedQueue = [];
 
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+const logout = () => {
+  removeAccessTokenFromStorage();
+  store.dispatch(showNotification("Your session has expired. Please log in again.", "error"));
+  history.push("/login");
+};
 axiosInstance.interceptors.request.use(
   (config) => {
     console.log("Axios instance baseURL:", axiosInstance.defaults.baseURL);
@@ -45,10 +60,9 @@ axiosInstance.interceptors.response.use(
       // Handle 401 Unauthorized errors
       if (error.response.status === 401 && !originalRequest._retry) {
         console.log("refresh token call");
-        
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
-            refreshSubscribers.push({ resolve, reject });
+            failedQueue.push({ resolve, reject });
           }).then((token) => {
             originalRequest.headers["Authorization"] = `Bearer ${token}`;
             return axiosInstance(originalRequest);
@@ -62,34 +76,34 @@ axiosInstance.interceptors.response.use(
         isRefreshing = true;
 
         try {
-          const response = await axiosInstance.post("/v1/refresh");
-          const newAccessToken = response.data.accessToken;
-          setAccessTokenToStorage(newAccessToken);
+        const response = await axiosInstance.post("/v1/refresh");
+        const { accessToken } = response.data;
 
-          axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + newAccessToken;
+        setAccessTokenToStorage(accessToken);
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
 
-          refreshSubscribers.forEach(({ resolve}) => resolve(newAccessToken));
-          refreshSubscribers = [];
-          
-          isRefreshing = false;
-          return axiosInstance(originalRequest);
-        } catch (refreshErr) {
-         refreshSubscribers.forEach(({ reject }) => reject(refreshErr));
-         refreshSubscribers = [];
-         removeAccessTokenFromStorage();
-         store.dispatch(showNotification("Your session expired. Please login again.", "error" ));
-         history.push("/login");
-
-         isRefreshing = false;
-         return Promise.reject(refreshErr);
+        processQueue(null, accessToken);
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        if (refreshError.response && refreshError.response.status === 401) {
+          // This likely means the refresh token is invalid or expired
+          logout();
+        } else {
+          store.dispatch(showNotification("Error refreshing access token. Please try again.", "error"));
         }
-      }else if(error.response.status >= 400 && error.response.status < 500) {
-          store.dispatch(showNotification(error.response?.data?.message || "An error occurred", "error" ));
-        } else if(error.response.status >= 500) {
-          store.dispatch(showNotification( "Server error. Please try again later.", "error" ));
-        }
-      
-      // Handle other errors (non-401 or 401 without retry)
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+  
+      if (error.response.status >= 400 && error.response.status < 500) {
+        store.dispatch(showNotification(error.response?.data?.message || "An error occurred", "error"));
+      } else if (error.response.status >= 500) {
+        store.dispatch(showNotification("Server error. Please try again later.", "error"));
+      }
 
       return Promise.reject(error);
     } 
