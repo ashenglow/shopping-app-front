@@ -1,5 +1,5 @@
 import "./ProductDetails.css";
-import React, { Fragment, useEffect, useState, useContext } from "react";
+import React, { Fragment, useEffect, useState, useContext, useCallback } from "react";
 import Carousel from "react-material-ui-carousel";
 import { useSelector, useDispatch } from "react-redux";
 import { getProductDetails, newReview } from "../../actions/productAction";
@@ -26,7 +26,6 @@ const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
   const userInfo = useUserInfo();
-  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const { product, loading } = useSelector((state) => state.productDetails);
 
   const { success } = useSelector((state) => state.newReview);
@@ -45,6 +44,7 @@ const ProductDetails = ({ match }) => {
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
 
   const increaseQuantity = () => {
     if (product.stockQuantity <= count) return;
@@ -56,31 +56,30 @@ const ProductDetails = ({ match }) => {
     setCount(count - 1);
   };
 
-  const addToCartHandler = () => {
-    try {
-      dispatch(addItemsToCart(match.params.id, count));
-      setShowConfirmPopup(true);
-      setTimeout(() => setShowConfirmPopup(false), 2000);
-    } catch (err) {
-      alert.error("Failed to add item to cart");
-    }
-  };
+  const addToCartHandler = useCallback(() => {
+    dispatch(addItemsToCart(match.params.id, count));
+    setShowConfirmPopup(true);
+    setTimeout(() => setShowConfirmPopup(false), 2000);
+  }, [dispatch, match.params.id, count]);
 
-  const submitReviewToggle = () => {
-    setOpen(!open);
-  };
+  const submitReviewToggle = useCallback(() => {
+    setOpen((prev) => !prev);
+  }, []);
 
-  const reviewSubmitHandler = () => {
+
+  const reviewSubmitHandler = useCallback(() => {
     const formData = {
       userId: null,
       username: "",
-      rating: rating,
-      comment: comment,
+      rating,
+      comment,
       productId: match.params.id,
     };
     dispatch(newReview(match.params.id, formData));
     setOpen(false);
-  };
+  }, [dispatch, rating, comment, match.params.id]);
+
+
   useEffect(() => {
     if (errorMessage) {
       alert.error(errorMessage);
@@ -103,7 +102,7 @@ const ProductDetails = ({ match }) => {
   }, [dispatch, alert, success, match.params.id]);
 
   return (
-    <div className="container">
+    <Fragment>
       {loading ? (
         <Loader />
       ) : (
@@ -220,7 +219,7 @@ const ProductDetails = ({ match }) => {
           )}
         </Fragment>
       )}
-    </div>
+    </Fragment>
   );
 };
 

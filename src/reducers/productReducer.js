@@ -40,6 +40,7 @@ const initialState = {
   productsCount: 0,
   resultPerPage: 0,
   filteredProductsCount: 0,
+  error: null,
 };
 export const productsReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -56,8 +57,8 @@ export const productsReducer = (state = initialState, action) => {
         loading: false,
         products: action.payload.content,
         productsCount: action.payload.totalElements,
-        resultPerPage: action.payload.numberOfElements,
-        filteredProductsCount: action.payload.totalElements,
+        resultPerPage: action.payload.size,
+        filteredProductsCount: action.payload.numberOfElements,
       };
 
     case ADMIN_PRODUCT_SUCCESS:
