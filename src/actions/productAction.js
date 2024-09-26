@@ -34,8 +34,17 @@ import {
 import { setError } from "./errorAction";
 import { updatePagination } from "../component/layout/MUI-comp/Pagination/paginationSlice";
 
+let cachedProducts = {};
 // Get All Products
 export const getProduct = (query) => async (dispatch) => {
+
+if( cachedProducts[query] ){
+  dispatch({
+    type: ALL_PRODUCT_SUCCESS,
+    payload: cachedProducts[query],
+  });
+  return;
+}
   try {
     dispatch({ type: ALL_PRODUCT_REQUEST });
     const baseURL = process.env.REACT_APP_API_URL;
@@ -45,19 +54,9 @@ export const getProduct = (query) => async (dispatch) => {
         "Content-Type": "application/json",
       },
     };
-    // const params = new URLSearchParams();
-    // params.append("page", currentPage);
-    // params.append("minPrice", price[0]);
-    // params.append("maxPrice", price[1]);
-    // params.append("category", category);
-    // params.append("ratings", ratings);
-    // const query = params.toString();
 
-    let url = `/api/public/v1/products`;
-
-    if (query) {
-      url = `/api/public/v1/products?${query}`;
-    }
+    
+    let url = `/api/public/v1/products${query ? `?${query}` : ''}`;
 
     const fullUrl = `${baseURL}${url}`;
     const { data } = await axios.get(fullUrl, config);
@@ -68,10 +67,10 @@ export const getProduct = (query) => async (dispatch) => {
     });
 
     dispatch(updatePagination({
-      currentPage: query.page,
-      totalPages: Math.ceil(data.productsCount / data.resultPerPage),
-      pageSize: data.resultPerPage,
-      totalItems: data.productsCount,
+      currentPage: data.number,
+      totalPages: data.totalPages,
+      pageSize: data.size,
+      totalItems: data.totalElements,
     }))
   } catch (error) {
     const errorMessage =
