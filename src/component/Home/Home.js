@@ -19,7 +19,10 @@ const Home = () => {
     if (errorMessage) {
       alert.error(errorMessage);
       dispatch(clearError());
-    }
+    }  
+  }, [dispatch, errorMessage, alert]);
+
+  useEffect(() => {
     const params = new URLSearchParams({
       page: 0,
       minPrice: 0,
@@ -28,9 +31,8 @@ const Home = () => {
       ratings: 0,
     });
     const query = params.toString();
-
     dispatch(getProduct(query));
-  }, [dispatch, errorMessage, alert]);
+  }, [dispatch]);
 
   return (
     <Fragment>
