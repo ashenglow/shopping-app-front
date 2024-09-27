@@ -11,7 +11,7 @@ import {
 const initialState = {
   loading: false,
   error: null,
-  paymentUrl: null,
+  paymentUrls: null,
   tid: null,
   paymentResult: null,
   orderId: null,
@@ -28,7 +28,7 @@ export const paymentReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        paymentUrl: action.payload.next_redirect_pc_url,
+        paymentUrls: action.payload.paymentUrls,
         tid: action.payload.tid,
       };
     case KAKAOPAYMENT_READY_FAILURE:

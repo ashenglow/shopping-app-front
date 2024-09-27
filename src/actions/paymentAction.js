@@ -8,7 +8,16 @@ import {
   CLEAR_PAYMENT_STATE,
 } from "../constants/paymentConstants";
 import axiosInstance from "../utils/axiosInstance";
-
+const transformKakaopayUrls = (kakaopayResponse) => {
+  return {
+    pc: kakaopayResponse.next_redirect_pc_url,
+    mobile: kakaopayResponse.next_redirect_mobile_url,
+    app: kakaopayResponse.next_redirect_app_url,
+    default: kakaopayResponse.next_redirect_pc_url, // Using PC URL as default
+    androidAppScheme: kakaopayResponse.android_app_scheme,
+    iosAppScheme: kakaopayResponse.ios_app_scheme
+  };
+};
 export const initiatePayment = (paymentInfo) => async (dispatch) => {
   try {
     dispatch({ type: KAKAOPAYMENT_READY_REQUEST });
@@ -23,9 +32,13 @@ export const initiatePayment = (paymentInfo) => async (dispatch) => {
       paymentInfo,
       config
     );
+    const paymentUrls = transformKakaopayUrls(data);
     dispatch({
       type: KAKAOPAYMENT_READY_SUCCESS,
-      payload: data,
+      payload: {
+        tid: data.tid,
+        paymentUrls: paymentUrls,
+      }
     });
     // open kakao pay window
   } catch (error) {
