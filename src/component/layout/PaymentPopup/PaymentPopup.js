@@ -1,16 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
+import useResponsiveUrl from "../MUI-comp/useResponsiveUrl";
 
-const PaymentPopup = ({ paymentUrl, onApproval, onClose, showPaymentPopup }) => {
-  useEffect(() => {
-    if (!showPaymentPopup) return;
+const PaymentPopup = ({ paymentUrls, onApproval, onClose, showPaymentPopup }) => {
+  const responsiveUrl = useResponsiveUrl(paymentUrls);
+  const openPopup = useCallback(() => {
+    if (!showPaymentPopup) return null;
 
+   
     const popupWidth = 500;
     const popupHeight = 700;
     const left = (window.screen.width / 2) - (popupWidth / 2);
     const top = (window.screen.height / 2) - (popupHeight / 2);
     
     const popup = window.open(
-      paymentUrl,
+      responsiveUrl,
       'KakaoPayment',
       `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
     );
@@ -18,6 +21,13 @@ const PaymentPopup = ({ paymentUrl, onApproval, onClose, showPaymentPopup }) => 
     if (popup) {
       popup.focus();
     }
+
+    return popup;
+    
+  }, [responsiveUrl, showPaymentPopup]);
+  useEffect(() => {
+   const popup = openPopup();
+   if(!popup) return;
 
     const checkPopup = setInterval(() => {
       if (!popup || popup.closed) {
@@ -43,7 +53,7 @@ const PaymentPopup = ({ paymentUrl, onApproval, onClose, showPaymentPopup }) => 
         popup.close();
       }
     };
-  }, [paymentUrl, onApproval, onClose, showPaymentPopup]);
+  }, [openPopup, onApproval, onClose]);
 
   return null;
 };

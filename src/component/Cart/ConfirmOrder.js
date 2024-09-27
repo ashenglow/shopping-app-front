@@ -21,7 +21,7 @@ import PaymentPopup from "../layout/PaymentPopup/PaymentPopup";
 
 const ConfirmOrder = () => {
   const { loading: orderLoading, error: orderError,isUpdated, orderId } = useSelector((state) => state.newOrder);
-  const { loading: paymentLoading, error: paymentError, paymentUrl, paymentResult } = useSelector(
+  const { loading: paymentLoading, error: paymentError, paymentUrls, paymentResult } = useSelector(
     (state) => state.payment
   );
   const dispatch = useDispatch();
@@ -221,7 +221,7 @@ const ConfirmOrder = () => {
           </div>
           {showPaymentPopup && (
             <PaymentPopup
-              paymentUrl={paymentUrl}
+              paymentUrls={paymentUrls}
               onApproval={handlePaymentApproval}
               onClose={() => {
                 setShowPaymentPopup(false);
