@@ -168,6 +168,9 @@
   --mobile-breakpoint: 480px;
   --tablet-breakpoint: 768px;
   --desktop-breakpoint: 1024px;
+  --first-color: #0f2f75;
+  --second-color: #3087ac;
+  --light-color:#dfddce;
 }
 
 /* Base styles */

@@ -32,8 +32,9 @@ const StyledFooter = styled('footer')(({ theme }) => ({
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
+  '&&.MuiButton-root': {
+  border: '1px solid white',
   color: 'white',
-  borderColor: 'white',
   borderRadius: '20px',
   padding: '6px 16px',
   marginRight: theme.spacing(1),
@@ -42,7 +43,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
     borderColor: theme.palette.primary.main,
     color: 'black',
     backgroundColor: 'rgba(255, 255, 255)',
-  },
+  }},
 }));
 
 const StyledLink = styled(Link)(({ theme }) => ({
