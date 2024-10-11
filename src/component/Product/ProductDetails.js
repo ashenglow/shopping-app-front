@@ -18,14 +18,12 @@ import {
 import { Rating } from "@mui/material";
 import { NEW_REVIEW_RESET } from "../../constants/productConstants";
 import { loadUser } from "../../actions/userAction";
-import { useUserInfo } from "../../utils/userContext";
 import ConfirmPopup from "../layout/ConfirmPopup/ConfirmPopup";
 import { clearError } from "../../actions/errorAction";
 
 const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
-  const userInfo = useUserInfo();
   const { product, loading } = useSelector((state) => state.productDetails);
   const { success } = useSelector((state) => state.newReview);
   const { message: errorMessage, type: errorType } = useSelector(

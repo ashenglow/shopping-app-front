@@ -9,7 +9,6 @@ import { useAlert } from "react-alert";
 import Typography from "@material-ui/core/Typography";
 import MetaData from "../layout/MetaData";
 import LaunchIcon from "@material-ui/icons/Launch";
-import { useUserInfo } from "../../utils/userContext";
 import { clearError } from "../../actions/errorAction";
 
 const MyOrders = () => {
@@ -17,7 +16,6 @@ const MyOrders = () => {
 
   const alert = useAlert();
 
-  const userInfo = useUserInfo();
   const { loading, orders } = useSelector((state) => state.myOrders);
   const { message: errorMessage, type: errorType } = useSelector(
     (state) => state.error

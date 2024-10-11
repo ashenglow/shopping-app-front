@@ -48,11 +48,13 @@ import { history } from "./utils/history";
 import { UserContext } from "./utils/userContext";
 import ScrollToTop from "./utils/ScrollToTop.js";
 import FlexibleNotification from "./component/layout/MUI-comp/MuiNotification/FlexibleNotification.js";
-
+import Loader from "./component/layout/Loader/Loader.js";
 function App() {
   //test
-  const { isAuthenticated, user } = useSelector((state) => state.user);
+  const { isAuthenticated, user, loading } = useSelector((state) => state.user);
+  const [userLoaded, setUserLoaded] = useState(false);
   const dispatch = useDispatch();
+
   useEffect(() => {
     WebFont.load({
       google: {
@@ -68,14 +70,12 @@ function App() {
       },
     });
   }, []);
-
-  useEffect(() => {
-    if (user) {
-      console.log("User:", user);
-      console.log("isAuthenticated:", isAuthenticated);
-      console.log("REACT_APP_API_URL:", process.env.REACT_APP_API_URL);
-    }
-  }, [isAuthenticated, user]);
+useEffect(() => {
+  dispatch(loadUser()).then(() => setUserLoaded(true));
+}, [dispatch]);
+if(loading){
+return <Loader/>
+}
 
   window.addEventListener("contextmenu", (e) => e.preventDefault());
 
@@ -91,7 +91,7 @@ function App() {
         {/* All other routes */}
         <Route>
           <>
-            <Header isAuthenticated={isAuthenticated} />
+            <Header isAuthenticated={isAuthenticated} loading={loading} />
 
             {/* 
       {stripeApiKey && (
@@ -113,7 +113,7 @@ function App() {
               <Route exact path="/about" component={About} />
               <Route exact path="/login" component={LoginSignUp} />
 
-              <Route exact path="/cart" component={Cart} />
+              <ProtectedRoute exact path="/cart" component={Cart} />
 
               <ProtectedRoute exact path="/account" component={Profile} />
 

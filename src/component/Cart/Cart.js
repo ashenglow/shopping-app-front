@@ -1,5 +1,5 @@
 import "./Cart.css";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import CartItemCard from "./CartItemCard";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -10,12 +10,13 @@ import {
 import { Typography } from "@material-ui/core";
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
 import { Link } from "react-router-dom";
-import { useUserInfo } from "../../utils/userContext";
 import Loader from "../layout/Loader/Loader";
 import { clearError } from "../../actions/errorAction";
+import { getUserId } from "../../hooks/getUserInfo";
+
 const Cart = ({ history }) => {
   const dispatch = useDispatch();
-  const userInfo = useUserInfo();
+  const userId = getUserId();
   const { message: errorMessage, type: errorType } = useSelector(
     (state) => state.error
   );
@@ -74,7 +75,7 @@ const Cart = ({ history }) => {
     }));
     history.push({
       pathname: "/order/confirm",
-      state: { selectedItems: selectedItemsData, userId: userInfo.id },
+      state: { selectedItems: selectedItemsData, userId: userId },
     });
   };
 
@@ -92,8 +93,12 @@ const Cart = ({ history }) => {
   };
 
   useEffect(() => {
-    dispatch(getCartItems(userInfo.id));
-  }, [dispatch, userInfo.id]);
+    if(userId){
+      dispatch(getCartItems(userId));
+    } else {
+      history.push("/login");
+    }
+  }, [dispatch, userId, history]);
 
   useEffect(() => {
     console.log("updatingItems:", updatingItems);
@@ -104,7 +109,7 @@ const Cart = ({ history }) => {
       alert.error(errorMessage);
       dispatch(clearError());
     }
-  }, [dispatch, errorMessage, alert]);
+  }, [dispatch, errorMessage]);
 
   return (
     <div className="container">

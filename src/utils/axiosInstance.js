@@ -7,6 +7,8 @@ import {
 } from "../hooks/accessTokenHook";
 import { history } from "./history";
 import { showNotification } from "../actions/notificationAction";
+import { refresh } from "../actions/userAction";
+import { ref } from "joi";
 const baseURL = process.env.REACT_APP_API_URL;
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -76,7 +78,7 @@ axiosInstance.interceptors.response.use(
         isRefreshing = true;
 
         try {
-        const response = await axiosInstance.post("/v1/refresh");
+        const response = await refresh();
         const { accessToken } = response.data;
 
         setAccessTokenToStorage(accessToken);

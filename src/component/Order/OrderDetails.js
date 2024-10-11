@@ -7,7 +7,6 @@ import { Typography } from "@material-ui/core";
 import { getOrderDetails } from "../../actions/orderAction";
 import Loader from "../layout/Loader/Loader";
 import { useAlert } from "react-alert";
-import { useUserInfo } from "../../utils/userContext";
 import { clearError } from "../../actions/errorAction";
 
 const OrderDetails = () => {
@@ -43,7 +42,7 @@ const OrderDetails = () => {
                 </Typography>
                 <Typography>Shipping Info</Typography>
                 <div className="orderDetailsContainerBox">
-                  <div>
+                  <div className="orderDetailsContainerBox-2">
                     <p>Name:</p>
                     <span>{order.name && order.name}</span>
                   </div>
@@ -53,14 +52,12 @@ const OrderDetails = () => {
                     {order.shippingInfo && order.shippingInfo.phoneNo}
                   </span>
                 </div> */}
-                  <div>
+                  <div className="orderDetailsContainerBox-2">
                     <p>Address:</p>
                     {order.address && (
-                      <div>
-                        <p>{order.address.city}</p>
-                        <p>{order.address.street}</p>
-                        <p>{order.address.zipcode}</p>
-                      </div>
+                      
+                        <span>{`${order.address.city} ${order.address.street}, ${order.address.zipcode}`}</span>
+                      
                     )}
                   </div>
                 </div>
@@ -82,7 +79,7 @@ const OrderDetails = () => {
                   </p>
                 </div> */}
 
-                  <div>
+                  <div className="orderDetailsContainerBox-2">
                     <p>Amount:</p>
                     <span>{order.totalPrice && order.totalPrice}</span>
                   </div>
