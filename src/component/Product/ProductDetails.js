@@ -18,16 +18,13 @@ import {
 import { Rating } from "@mui/material";
 import { NEW_REVIEW_RESET } from "../../constants/productConstants";
 import { loadUser } from "../../actions/userAction";
-import { useUserInfo } from "../../utils/userContext";
 import ConfirmPopup from "../layout/ConfirmPopup/ConfirmPopup";
 import { clearError } from "../../actions/errorAction";
 
 const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
-  const userInfo = useUserInfo();
   const { product, loading } = useSelector((state) => state.productDetails);
-
   const { success } = useSelector((state) => state.newReview);
   const { message: errorMessage, type: errorType } = useSelector(
     (state) => state.error
@@ -45,6 +42,7 @@ const ProductDetails = ({ match }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
+  const [isLoadingBtn, setIsLoadingBtn] = useState(false);
 
   const increaseQuantity = () => {
     if (product.stockQuantity <= count) return;
@@ -57,9 +55,12 @@ const ProductDetails = ({ match }) => {
   };
 
   const addToCartHandler = useCallback(() => {
+    setIsLoadingBtn(true);
     dispatch(addItemsToCart(match.params.id, count));
+    
     setShowConfirmPopup(true);
     setTimeout(() => setShowConfirmPopup(false), 2000);
+    setTimeout(() => setIsLoadingBtn(false), 1000);
   }, [dispatch, match.params.id, count]);
 
   const submitReviewToggle = useCallback(() => {
@@ -139,15 +140,16 @@ const ProductDetails = ({ match }) => {
                 <h1>{`₹${product.price}`}</h1>
                 <div className="detailsBlock-3-1">
                   <div className="detailsBlock-3-1-1">
-                    <button onClick={decreaseQuantity}>-</button>
-                    <input readOnly type="number" value={count} />
-                    <button onClick={increaseQuantity}>+</button>
+                    <button className="quantityBtn" onClick={decreaseQuantity}>-</button>
+                   <input readOnly type="number" value={count} />
+                    <button className="quantityBtn" onClick={increaseQuantity}>+</button>
                   </div>
                   <button
-                    disabled={product.stockQuantity < 1 ? true : false}
+                    className={`submitBtn ${isLoadingBtn ? "loading" : ""}`}
+                    disabled={product.stockQuantity < 1  || isLoadingBtn}
                     onClick={addToCartHandler}
                   >
-                    Add to Cart
+                   {isLoadingBtn ? "Adding..." : "Add to Cart"}
                   </button>
                   {showConfirmPopup && <ConfirmPopup message="Added to cart" />}
                 </div>
@@ -168,7 +170,7 @@ const ProductDetails = ({ match }) => {
                 Description : <p>{product.description}</p>
               </div>
 
-              <button onClick={submitReviewToggle} className="submitReview">
+              <button onClick={submitReviewToggle} className="submitBtn">
                 Submit Review
               </button>
             </div>

@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import MetaData from "../layout/MetaData";
 import { Link } from "react-router-dom";
 import { Typography } from "@material-ui/core";
-import { useUserInfo } from "../../utils/userContext";
 import { createOrder, clearOrderState } from "../../actions/orderAction";
 import { useDispatch } from "react-redux";
 import { useAlert } from "react-alert";

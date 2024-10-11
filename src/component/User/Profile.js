@@ -5,7 +5,6 @@ import Loader from "../layout/Loader/Loader";
 import { Link } from "react-router-dom";
 import "./Profile.css";
 import { loadUser } from "../../actions/userAction";
-
 const Profile = ({ history }) => {
   const { user, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();

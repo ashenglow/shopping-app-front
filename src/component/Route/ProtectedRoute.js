@@ -1,13 +1,10 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Redirect, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { refresh } from "../../actions/userAction";
+import { refresh, loadUser } from "../../actions/userAction";
 import Loader from "../layout/Loader/Loader";
-import Header from "../layout/Header/Header";
-import Footer from "../layout/Footer/Footer";
-
 const ProtectedRoute = ({
   component: Component,
   allowedRoles,
@@ -19,27 +16,32 @@ const ProtectedRoute = ({
   );
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
+  const mountedRef = useRef(true);
   const isAuthorized = allowedRoles
     ? allowedRoles.some((roles) => roles.includes(role))
     : true;
 
   useEffect(() => {
-    let isMounted = true;
 
     if (!isAuthenticated && !refreshing) {
       setRefreshing(true);
       dispatch(refresh()).finally(() => {
-        if (isMounted) {
+        if (mountedRef.current) {
           setRefreshing(false);
         }
       });
     }
 
     return () => {
-      isMounted = false;
+      mountedRef.current = false;
     };
   }, [dispatch, isAuthenticated, refreshing]);
 
+  useEffect(() => {
+    if (!user && !loading && mountedRef.current) {
+      dispatch(loadUser());
+    }
+  }, [user, loading, dispatch]);
   if (loading || refreshing) {
     return <Loader />;
   }
@@ -49,13 +51,13 @@ const ProtectedRoute = ({
       <Route
         {...rest}
         render={(props) => {
-          return isAuthenticated ? (
-            <div>
-              <Component {...props} />
-            </div>
-          ) : (
-            <Redirect to="/login" />
-          );
+   if(!isAuthorized){
+    return <Redirect to="/login" />;
+   }
+  //  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+  //   return <Redirect to="/" />;
+  //  }
+  return <Component {...props}  user={user}/>;
         }}
       />
     </Fragment>

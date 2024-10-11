@@ -66,6 +66,8 @@ export const login = (loginform) => async (dispatch) => {
       config
     );
     localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("userId", data.id);
+    localStorage.setItem("userName", data.name);
     dispatch({ type: LOGIN_SUCCESS, payload: data });
     dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {
@@ -137,6 +139,8 @@ export const logout = () => async (dispatch) => {
     const { data } = await axiosInstance.post(`/api/v1/logout`);
 
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
     // Clear the axiosInstance defaults headers
     delete axiosInstance.defaults.headers.common["Authorization"];
     dispatch({ type: LOGOUT_SUCCESS, payload: data });
