@@ -20,13 +20,11 @@ const options = {
 ReactDOM.render(
   <Router history={history}>
     <Provider store={store}>
-      <UserInfoProvider>
         <AlertProvider template={AlertTemplate} {...options}>
           <ThemeProvider theme={theme}>
           <App />
           </ThemeProvider>
         </AlertProvider>
-      </UserInfoProvider>
     </Provider>
   </Router>,
   document.getElementById("root")

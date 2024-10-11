@@ -8,7 +8,6 @@ import { updateProfile, getProfileEdit } from "../../actions/userAction";
 import { useAlert } from "react-alert";
 import { UPDATE_PROFILE_RESET } from "../../constants/userConstants";
 import MetaData from "../layout/MetaData";
-import { useUserInfo } from "../../utils/userContext";
 import { clearError } from "../../actions/errorAction";
 
 const UpdateProfile = ({ history, location }) => {

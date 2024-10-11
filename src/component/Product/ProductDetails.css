@@ -64,44 +64,71 @@
   display: flex;
   align-items: center;
 }
-
-.detailsBlock-3-1-1 > button {
+.detailsBlock-3-1-1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.quantityBtn {
   border: none;
   background-color: rgba(0, 0, 0, 0.616);
   padding: 0.5vmax;
   cursor: pointer;
   color: white;
   transition: all 0.5s;
+  min-width: 15px;
+  min-height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.detailsBlock-3-1-1 > button:hover {
+.quantityBtn:hover {
   background-color: rgba(0, 0, 0, 0.767);
 }
 
 .detailsBlock-3-1-1 > input {
   border: none;
   padding: 0.5vmax;
-  width: 1vmax;
   text-align: center;
+  width:3vmax;
+  min-width: 20px;
   outline: none;
   font: 400 0.8vmax "Roboto";
   color: rgba(0, 0, 0, 0.74);
+  -moz-appearance: textfield;
 }
 
-.detailsBlock-3-1 > button:last-child {
+.detailsBlock-3-1-1 > input::-webkit-outer-spin-button,
+.detailsBlock-3-1-1 > input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.submitBtn {
   border: none;
   cursor: pointer;
   color: white;
   transition: all 0.5s;
-  background-color: tomato;
+  background-color: var(--first-color);
   font: 500 0.7vmax "Roboto";
   border-radius: 20px;
-  padding: 0.5vmax 2vmax;
+  padding: 0.8vmax 2vmax;
   margin: 1vmax;
   outline: none;
+  white-space: nowrap;
+  min-width: 130px;
+  min-height: 40px;
+  max-width: 150px;
+  max-height: 40px;;
+  text-align: center;
 }
 
-.detailsBlock-3-1 > button:last-child:hover {
-  background-color: rgb(214, 84, 61);
+.submitBtn:hover {
+  background-color: var(--second-color);
+}
+
+.submitBtn.loading {
+  background-color: var(--light-color);
+  color: var(--first-color);
 }
 
 .detailsBlock-3 > p {
@@ -125,7 +152,7 @@
 
 .submitReview {
   border: none;
-  background-color: tomato;
+  background-color: var(--first-color);
   font: 500 0.7vmax "Roboto";
   border-radius: 20px;
   padding: 0.6vmax 2vmax;
@@ -136,7 +163,7 @@
   outline: none;
 }
 .submitReview:hover {
-  background-color: rgb(197, 68, 45);
+  background-color: var(--first-color);
   transform: scale(1.1);
 }
 
@@ -247,12 +274,12 @@
     font: 400 1.8vmax "Roboto";
   }
 
-  .detailsBlock-3-1 > button:last-child {
+  /* .detailsBlock-3-1 > button:last-child {
     font: 500 1.7vmax "Roboto";
     padding: 1.5vmax;
     width: 20vmax;
     margin: 3vmax 0;
-  }
+  } */
 
   .detailsBlock-3 > p {
     padding: 2.5vmax 0;
@@ -280,5 +307,24 @@
   }
   .reviewCardComment {
     font: 300 5vw cursive;
+  }
+  .submitBtn {
+    font: 500 1.7vmax "Roboto";
+    padding: 1.5vmax;
+    width: 20vmax;
+    margin: 3vmax 0;
+  }
+}
+@media screen and (min-width: 601px) {
+
+
+  .detailsBlock-3-1-1 > button,
+  .detailsBlock-3-1-1 > input {
+    font-size: 1vmax;
+    padding: 0.8vmax;
+  }
+
+  .detailsBlock-3-1-1 > input {
+    width: 2vmax;
   }
 }

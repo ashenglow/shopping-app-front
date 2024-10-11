@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
@@ -38,7 +38,7 @@ const Logo = styled(Link)(({ theme }) => ({
 const LogoText = styled(Typography)(({ theme }) => ({
   fontFamily: 'Montserrat, sans-serif',
   letterSpacing: '-0.02em',
-  fontSize: '2rem',
+  fontSize: '2rem !important',
   color: '#333333',
   margin: '0',
   [theme.breakpoints.down('md')]: {
@@ -69,9 +69,8 @@ const StyledLink = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
 }));
 
-const Header = () => {
+const Header = ({isAuthenticated: isAuthenticated, loading: loading}) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { isAuthenticated } = useSelector((state) => state.user);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const location = useLocation();
@@ -86,6 +85,7 @@ const Header = () => {
     { text: 'About', path: '/about' },
     { text: 'Contact', path: '/contact' },
   ];
+
 
   return (
     <StyledAppBar position="static" elevation={1}>

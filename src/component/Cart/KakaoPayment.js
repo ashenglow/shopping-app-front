@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { initiatePayment, approvePayment } from "../../actions/paymentAction";
 import Loader from "../layout/Loader/Loader";
-import { useUserInfo } from "../../utils/userContext";
 import { v4 as uuidv4 } from "uuid";
 const KakaoPayment = ({ orderInfo, userId }) => {
   const dispatch = useDispatch();
