@@ -63,10 +63,9 @@ const ProductDetails = ({ match }) => {
     setTimeout(() => setIsLoadingBtn(false), 1000);
   }, [dispatch, match.params.id, count]);
 
-  const submitReviewToggle = useCallback(() => {
-    setOpen((prev) => !prev);
-  }, []);
-
+  const submitReviewToggle = () => {
+    setOpen(!open);
+  };
 
   const reviewSubmitHandler = useCallback(() => {
     const formData = {
