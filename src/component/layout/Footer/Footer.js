@@ -18,7 +18,7 @@ import { login, logout } from '../../../actions/userAction';
 import { showNotification } from '../MUI-comp/MuiNotification/notificationSlice';
 import { clearError } from '../../../actions/errorAction';
 import { Redirect} from 'react-router-dom';
-
+import { useScrollToTopHistory } from '../../../hooks/useScrollToTopHistory';
 const StyledFooter = styled('footer')(({ theme }) => ({
   backgroundColor: '#000000',
   color: 'white',
@@ -68,6 +68,7 @@ const StyledLink = styled(Link)(({ theme }) => ({
 const Footer = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
+  const navigateAndScrollToTop = useScrollToTopHistory();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { errorMessage } = useSelector((state) => state.error);
 
@@ -77,7 +78,8 @@ const Footer = () => {
   };
 
   const handleLoginUser = () => {
-    dispatch(login({ username: "user2", password: "1234" }));
+    dispatch(login({ username: "user2", password: "1234" }))
+    .then(() => navigateAndScrollToTop("/"))
     
   };
 
