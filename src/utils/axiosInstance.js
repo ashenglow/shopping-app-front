@@ -30,9 +30,9 @@ const processQueue = (error, token = null) => {
 const logout = () => {
   removeAccessTokenFromStorage();
   store.dispatch(showNotification("Your session has expired. Please log in again.", "error"));
-  setTimeout(() => {
+
     history.push("/login");
-  }, 0);
+ 
 };
 axiosInstance.interceptors.request.use(
   (config) => {
