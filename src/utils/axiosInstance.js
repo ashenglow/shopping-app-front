@@ -30,7 +30,9 @@ const processQueue = (error, token = null) => {
 const logout = () => {
   removeAccessTokenFromStorage();
   store.dispatch(showNotification("Your session has expired. Please log in again.", "error"));
-  history.push("/login");
+  setTimeout(() => {
+    history.push("/login");
+  }, 0);
 };
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -89,12 +91,9 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-        if (refreshError.response && refreshError.response.status === 401) {
-          // This likely means the refresh token is invalid or expired
-          logout();
-        } else {
-          store.dispatch(showNotification("Error refreshing access token. Please try again.", "error"));
-        }
+      // Always logout on refresh failure
+        logout();
+
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
