@@ -70,7 +70,7 @@ const StyledLink = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
 }));
 
-const Header = ({isAuthenticated: isAuthenticated, loading: loading}) => {
+const NoAuthHeader = ({loading: loading}) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -86,7 +86,9 @@ const Header = ({isAuthenticated: isAuthenticated, loading: loading}) => {
     { text: 'About', path: '/about' },
     { text: 'Contact', path: '/contact' },
   ];
-
+if(loading){
+  return <Loader/>
+}
 
   return (
     <StyledAppBar position="static" elevation={1}>
@@ -125,18 +127,13 @@ const Header = ({isAuthenticated: isAuthenticated, loading: loading}) => {
           <IconButton color="inherit" component={Link} to="/">
             <HomeIcon />
           </IconButton>
-          {isAuthenticated && (
-             <IconButton color="inherit" component={Link} to="/cart">
-             <ShoppingCartIcon />
-           </IconButton>
-          )}
-         
+      
           <IconButton
             color="inherit"
             component={Link}
-            to={isAuthenticated ? '/account' : '/login'}
+            to="/login"
           >
-            {isAuthenticated ? <PersonIcon /> : <LoginIcon />}
+            <LoginIcon />
            
           </IconButton>
         </NavIcons>
@@ -160,4 +157,4 @@ const Header = ({isAuthenticated: isAuthenticated, loading: loading}) => {
   );
 };
 
-export default Header;
+export default NoAuthHeader;

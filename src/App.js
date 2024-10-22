@@ -49,6 +49,7 @@ import { UserContext } from "./utils/userContext";
 import ScrollToTop from "./utils/ScrollToTop.js";
 import FlexibleNotification from "./component/layout/MUI-comp/MuiNotification/FlexibleNotification.js";
 import Loader from "./component/layout/Loader/Loader.js";
+import NoAuthHeader from "./component/layout/Header/NoAuthHeader.js";
 function App() {
   //test
   const { isAuthenticated, user, loading } = useSelector((state) => state.user);
@@ -91,7 +92,10 @@ return <Loader/>
         {/* All other routes */}
         <Route>
           <>
-            <Header isAuthenticated={isAuthenticated} loading={loading} />
+
+              <Header isAuthenticated={isAuthenticated} loading={loading} />   
+      
+           
 
             {/* 
       {stripeApiKey && (
