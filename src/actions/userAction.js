@@ -113,7 +113,7 @@ export const loadUser = () => async (dispatch) => {
 
     dispatch({ type: LOAD_USER_SUCCESS, payload: data });
   } catch (error) {
-    const errorMessage = error.response?.data?.message || "Error loading user";
+    const errorMessage =  "Error loading user";
     dispatch({ type: LOAD_USER_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, LOAD_USER_FAIL));
   }
@@ -127,7 +127,7 @@ export const refresh = () => async (dispatch) => {
     dispatch({ type: REFRESH_TOKEN_SUCCESS, payload: data });
   } catch (error) {
     const errorMessage =
-      error.response?.data?.message || "Error refreshing token";
+       "Error refreshing token";
       dispatch({ type: REFRESH_TOKEN_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, REFRESH_TOKEN_FAIL));
   }
@@ -160,7 +160,7 @@ export const getProfileEdit = () => async (dispatch) => {
     dispatch({ type: PROFILE_EDIT_SUCCESS, payload: data });
   } catch (error) {
     const errorMessage =
-      error.response?.data?.message || "Error getting profile edit";
+      "Error getting profile edit";
     dispatch({ type: PROFILE_EDIT_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, PROFILE_EDIT_FAIL));
   }
@@ -183,7 +183,7 @@ export const updateProfile = (userData) => async (dispatch) => {
     dispatch(showNotification( "Profile Updated",  "success" ));
   } catch (error) {
     const errorMessage =
-      error.response?.data?.message || "Error updating profile";
+       "Error updating profile";
     dispatch({ type: UPDATE_PROFILE_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, UPDATE_PROFILE_FAIL));
     dispatch(showNotification(errorMessage,  "error" ));
@@ -265,7 +265,7 @@ export const getAllUsers = () => async (dispatch) => {
     dispatch({ type: ALL_USERS_SUCCESS, payload: data.users });
   } catch (error) {
     const errorMessage =
-      error.response?.data?.message || "Error getting all users";
+       "Error getting all users";
     dispatch({ type: ALL_USERS_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, ALL_USERS_FAIL));
   }
@@ -314,7 +314,7 @@ export const deleteUser = (id) => async (dispatch) => {
 
     dispatch({ type: DELETE_USER_SUCCESS, payload: data });
   } catch (error) {
-    const errorMessage = error.response?.data?.message || "Error deleting user";
+    const errorMessage =  "Error deleting user";
     dispatch({ type: DELETE_USER_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, DELETE_USER_FAIL));
   }

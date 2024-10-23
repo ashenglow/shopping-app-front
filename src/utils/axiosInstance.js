@@ -29,7 +29,6 @@ const processQueue = (error, token = null) => {
 };
 const logout = () => {
   removeAccessTokenFromStorage();
-  store.dispatch(showNotification("Your session has expired. Please log in again.", "error"));
 
     history.push("/login");
  

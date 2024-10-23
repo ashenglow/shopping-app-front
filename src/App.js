@@ -71,9 +71,12 @@ function App() {
       },
     });
   }, []);
-useEffect(() => {
-  dispatch(loadUser()).then(() => setUserLoaded(true));
-}, [dispatch]);
+  useEffect(() => {
+    // Only load user if we have an access token
+    if (localStorage.getItem("accessToken")) {
+      dispatch(loadUser());
+    }
+  }, [dispatch]);
 if(loading){
 return <Loader/>
 }
