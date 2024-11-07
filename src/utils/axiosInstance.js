@@ -17,6 +17,14 @@ const axiosInstance = axios.create({
 let isRefreshing = false;
 let failedQueue = [];
 
+// Add a flag to identify public routes
+const isPublicRoute = (url) => {
+  return url.includes('/api/public/') || 
+         url.includes('/v1/login') || 
+         url.includes('/v1/register');
+};
+
+
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
@@ -35,10 +43,12 @@ const logout = () => {
 };
 axiosInstance.interceptors.request.use(
   (config) => {
-    console.log("Axios instance baseURL:", axiosInstance.defaults.baseURL);
-    const accessToken = getAccessTokenFromStorage();
-    if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    // Only add token for non-public routes
+    if (!isPublicRoute(config.url)) {
+      const accessToken = getAccessTokenFromStorage();
+      if (accessToken) {
+        config.headers["Authorization"] = `Bearer ${accessToken}`;
+      }
     }
     return config;
   },
@@ -61,7 +71,9 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
       }
       // Handle 401 Unauthorized errors
-      if (error.response.status === 401 && !originalRequest._retry) {
+      if (!isPublicRoute(originalRequest.url) && 
+      error.response?.status === 401 && 
+      !originalRequest._retry) {
         console.log("refresh token call");
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
@@ -90,9 +102,13 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-      // Always logout on refresh failure
-        logout();
-
+   
+      if (!isPublicRoute(originalRequest.url)) {
+        store.dispatch(showNotification("Session expired. Please log in again.", "error"));
+        removeAccessTokenFromStorage();
+        history.push('/login');
+      }
+      logout();
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

@@ -50,10 +50,11 @@ import ScrollToTop from "./utils/ScrollToTop.js";
 import FlexibleNotification from "./component/layout/MUI-comp/MuiNotification/FlexibleNotification.js";
 import Loader from "./component/layout/Loader/Loader.js";
 import NoAuthHeader from "./component/layout/Header/NoAuthHeader.js";
+
 function App() {
   //test
   const { isAuthenticated, user, loading } = useSelector((state) => state.user);
-  const [userLoaded, setUserLoaded] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -71,12 +72,24 @@ function App() {
       },
     });
   }, []);
-  useEffect(() => {
-    // Only load user if we have an access token
-    if (localStorage.getItem("accessToken")) {
-      dispatch(loadUser());
+ // Silent auth check on app load
+ useEffect(() => {
+  const initAuth = async () => {
+    if (localStorage.getItem('accessToken')) {
+      try {
+        await dispatch(loadUser());
+      } catch (error) {
+        console.log("Failed to load user:", error);
+      }
     }
-  }, [dispatch]);
+    setInitialized(true);
+  };
+
+  if (!initialized) {
+    initAuth();
+  }
+}, [dispatch, initialized]);
+
 if(loading){
 return <Loader/>
 }
@@ -96,7 +109,7 @@ return <Loader/>
         <Route>
           <>
 
-              <Header isAuthenticated={isAuthenticated} loading={loading} />   
+              <Header isAuthenticated={isAuthenticated} user={user}/>   
       
            
 
@@ -108,45 +121,33 @@ return <Loader/>
       )} */}
 
             <Switch>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/product/:id" component={ProductDetails} />
-              <Route exact path="/products" component={Products} />
-              <Route path="/products/:keyword" component={Products} />
+            {/* Public Routes */}
+        <Route exact path="/" component={Home} />
+        <Route exact path="/products" component={Products} />
+        <Route exact path="/product/:id" component={ProductDetails} />
+        <Route exact path="/search" component={Search} />
+        <Route exact path="/contact" component={Contact} />
+        <Route exact path="/about" component={About} />
+        
+        {/* Auth Routes */}
+        <Route 
+          exact 
+          path="/login" 
+          render={(props) => 
+            isAuthenticated ? <Redirect to="/" /> : <LoginSignUp {...props} />
+          }
+        />
 
-              <Route exact path="/search" component={Search} />
-
-              <Route exact path="/contact" component={Contact} />
-
-              <Route exact path="/about" component={About} />
-              <Route exact path="/login" component={LoginSignUp} />
-
-              <ProtectedRoute exact path="/cart" component={Cart} />
-
-              <ProtectedRoute exact path="/account" component={Profile} />
-
-              <ProtectedRoute
-                exact
-                path="/member/update"
-                component={UpdateProfile}
-              />
-              <ProtectedRoute exact path="/shipping" component={Shipping} />
-
-              <ProtectedRoute exact path="/success" component={OrderSuccess} />
-
-              <ProtectedRoute exact path="/orders" component={MyOrders} />
-
-              <ProtectedRoute
-                exact
-                path="/order/confirm"
-                component={ConfirmOrder}
-              />
-
-              <ProtectedRoute
-                exact
-                path="/order/:id"
-                component={OrderDetails}
-              />
-
+        {/* Protected Routes */}
+        <ProtectedRoute exact path="/cart" component={Cart} />
+        <ProtectedRoute exact path="/account" component={Profile} />
+        <ProtectedRoute exact path="/member/update" component={UpdateProfile} />
+        <ProtectedRoute exact path="/shipping" component={Shipping} />
+        <ProtectedRoute exact path="/success" component={OrderSuccess} />
+        <ProtectedRoute exact path="/orders" component={MyOrders} />
+        <ProtectedRoute exact path="/order/confirm" component={ConfirmOrder} />
+        <ProtectedRoute exact path="/order/:id" component={OrderDetails} />
+        <Route component={NotFound} />
               {/* <ProtectedRoute
           exact
           path="/password/update"
