@@ -11,37 +11,22 @@ const ProtectedRoute = ({
   axiosInstance,
   ...rest
 }) => {
-  const { user, isAuthenticated, loading, role } = useSelector(
+  const { user, isAuthenticated, loading} = useSelector(
     (state) => state.user
   );
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
-  const mountedRef = useRef(true);
-  const isAuthorized = allowedRoles
-    ? allowedRoles.some((roles) => roles.includes(role))
-    : true;
 
-  useEffect(() => {
 
-    if (!isAuthenticated && !refreshing) {
-      setRefreshing(true);
-      dispatch(refresh()).finally(() => {
-        if (mountedRef.current) {
-          setRefreshing(false);
-        }
-      });
-    }
+    useEffect(() => {
+      if (!isAuthenticated && !loading && !refreshing) {
+        setRefreshing(true);
+        dispatch(refresh())
+          .catch(() => {})
+          .finally(() => setRefreshing(false));
+      }
+    }, [dispatch, isAuthenticated, loading, refreshing]);
 
-    return () => {
-      mountedRef.current = false;
-    };
-  }, [dispatch, isAuthenticated, refreshing]);
-
-  useEffect(() => {
-    if (!user && !loading && mountedRef.current) {
-      dispatch(loadUser());
-    }
-  }, [user, loading, dispatch]);
   if (loading || refreshing) {
     return <Loader />;
   }
@@ -49,17 +34,18 @@ const ProtectedRoute = ({
   return (
     <Fragment>
       <Route
-        {...rest}
-        render={(props) => {
-   if(!isAuthorized){
-    return <Redirect to="/login" />;
-   }
-  //  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-  //   return <Redirect to="/" />;
-  //  }
-  return <Component {...props}  user={user}/>;
-        }}
-      />
+      {...rest}
+      render={(props) => 
+        isAuthenticated ? (
+          <Component {...props} user={user} />
+        ) : (
+          <Redirect to={{
+            pathname: "/login",
+            state: { from: props.location }
+          }} />
+        )
+      }
+    />
     </Fragment>
   );
 };
