@@ -1,3 +1,4 @@
+import { BorderClear, BorderColor } from "@mui/icons-material";
 import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
@@ -19,6 +20,20 @@ const theme = createTheme({
       xl: 1920,
     },
   },
+  components: {
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          "&.MuiChip-outlined" : {
+            BorderColor: "rgba(0,0,0, 0.12)",
+          },
+          "&.MuiChip-filled" : {
+            color: "#ffffff"
+        }
+      },
+    },
+  }
+}
 });
 
 export default theme;
