@@ -73,7 +73,7 @@ const Footer = () => {
   const { errorMessage } = useSelector((state) => state.error);
 
   const handleLoginAdmin = () => {
-    dispatch(login({ username: "admin", password: "1234" }))
+    dispatch(login({ username: "user1", password: "1234" }))
    
   };
 
