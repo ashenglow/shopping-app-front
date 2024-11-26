@@ -102,7 +102,7 @@ return <Loader/>
       <Switch>
       <Route 
           exact 
-          path="/monitoring/orders" 
+          path="/monitoring" 
           component={OrderPerformanceMetrics} 
         />
         {/* API Docs Route */}

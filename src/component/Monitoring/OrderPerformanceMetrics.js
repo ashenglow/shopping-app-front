@@ -1,266 +1,191 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardContent, Grid, Typography, Box, Stack, Tabs, Tab, TableBody, TableCell, Table, TableHead, TableRow  } from '@mui/material';
-import { LineChart, XAxis, YAxis, Tooltip, Legend, Line, BarChart, Bar, ResponsiveContainer} from 'recharts';
+import { Card, CardHeader, CardContent, Grid, Typography, Box, Stack, Tabs, Tab, 
+  Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { LineChart, XAxis, YAxis, Tooltip, Legend, Line, BarChart, Bar, PieChart, Pie } from 'recharts';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import axiosInstance from '../../utils/axiosInstance';
 
 const OrderPerformanceMetrics = () => {
-  const [metrics, setMetrics] = useState(null);
-  const [flowMetrics, setFlowMetrics] = useState(null); 
-  const [activeTab, setActiveTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [metrics, setMetrics] = useState({
+      orders: [],
+      items: [],
+      systemMetrics: null
+  });
   
   useEffect(() => {
-    // Fetch both metrics
-    Promise.all([
-      axiosInstance.get('/api/public/monitoring/metrics/orders'),
-      axiosInstance.get('/api/public/monitoring/metrics/orders/flow')
-    ])
-      .then(([metricsResponse, flowResponse]) => {
-        const groupedMetrics = groupMetricsByType(metricsResponse.data);
-        setMetrics(groupedMetrics);
-        setFlowMetrics(flowResponse.data);
-      })
-      .catch(error => console.error('Error fetching metrics:', error));
+      fetchAllMetrics();
   }, []);
-   const groupMetricsByType = (data) => {
-    return {
-      orderMethods: data.filter(m => m.methodName.includes('Order') || m.methodName.includes('order')),
-      memberMethods: data.filter(m => m.methodName.includes('Member')),
-      itemMethods: data.filter(m => m.methodName.includes('Item')),
-      deliveryMethods: data.filter(m => m.methodName.includes('Delivery') || m.methodName.includes('delivery'))
-    };
+
+  const fetchAllMetrics = async () => {
+      try {
+          const [orderMetrics, itemMetrics, systemMetrics] = await Promise.all([
+              axiosInstance.get('/api/public/monitoring/metrics/orders'),
+              axiosInstance.get('/api/public/monitoring/metrics/items'),
+              axiosInstance.get('/api/public/monitoring/metrics')
+          ]);
+
+          setMetrics({
+              orders: orderMetrics.data,
+              items: itemMetrics.data,
+              systemMetrics: systemMetrics.data
+          });
+      } catch (error) {
+          console.error('Error fetching metrics:', error);
+      }
   };
 
-  if (!metrics || !flowMetrics) return null;
-
-  const renderMethodCards = (methods) => (
-    <Grid container spacing={2}>
-      {methods.map((method) => (
-        <Grid item xs={12} md={6} key={method.methodName}>
+  const renderPerformanceSummary = (methodMetrics) => (
+      <Grid item xs={12} md={6}>
           <Card>
-            <Box p={2}>
-              <Typography variant="h6" gutterBottom>
-                {method.methodName.split('.').pop()}
-              </Typography>
-              <Stack spacing={1}>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography>Average Time:</Typography>
-                  <Typography>{method.averageTime.toFixed(2)} ms</Typography>
-                </Box>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography>Total Queries:</Typography>
-                  <Typography>{method.totalQueries}</Typography>
-                </Box>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography>Slow Queries:</Typography>
-                  <Typography color={method.slowQueries > 0 ? "error" : "inherit"}>
-                    {method.slowQueries}
+              <Box p={2}>
+                  <Typography variant="h6" gutterBottom>
+                      {methodMetrics.methodName}
                   </Typography>
-                </Box>
-              </Stack>
-            </Box>
+                  <Stack spacing={1}>
+                      <Box display="flex" justifyContent="space-between">
+                          <Typography>Average Time:</Typography>
+                          <Typography>{methodMetrics.averageTime.toFixed(2)} ms</Typography>
+                      </Box>
+                      <Box display="flex" justifyContent="space-between">
+                          <Typography>Total Queries:</Typography>
+                          <Typography>{methodMetrics.totalQueries}</Typography>
+                      </Box>
+                      <Box display="flex" justifyContent="space-between">
+                          <Typography>Slow Queries:</Typography>
+                          <Typography color="error">{methodMetrics.slowQueries}</Typography>
+                      </Box>
+                  </Stack>
+              </Box>
           </Card>
-        </Grid>
-      ))}
-    </Grid>
+      </Grid>
   );
 
-  const renderTimeSeriesChart = (methods, title) => (
-    <Card sx={{ mt: 3 }}>
-      <CardHeader title={`${title} Response Time Trend`} />
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={methods.flatMap(m => m.timeSeriesData || [])}>
-            <XAxis 
-              dataKey="timestamp" 
-              tickFormatter={(value) => new Date(value).toLocaleTimeString()}
-            />
-            <YAxis />
-            <Tooltip 
-              labelFormatter={(value) => new Date(value).toLocaleString()}
-              formatter={(value) => `${value.toFixed(2)} ms`}
-            />
-            <Legend />
-            {methods.map((method, index) => (
-              <Line
-                key={method.methodName}
-                type="monotone"
-                dataKey="value"
-                data={method.timeSeriesData}
-                name={method.methodName.split('.').pop()}
-                stroke={`hsl(${index * 137.5}, 70%, 50%)`}
-                dot={false}
-              />
-            ))}
-          </LineChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
-  );
-
-  const renderExecutionBreakdown = () => {
-    const allMethods = Object.values(metrics).flat();
-    const executionData = allMethods.map(method => ({
-      name: method.methodName.split('.').pop(),
-      averageTime: method.averageTime,
-      queries: method.totalQueries
-    }));
-
-    return (
-      <Card sx={{ mt: 3 }}>
-        <CardHeader title="Query Execution Breakdown" />
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={executionData}>
-              <XAxis dataKey="name" />
-              <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
-              <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
-              <Tooltip />
-              <Legend />
-              <Bar yAxisId="left" dataKey="averageTime" name="Avg Time (ms)" fill="#8884d8" />
-              <Bar yAxisId="right" dataKey="queries" name="Query Count" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
+  const renderTimeSeriesChart = (data, title) => (
+      <Card sx={{ mb: 4 }}>
+          <CardHeader title={title} />
+          <CardContent>
+              <LineChart width={800} height={300} data={data}>
+                  <XAxis 
+                      dataKey="timestamp" 
+                      tickFormatter={(value) => new Date(value).toLocaleTimeString()}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                      labelFormatter={(value) => new Date(value).toLocaleString()}
+                  />
+                  <Legend />
+                  {Object.keys(data[0] || {})
+                      .filter(key => key !== 'timestamp')
+                      .map((key, index) => (
+                          <Line
+                              key={key}
+                              type="monotone"
+                              dataKey={key}
+                              name={key}
+                              stroke={`hsl(${index * 137.5}, 70%, 50%)`}
+                          />
+                      ))}
+              </LineChart>
+          </CardContent>
       </Card>
-    );
-  };
-
-  const OrderFlowBreakdown = ({ flowData }) => {
-    const steps = Object.keys(flowData.steps);
-  
-  return (
-    <Card>
-      <CardContent>
-        {/* Step Timing Bar Chart */}
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={steps.map(step => ({
-            name: step,
-            duration: flowData.steps[step].duration,
-            percentage: flowData.steps[step].percentageOfTotal
-          }))}>
-            <XAxis dataKey="name" />
-            <YAxis yAxisId="time" orientation="left" label={{ value: "Time (ms)", angle: -90, position: 'insideLeft' }} />
-            <YAxis yAxisId="percentage" orientation="right" label={{ value: "% of Total", angle: 90, position: 'insideRight' }} />
-            <Tooltip />
-            <Legend />
-            <Bar yAxisId="time" dataKey="duration" fill="#8884d8" name="Duration (ms)" />
-            <Bar yAxisId="percentage" dataKey="percentage" fill="#82ca9d" name="% of Total" />
-          </BarChart>
-        </ResponsiveContainer>
-
-        {/* Query Breakdown Table */}
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Step</TableCell>
-              <TableCell>Queries</TableCell>
-              <TableCell align="right">Duration (ms)</TableCell>
-              <TableCell align="right">% of Total</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {steps.map(step => (
-              <TableRow key={step}>
-                <TableCell>{step}</TableCell>
-                <TableCell>{flowData.steps[step].queries?.join(', ') || 'No queries'}</TableCell>
-                <TableCell align="right">{flowData.steps[step].duration}</TableCell>
-                <TableCell align="right">
-                  {flowData.steps[step].percentageOfTotal.toFixed(1)}%
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        {/* Query Type Breakdown */}
-        {flowData.queryBreakdown && (
-          <Box mt={3}>
-            <Typography variant="h6" gutterBottom>Query Type Breakdown</Typography>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Query Type</TableCell>
-                  <TableCell>Table</TableCell>
-                  <TableCell align="right">Avg Duration (ms)</TableCell>
-                  <TableCell align="right">Count</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {flowData.queryBreakdown.map((query, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{query.queryType}</TableCell>
-                    <TableCell>{query.table}</TableCell>
-                    <TableCell align="right">{query.avgDuration.toFixed(2)}</TableCell>
-                    <TableCell align="right">{query.count}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
-        )}
-      </CardContent>
-    </Card>
-  );
-  };
-
-  const renderOrderFlowSection = () => (
-    <Card sx={{ mt: 3, mb: 3 }}>
-      <CardHeader title="Recent Order Flows" />
-      <CardContent>
-        {flowMetrics.map((flow, index) => (
-          <Box key={index} mb={3}>
-            <Typography variant="subtitle1" gutterBottom>
-              Order #{flow.orderId} - {new Date(flow.timestamp).toLocaleString()}
-            </Typography>
-            <Typography variant="body2" color="textSecondary" gutterBottom>
-              Total Execution Time: {flow.totalTime}ms
-            </Typography>
-            <OrderFlowBreakdown flowData={flow} />
-          </Box>
-        ))}
-      </CardContent>
-    </Card>
   );
 
-  const tabs = [
-    { label: 'Order Operations', content: metrics.orderMethods },
-    { label: 'Member Validation', content: metrics.memberMethods },
-    { label: 'Item Processing', content: metrics.itemMethods },
-    { label: 'Delivery Handling', content: metrics.deliveryMethods }
+  const renderOptimizationSuggestions = (suggestions) => (
+      <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>Optimization Suggestions</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+              <Stack spacing={1}>
+                  {suggestions.map((suggestion, index) => (
+                      <Typography key={index}>• {suggestion}</Typography>
+                  ))}
+              </Stack>
+          </AccordionDetails>
+      </Accordion>
+  );
+
+  const renderSystemOverview = () => (
+      <Grid container spacing={3}>
+          <Grid item xs={12}>
+              <Card>
+                  <CardHeader title="System Performance Overview" />
+                  <CardContent>
+                      <Grid container spacing={2}>
+                          <Grid item xs={12} md={4}>
+                              <Typography variant="h6">Total Methods: {metrics.systemMetrics?.summary.totalMethods}</Typography>
+                              <Typography variant="h6">Average Response Time: {metrics.systemMetrics?.summary.averageResponseTime.toFixed(2)} ms</Typography>
+                          </Grid>
+                          <Grid item xs={12} md={8}>
+                              <PieChart width={400} height={300}>
+                                  <Pie
+                                      data={[
+                                          { name: 'Normal Queries', value: metrics.systemMetrics?.summary.totalQueries - metrics.systemMetrics?.summary.totalSlowQueries },
+                                          { name: 'Slow Queries', value: metrics.systemMetrics?.summary.totalSlowQueries }
+                                      ]}
+                                      dataKey="value"
+                                      nameKey="name"
+                                      cx="50%"
+                                      cy="50%"
+                                  />
+                                  <Tooltip />
+                                  <Legend />
+                              </PieChart>
+                          </Grid>
+                      </Grid>
+                  </CardContent>
+              </Card>
+          </Grid>
+      </Grid>
+  );
+
+  const tabContent = [
+      {
+          label: "System Overview",
+          content: renderSystemOverview()
+      },
+      {
+          label: "Order Metrics",
+          content: (
+              <Box>
+                  <Grid container spacing={2}>
+                      {metrics.orders.map(renderPerformanceSummary)}
+                  </Grid>
+                  {renderTimeSeriesChart(metrics.orders.flatMap(m => m.timeSeriesData), "Order Response Times")}
+                  {metrics.orders.map(method => (
+                      method.optimizationSuggestions && 
+                      renderOptimizationSuggestions(method.optimizationSuggestions)
+                  ))}
+              </Box>
+          )
+      },
+      {
+          label: "Item Metrics",
+          content: (
+              <Box>
+                  <Grid container spacing={2}>
+                      {metrics.items.map(renderPerformanceSummary)}
+                  </Grid>
+                  {renderTimeSeriesChart(metrics.items.flatMap(m => m.timeSeriesData), "Item Query Response Times")}
+              </Box>
+          )
+      }
   ];
 
   return (
-    <Box sx={{ p: 3 }}>
-    <Typography variant="h4" gutterBottom>
-      Order Flow Performance Metrics
-    </Typography>
-    
-    {/* Overall Performance Summary */}
-    {renderExecutionBreakdown()}
-
-    {/* Order Flow Section */}
-    {renderOrderFlowSection()}
-
-    {/* Tab Navigation */}
-    <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 4 }}>
-      <Tabs 
-        value={activeTab} 
-        onChange={(e, newValue) => setActiveTab(newValue)}
-        variant="scrollable"
-        scrollButtons="auto"
-      >
-        {tabs.map((tab, index) => (
-          <Tab key={index} label={tab.label} />
-        ))}
-      </Tabs>
-    </Box>
-
-    {/* Tab Content */}
-    <Box sx={{ mt: 3 }}>
-      {renderMethodCards(tabs[activeTab].content)}
-      {renderTimeSeriesChart(tabs[activeTab].content, tabs[activeTab].label)}
-    </Box>
-  </Box>
+      <Box sx={{ width: '100%', p: 3 }}>
+          <Tabs
+              value={selectedTab}
+              onChange={(e, newValue) => setSelectedTab(newValue)}
+              sx={{ mb: 3 }}
+          >
+              {tabContent.map((tab, index) => (
+                  <Tab key={index} label={tab.label} />
+              ))}
+          </Tabs>
+          {tabContent[selectedTab].content}
+      </Box>
   );
   };
 
