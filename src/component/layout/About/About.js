@@ -97,9 +97,6 @@ const About = () => {
               <Typography variant="h6" gutterBottom>
                 Links
               </Typography>
-              <Link href="https://drive.google.com/file/d/1jfIAWJ3ME70EGwBB73TYdKByHiaOJu3Q/view?usp=sharing" target="_blank" display="flex" alignItems="center" sx={{ mb: 1 }}>
-                <ContactPageIcon sx={{ mr: 1 }} /> PDF 이력서
-              </Link>
               <Link href="https://ashen-glow.notion.site/546d42ae6c224cdbab478c47a6e7e139?pvs=4" target="_blank" display="flex" alignItems="center" sx={{ mb: 1 }}>
                 <SummarizeOutlinedIcon sx={{ mr: 1 }} /> 프로젝트 포트폴리오 노션
               </Link>

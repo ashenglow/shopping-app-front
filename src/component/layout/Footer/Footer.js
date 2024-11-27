@@ -118,10 +118,7 @@ const Footer = () => {
             <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
               Links
             </Typography>
-            <StyledLink href="https://www.notion.so/ashen-glow/portfolio-300405db13254028a02ca9a779b09384?pvs=4" target="_blank">
-              <ContactPageIcon sx={{ mr: 1 }} /> Profile Notion
-            </StyledLink>
-            <StyledLink href="https://www.notion.so/ashen-glow/546d42ae6c224cdbab478c47a6e7e139?pvs=4" target="_blank">
+            <StyledLink href="https://ashen-glow.notion.site/546d42ae6c224cdbab478c47a6e7e139?pvs=4" target="_blank">
               <SummarizeOutlinedIcon sx={{ mr: 1 }} /> Project Portfolio
             </StyledLink>
             <StyledLink href="https://github.com/ashenglow/shopping-app" target="_blank">
