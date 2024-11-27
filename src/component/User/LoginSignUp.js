@@ -1,9 +1,10 @@
-import React, { Fragment, useRef, useState, useEffect } from "react";
+import React, { Fragment,  useState, useEffect } from "react";
 import "./LoginSignUp.css";
 import Loader from "../layout/Loader/Loader";
 import { useHistory, Redirect } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { login, register } from "../../actions/userAction";
+import { useTheme } from '@mui/material/styles';
+import { login, register, loginForTestAdmin, loginForTestUser } from "../../actions/userAction";
 import { useAlert } from "react-alert";
 import { clearError } from "../../actions/errorAction";
 import {
@@ -19,7 +20,25 @@ import {
   CircularProgress
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { styled } from '@mui/system';
+import { useScrollToTopHistory } from '../../hooks/useScrollToTopHistory';
+import { margin, styled } from '@mui/system';
+const StyledButton = styled(Button)(({ theme }) => ({
+  '&&.MuiButton-root': {
+  border: '1px solid black',
+  color: 'white',
+  backgroundColor: 'black',
+  borderRadius: '20px',
+  padding: '6px 16px',
+  marginRight: theme.spacing(1),
+  marginLeft: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+  marginTop: theme.spacing(2),
+  '&:hover': {
+    borderColor: theme.palette.primary.main,
+    color: 'black',
+    backgroundColor: 'rgba(255, 255, 255)',
+  }},
+}));
 
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -32,7 +51,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
   margin: theme.spacing(1),
-  backgroundColor: theme.palette.secondary.main,
+  backgroundColor: 'black',
 }));
 
 const StyledForm = styled('form')(({ theme }) => ({
@@ -42,6 +61,18 @@ const StyledForm = styled('form')(({ theme }) => ({
 
 const LoginSignUp = () => {
   const dispatch = useDispatch();
+  const theme = useTheme();
+  const navigateAndScrollToTop = useScrollToTopHistory();
+  const handleLoginAdmin = () => {
+    dispatch(loginForTestAdmin())
+    .then(() => navigateAndScrollToTop("/"))
+  };
+
+  const handleLoginUser = () => {
+    dispatch(loginForTestUser())
+    .then(() => navigateAndScrollToTop("/"))
+    
+  };
   const alert = useAlert();
   const history = useHistory();
   const { loading, isAuthenticated } = useSelector((state) => state.user);
@@ -217,6 +248,14 @@ const LoginSignUp = () => {
           </StyledForm>
         )}
       </StyledPaper>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <StyledButton variant="outlined" onClick={handleLoginAdmin}>
+                LOGIN AS ADMIN
+              </StyledButton>
+              <StyledButton variant="outlined" onClick={handleLoginUser}>
+                LOGIN AS USER
+              </StyledButton>
+              </Box>
     </Container>
   );
 };

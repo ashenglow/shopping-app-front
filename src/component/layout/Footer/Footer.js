@@ -14,7 +14,7 @@ import ContactPageIcon from '@mui/icons-material/ContactPage';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, logout } from '../../../actions/userAction';
+import { logout, loginForTestAdmin, loginForTestUser } from '../../../actions/userAction';
 import { showNotification } from '../MUI-comp/MuiNotification/notificationSlice';
 import { clearError } from '../../../actions/errorAction';
 import { Redirect} from 'react-router-dom';
@@ -73,12 +73,12 @@ const Footer = () => {
   const { errorMessage } = useSelector((state) => state.error);
 
   const handleLoginAdmin = () => {
-    dispatch(login({ username: "user1", password: "1234" }))
-   
+    dispatch(loginForTestAdmin())
+    .then(() => navigateAndScrollToTop("/"))
   };
 
   const handleLoginUser = () => {
-    dispatch(login({ username: "user2", password: "1234" }))
+    dispatch(loginForTestUser())
     .then(() => navigateAndScrollToTop("/"))
     
   };
