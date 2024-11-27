@@ -78,6 +78,64 @@ export const login = (loginform) => async (dispatch) => {
   }
 };
 
+export const loginForTestAdmin = () => async (dispatch) => {
+  const loginform = { username: "user1", password: "1234" };
+  try {
+    dispatch({ type: LOGIN_REQUEST });
+    const baseURL = process.env.REACT_APP_API_URL;
+    const config = {
+      headers: { "Content-Type": "application/json" },
+      baseURL: baseURL,
+      withCredentials: true,
+    };
+
+    const { data } = await axios.post(
+      `${baseURL}/api/v1/login`,
+      loginform,
+      config
+    );
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("userId", data.id);
+    localStorage.setItem("userName", data.name);
+    dispatch({ type: LOGIN_SUCCESS, payload: data });
+    dispatch(showNotification("Login Successful", "success" ));
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || "Login failed";
+    dispatch({ type: LOGIN_FAIL, payload: errorMessage });
+    dispatch(setError(errorMessage, LOGIN_FAIL));
+ 
+  }
+};
+
+export const loginForTestUser = () => async (dispatch) => {
+  const loginform = { username: "user2", password: "1234" };
+  try {
+    dispatch({ type: LOGIN_REQUEST });
+    const baseURL = process.env.REACT_APP_API_URL;
+    const config = {
+      headers: { "Content-Type": "application/json" },
+      baseURL: baseURL,
+      withCredentials: true,
+    };
+
+    const { data } = await axios.post(
+      `${baseURL}/api/v1/login`,
+      loginform,
+      config
+    );
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("userId", data.id);
+    localStorage.setItem("userName", data.name);
+    dispatch({ type: LOGIN_SUCCESS, payload: data });
+    dispatch(showNotification("Login Successful", "success" ));
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || "Login failed";
+    dispatch({ type: LOGIN_FAIL, payload: errorMessage });
+    dispatch(setError(errorMessage, LOGIN_FAIL));
+ 
+  }
+};
+
 // Register
 export const register = (userData) => async (dispatch) => {
   try {

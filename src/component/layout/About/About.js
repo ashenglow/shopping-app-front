@@ -1,17 +1,52 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { loginForTestAdmin, loginForTestUser } from '../../../actions/userAction';
+import { useTheme } from '@mui/material/styles';
+import { useScrollToTopHistory } from '../../../hooks/useScrollToTopHistory';
 import { 
   Container, 
   Grid, 
   Typography, 
   Box, 
+  Button,
   Avatar, 
-  Link 
+  Link
 } from '@mui/material';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import { margin, styled } from '@mui/system';
+const StyledButton = styled(Button)(({ theme }) => ({
+  '&&.MuiButton-root': {
+  border: '1px solid black',
+  color: 'white',
+  backgroundColor: 'black',
+  borderRadius: '20px',
+  padding: '6px 16px',
+  marginRight: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+  marginTop: theme.spacing(2),
+  '&:hover': {
+    borderColor: theme.palette.primary.main,
+    color: 'black',
+    backgroundColor: 'rgba(255, 255, 255)',
+  }},
+}));
 
 const About = () => {
+  const dispatch = useDispatch();
+  const theme = useTheme();
+  const navigateAndScrollToTop = useScrollToTopHistory();
+  const handleLoginAdmin = () => {
+    dispatch(loginForTestAdmin())
+    .then(() => navigateAndScrollToTop("/"))
+  };
+
+  const handleLoginUser = () => {
+    dispatch(loginForTestUser())
+    .then(() => navigateAndScrollToTop("/"))
+    
+  };
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h2" gutterBottom align="center">
@@ -26,14 +61,16 @@ const About = () => {
             <Typography variant="body1" paragraph>
               이 웹사이트는 포트폴리오 및 이력서 목적으로 제작되었습니다. 
               방문자 여러분께서는 회원가입 없이 빠르게 로그인하실 수 있도록 
-              Footer에 있는 버튼을 이용해 주세요. 
+              Footer나 아래에 있는 버튼을 이용해 주세요. 
             </Typography>
-            <Typography variant="body1">
-              This website was created for portfolio and resume purposes. 
-              Visitors can use the buttons in the footer to quickly log in 
-              without registration. You can experience various features by 
-              logging in as an administrator or a general user.
-            </Typography>
+            <Box>
+            <StyledButton variant="outlined" onClick={handleLoginAdmin}>
+                LOGIN AS ADMIN
+              </StyledButton>
+              <StyledButton variant="outlined" onClick={handleLoginUser}>
+                LOGIN AS USER
+              </StyledButton>
+              </Box>
           </Box>
         </Grid>
         <Grid item xs={12} md={6}>
@@ -60,10 +97,10 @@ const About = () => {
               <Typography variant="h6" gutterBottom>
                 Links
               </Typography>
-              <Link href="https://www.notion.so/ashen-glow/portfolio-300405db13254028a02ca9a779b09384?pvs=4" target="_blank" display="flex" alignItems="center" sx={{ mb: 1 }}>
-                <ContactPageIcon sx={{ mr: 1 }} /> 프로필 노션
+              <Link href="https://drive.google.com/file/d/1jfIAWJ3ME70EGwBB73TYdKByHiaOJu3Q/view?usp=sharing" target="_blank" display="flex" alignItems="center" sx={{ mb: 1 }}>
+                <ContactPageIcon sx={{ mr: 1 }} /> PDF 이력서
               </Link>
-              <Link href="https://www.notion.so/ashen-glow/546d42ae6c224cdbab478c47a6e7e139?pvs=4" target="_blank" display="flex" alignItems="center" sx={{ mb: 1 }}>
+              <Link href="https://ashen-glow.notion.site/546d42ae6c224cdbab478c47a6e7e139?pvs=4" target="_blank" display="flex" alignItems="center" sx={{ mb: 1 }}>
                 <SummarizeOutlinedIcon sx={{ mr: 1 }} /> 프로젝트 포트폴리오 노션
               </Link>
               <Link href="https://github.com/ashenglow/shopping-app" target="_blank" display="flex" alignItems="center" sx={{ mb: 1 }}>
