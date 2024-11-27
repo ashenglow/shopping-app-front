@@ -56,6 +56,7 @@ function App() {
   const { isAuthenticated, user, loading } = useSelector((state) => state.user);
   const [initialized, setInitialized] = useState(false);
   const dispatch = useDispatch();
+ 
 
   useEffect(() => {
     WebFont.load({
