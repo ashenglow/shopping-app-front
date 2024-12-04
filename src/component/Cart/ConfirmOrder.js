@@ -17,6 +17,7 @@ import {
   clearPaymentState,
 } from "../../actions/paymentAction";
 import PaymentPopup from "../layout/PaymentPopup/PaymentPopup";
+import { clearCart } from "../../actions/cartAction";
 
 const ConfirmOrder = () => {
   const { loading: orderLoading, error: orderError,isUpdated, orderId } = useSelector((state) => state.newOrder);
@@ -114,6 +115,7 @@ const ConfirmOrder = () => {
     if (isUpdated && orderId) {
       alert.success("Order created successfully");
       setShowPaymentPopup(false);
+      dispatch(clearCart());
       history.push(`/order/${orderId}`);
       dispatch(clearPaymentState());
       dispatch(clearOrderState());

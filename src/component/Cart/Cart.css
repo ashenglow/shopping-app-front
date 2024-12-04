@@ -136,6 +136,52 @@
 .checkOutBtn > button:hover {
   background-color: var(--first-color);
 }
+.cartSelectAllContainer {
+  border-bottom: 1px solid #ddd;
+  padding: 1vmax 0;
+  margin-bottom: 1vmax;
+}
+
+.selectAllWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.selectAllWrapper label {
+  display: flex;
+  align-items: center;
+  gap: 0.5vmax;
+  cursor: pointer;
+  font: 300 1vmax "Roboto";
+}
+
+.selectAllWrapper input[type="checkbox"] {
+  width: 1vmax;
+  height: 1vmax;
+  cursor: pointer;
+}
+
+.clearCartWrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.clearCartButton {
+  padding: 0.5vmax 1vmax;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font: 300 0.9vmax "Roboto";
+}
+
+.clearCartButton:hover {
+  background-color: #ff5252;
+}
+
 
 @media screen and (max-width: 600px) {
   .cartPage {
@@ -188,5 +234,19 @@
     padding: 2vmax 4vmax;
     width: 100%;
     font: 300 2vmax "Roboto";
+  }
+
+  .selectAllWrapper label {
+    font: 300 1.8vmax "Roboto";
+  }
+
+  .selectAllWrapper input[type="checkbox"] {
+    width: 1.8vmax;
+    height: 1.8vmax;
+  }
+
+  .clearCartButton {
+    padding: 1vmax 2vmax;
+    font: 300 1.8vmax "Roboto";
   }
 }

@@ -14,6 +14,11 @@ import {
   GET_CART_ITEMS_REQUEST,
   GET_CART_ITEMS_SUCCESS,
   GET_CART_ITEMS_FAILURE,
+  CLEAR_CART_REQUEST,
+  CLEAR_CART_SUCCESS,
+  CLEAR_CART_FAILURE,
+  SELECT_ALL_CART_ITEMS,
+  UNSELECT_ALL_CART_ITEMS
 } from "../constants/cartConstants";
 import axiosInstance from "../utils/axiosInstance";
 import { setError } from "./errorAction";
@@ -123,3 +128,22 @@ export const updateCartItem =
       dispatch(setError(errorMessage, UPDATE_CART_ITEM_FAILURE));
     }
   };
+
+  export const clearCart = () => async (dispatch) => {
+    dispatch({ type: CLEAR_CART_REQUEST });
+    try {
+      await axiosInstance.delete('/api/auth/v1/cart/clear');
+      dispatch({ type: CLEAR_CART_SUCCESS });
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Error clearing cart";
+      dispatch(setError(errorMessage, CLEAR_CART_FAILURE));
+    }
+  };
+
+  export const selectAllCartItems = () => ({
+    type: SELECT_ALL_CART_ITEMS
+  })
+
+  export const unselectAllCartItems = () => ({
+    type: UNSELECT_ALL_CART_ITEMS
+  });

@@ -6,6 +6,7 @@ import {
   getCartItems,
   removeItemsFromCart,
   updateCartItem,
+  clearCart,
 } from "../../actions/cartAction";
 import { Typography } from "@material-ui/core";
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
@@ -75,7 +76,7 @@ const Cart = ({ history }) => {
     }));
     history.push({
       pathname: "/order/confirm",
-      state: { selectedItems: selectedItemsData, userId: userId },
+      state: { selectedItems: selectedItemsData},
     });
   };
 
@@ -92,6 +93,13 @@ const Cart = ({ history }) => {
     }
   };
 
+  const handleSelectAll = () => {
+    if (selectedItems.length === cartItems.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems([...cartItems]);
+    }
+  };
   useEffect(() => {
     if(userId){
       dispatch(getCartItems(userId));
@@ -132,44 +140,79 @@ const Cart = ({ history }) => {
                   <p>Quantity</p>
                   <p>Subtotal</p>
                 </div>
-
+              
                 {cartItems && cartItems.length > 0 ? (
-                  cartItems.map((item) => (
-                    <div className="cartContainer" key={item.id}>
-                      <CartItemCard
-                        item={item}
-                        deleteCartItems={deleteCartItems}
-                        isUpdating={
-                          updatingItems ? updatingItems[item.id] : false
-                        }
-                        isSelected={selectedItems.some(
-                          (selectedItem) => selectedItem.id === item.id
-                        )}
-                        onSelect={() => handleItemSelection(item)}
-                      />
-                      <div className="cartInput">
-                        <button
-                          disabled={item.count <= 1 || isItemUpdating(item.id)}
-                          onClick={() => decreaseQuantity(item.id, item.count)}
-                        >
-                          -
-                        </button>
-                        <input type="number" value={item.count} readOnly />
-                        <button
-                          disabled={
-                            item.count >= item.stockQuantity ||
-                            isItemUpdating(item.id)
-                          }
-                          onClick={() => increaseQuantity(item.id, item.count)}
-                        >
-                          +
-                        </button>
-                      </div>
-                      <p className="cartSubtotal">{`₹${
-                        item.price * item.count
-                      }`}</p>
-                    </div>
-                  ))
+                   <>
+                   <div className="cartContainer" style={{ borderBottom: '1px solid #ddd' }}>
+                     <div className="selectAllWrapper">
+                       <label>
+                         <input
+                           type="checkbox"
+                           checked={selectedItems.length === cartItems.length}
+                           onChange={handleSelectAll}
+                         />
+                         <span>Select All</span>
+                       </label>
+                     </div>
+                     <div></div>
+                     <div className="clearCartWrapper">
+                       <button 
+                         onClick={() => dispatch(clearCart())}
+                         className="clearCartButton"
+                       >
+                         Clear Cart
+                       </button>
+                     </div>
+                   </div>
+             
+                   {cartItems.map((item) => (
+                     <div className="cartContainer" key={item.id}>
+                       <CartItemCard
+                         item={item}
+                         deleteCartItems={deleteCartItems}
+                         isUpdating={updatingItems ? updatingItems[item.id] : false}
+                         isSelected={selectedItems.some(
+                           (selectedItem) => selectedItem.id === item.id
+                         )}
+                         onSelect={() => handleItemSelection(item)}
+                       />
+                       <div className="cartInput">
+                         <button
+                           disabled={item.count <= 1 || isItemUpdating(item.id)}
+                           onClick={() => decreaseQuantity(item.id, item.count)}
+                         >
+                           -
+                         </button>
+                         <input type="number" value={item.count} readOnly />
+                         <button
+                           disabled={
+                             item.count >= item.stockQuantity ||
+                             isItemUpdating(item.id)
+                           }
+                           onClick={() => increaseQuantity(item.id, item.count)}
+                         >
+                           +
+                         </button>
+                       </div>
+                       <p className="cartSubtotal">{`₹${item.price * item.count}`}</p>
+                     </div>
+                   ))}
+             
+                   <div className="cartGrossProfit">
+                     <div></div>
+                     <div className="cartGrossProfitBox">
+                       <p>Gross Total</p>
+                       <p>{`₹${cartItems.reduce(
+                         (acc, item) => acc + item.count * item.price,
+                         0
+                       )}`}</p>
+                     </div>
+                     <div></div>
+                     <div className="checkOutBtn">
+                       <button onClick={checkoutHandler}>Check Out</button>
+                     </div>
+                   </div>
+                 </>
                 ) : (
                   <p>Your cart is empty</p>
                 )}

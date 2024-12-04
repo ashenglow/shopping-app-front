@@ -14,6 +14,11 @@ import {
   GET_CART_ITEMS_REQUEST,
   GET_CART_ITEMS_SUCCESS,
   GET_CART_ITEMS_FAILURE,
+  CLEAR_CART_REQUEST,
+  CLEAR_CART_SUCCESS,
+  CLEAR_CART_FAILURE,
+  SELECT_ALL_CART_ITEMS,
+  UNSELECT_ALL_CART_ITEMS,
 } from "../constants/cartConstants";
 const initialState = {
   cartItems: [],
@@ -148,5 +153,32 @@ export const cartReducer = (state = initialState, action) => {
 
     default:
       return state;
+      case CLEAR_CART_REQUEST:
+        return {
+          ...state,
+          loading: true
+        };
+      case CLEAR_CART_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          cartItems: []
+        };
+      case CLEAR_CART_FAILURE:
+        return {
+          ...state,
+          loading: false,
+          error: action.payload
+        };
+      case SELECT_ALL_CART_ITEMS:
+        return {
+          ...state,
+          selectedItems: state.cartItems.map(item => item.id),
+        };
+      case UNSELECT_ALL_CART_ITEMS:
+        return {
+          ...state,
+          selectedItems: [],
+        };
   }
 };
