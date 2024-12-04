@@ -364,11 +364,11 @@ export const getAllUsers = () => async (dispatch) => {
 // };
 
 // Delete User
-export const deleteUser = (id) => async (dispatch) => {
+export const deleteUser = () => async (dispatch) => {
   try {
     dispatch({ type: DELETE_USER_REQUEST });
 
-    const { data } = await axiosInstance.delete(`/api/v1/admin/user/${id}`);
+    const { data } = await axiosInstance.delete('/api/auth/v1/member/delete');
 
     dispatch({ type: DELETE_USER_SUCCESS, payload: data });
   } catch (error) {

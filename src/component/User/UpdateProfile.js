@@ -13,14 +13,14 @@ import { clearError } from "../../actions/errorAction";
 const UpdateProfile = ({ history, location }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
-  const { memberId } = location.state || {};
+
 
   const { message: errorMessage, type: errorType } = useSelector(
     (state) => state.error
   );
   const { isUpdated, loading, profile } = useSelector((state) => state.profile);
   const [formData, setFormData] = useState({
-    id: memberId,
+    id: null,
     password: "",
     address: {
       city: "",
@@ -97,11 +97,11 @@ const UpdateProfile = ({ history, location }) => {
       dispatch(clearError());
     }
 
-    if (!profile && profile.id !== memberId) {
-      dispatch(getProfileEdit(memberId));
+    if (!profile ) {
+      dispatch(getProfileEdit());
     } else {
       const newFormData = {
-        id: profile.id,
+        id: null,
         username: profile.username,
         password: "",
         address: {

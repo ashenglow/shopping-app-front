@@ -27,7 +27,7 @@ const ConfirmOrder = () => {
   const alert = useAlert();
   const history = useHistory();
   const location = useLocation();
-  const { selectedItems, userId } = location.state || {};
+  const { selectedItems} = location.state || {};
   const orderItems = selectedItems.map((item) => ({
     itemId: item.itemId,
     count: item.count,
@@ -56,7 +56,7 @@ const ConfirmOrder = () => {
     localStorage.setItem("transactionId", transactionId);
     const paymentInfo = {
       transactionId,
-      userId,
+  
       itemId:
         selectedItems.length > 1
           ? selectedItems.map((item) => item.itemId)
@@ -74,7 +74,7 @@ const ConfirmOrder = () => {
     dispatch(initiatePayment(paymentInfo));
     setIsPaymentInitiated(true);
     setShowPaymentPopup(true);
-  }, [dispatch, selectedItems, userId, isPaymentInitiated]);
+  }, [dispatch, selectedItems, isPaymentInitiated]);
 
   const handlePaymentApproval = useCallback(
     (approvalUrl) => {
@@ -85,7 +85,7 @@ const ConfirmOrder = () => {
         dispatch(
           approvePayment({
             transactionId: partnerOrderId,
-            userId,
+      
             pgToken,
           })
         );
@@ -93,7 +93,7 @@ const ConfirmOrder = () => {
         alert.error("Payment approval failed. Missing required parameters.");
       }
     },
-    [dispatch, userId, alert]
+    [dispatch,  alert]
   );
 
 
@@ -105,10 +105,10 @@ const ConfirmOrder = () => {
         count: item.count,
         price: item.price,
       }));
-      dispatch(createOrder(userId, orderItems));
+      dispatch(createOrder(orderItems));
 
     }
-  }, [paymentResult, dispatch, userId, selectedItems ]);
+  }, [paymentResult, dispatch, selectedItems ]);
 
   useEffect(() => {
     if (isUpdated && orderId) {
