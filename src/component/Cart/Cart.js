@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import Loader from "../layout/Loader/Loader";
 import { clearError } from "../../actions/errorAction";
 import { getUserId } from "../../hooks/getUserInfo";
+import CloseIcon from '@material-ui/icons/Close';
 
 const Cart = ({ history }) => {
   const dispatch = useDispatch();
@@ -100,6 +101,15 @@ const Cart = ({ history }) => {
       setSelectedItems([...cartItems]);
     }
   };
+
+  const handleRemoveSelected = () => {
+    if(selectedItems.length === 0) return;
+
+    const selectedIds = selectedItems.map((item) => item.id);
+    dispatch(removeItemsFromCart(selectedIds));
+    setSelectedItems([]);
+  };
+
   useEffect(() => {
     if(userId){
       dispatch(getCartItems(userId));
@@ -128,111 +138,84 @@ const Cart = ({ history }) => {
           {cartItems.length === 0 ? (
             <div className="emptyCart">
               <RemoveShoppingCartIcon />
-
               <Typography>No Product in Your Cart</Typography>
               <Link to="/products">View Products</Link>
             </div>
           ) : (
-            <Fragment>
-              <div className="cartPage">
-                <div className="cartHeader">
-                  <p>Product</p>
-                  <p>Quantity</p>
-                  <p>Subtotal</p>
-                </div>
-              
-                {cartItems && cartItems.length > 0 ? (
-                   <>
-                   <div className="cartContainer" style={{ borderBottom: '1px solid #ddd' }}>
-                     <div className="selectAllWrapper">
-                       <label>
-                         <input
-                           type="checkbox"
-                           checked={selectedItems.length === cartItems.length}
-                           onChange={handleSelectAll}
-                         />
-                         <span>Select All</span>
-                       </label>
-                     </div>
-                     <div></div>
-                     <div className="clearCartWrapper">
-                       <button 
-                         onClick={() => dispatch(clearCart())}
-                         className="clearCartButton"
-                       >
-                         Clear Cart
-                       </button>
-                     </div>
-                   </div>
-             
-                   {cartItems.map((item) => (
-                     <div className="cartContainer" key={item.id}>
-                       <CartItemCard
-                         item={item}
-                         deleteCartItems={deleteCartItems}
-                         isUpdating={updatingItems ? updatingItems[item.id] : false}
-                         isSelected={selectedItems.some(
-                           (selectedItem) => selectedItem.id === item.id
-                         )}
-                         onSelect={() => handleItemSelection(item)}
-                       />
-                       <div className="cartInput">
-                         <button
-                           disabled={item.count <= 1 || isItemUpdating(item.id)}
-                           onClick={() => decreaseQuantity(item.id, item.count)}
-                         >
-                           -
-                         </button>
-                         <input type="number" value={item.count} readOnly />
-                         <button
-                           disabled={
-                             item.count >= item.stockQuantity ||
-                             isItemUpdating(item.id)
-                           }
-                           onClick={() => increaseQuantity(item.id, item.count)}
-                         >
-                           +
-                         </button>
-                       </div>
-                       <p className="cartSubtotal">{`₹${item.price * item.count}`}</p>
-                     </div>
-                   ))}
-             
-                   <div className="cartGrossProfit">
-                     <div></div>
-                     <div className="cartGrossProfitBox">
-                       <p>Gross Total</p>
-                       <p>{`₹${cartItems.reduce(
-                         (acc, item) => acc + item.count * item.price,
-                         0
-                       )}`}</p>
-                     </div>
-                     <div></div>
-                     <div className="checkOutBtn">
-                       <button onClick={checkoutHandler}>Check Out</button>
-                     </div>
-                   </div>
-                 </>
-                ) : (
-                  <p>Your cart is empty</p>
-                )}
+            <div className="cartPage">
+              <div className="cartHeader">
+     
+              </div>
 
-                <div className="cartGrossProfit">
-                  <div></div>
-                  <div className="cartGrossProfitBox">
-                    <p>Gross Total</p>
-                    <p>{`₹${cartItems.reduce(
-                      (acc, item) => acc + item.count * item.price,
-                      0
-                    )}`}</p>
+             
+                <div className="cartControls" style={{ borderBottom: '1px solid #ddd' }}>
+                  <label className="selectAllLabel">
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.length === cartItems.length}
+                      onChange={handleSelectAll}
+                    />
+                    <span>전체선택</span>
+                  </label>
+
+                  <button
+                    onClick={handleRemoveSelected}
+                    className="removeSelectedBtn"
+                  >
+                    < CloseIcon size={16} />
+                    <span>선택삭제</span>
+                  </button>
+                </div>
+            
+
+              {cartItems.map((item) => (
+                <div className="cartContainer" key={item.id}>
+                  <CartItemCard
+                    item={item}
+                    deleteCartItems={deleteCartItems}
+                    isUpdating={updatingItems ? updatingItems[item.id] : false}
+                    isSelected={selectedItems.some(
+                      (selectedItem) => selectedItem.id === item.id
+                    )}
+                    onSelect={() => handleItemSelection(item)}
+                  />
+                  <div className="cartInput">
+                    <button
+                      disabled={item.count <= 1 || isItemUpdating(item.id)}
+                      onClick={() => decreaseQuantity(item.id, item.count)}
+                    >
+                      -
+                    </button>
+                    <input type="number" value={item.count} readOnly />
+                    <button
+                      disabled={
+                        item.count >= item.stockQuantity ||
+                        isItemUpdating(item.id)
+                      }
+                      onClick={() => increaseQuantity(item.id, item.count)}
+                    >
+                      +
+                    </button>
                   </div>
-                  <div></div>
-                  <div className="checkOutBtn">
-                    <button onClick={checkoutHandler}>Check Out</button>
-                  </div>
+                  <p className="cartSubtotal">{`₹${item.price * item.count}`}</p>
+                </div>
+              ))}
+
+              <div className="cartGrossProfit">
+                <div></div>
+                <div className="cartGrossProfitBox">
+                  <p>Gross Total</p>
+                  <p>{`₹${cartItems.reduce(
+                    (acc, item) => acc + item.count * item.price,
+                    0
+                  )}`}</p>
+                </div>
+                <div></div>
+                <div className="checkOutBtn">
+                  <button onClick={checkoutHandler}>Check Out</button>
                 </div>
               </div>
-            </Fragment>
+            </div>
           )}
         </Fragment>
       )}

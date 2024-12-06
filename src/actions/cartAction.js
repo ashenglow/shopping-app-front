@@ -63,12 +63,12 @@ export const getCartItems = (memberId) => async (dispatch) => {
 };
 
 // REMOVE FROM CART
-export const removeItemsFromCart = (itemId) => async (dispatch) => {
+export const removeItemsFromCart = (itemIds) => async (dispatch) => {
   dispatch({ type: REMOVE_CART_ITEM_REQUEST });
   try {
     const { data } = await axiosInstance.delete(
-      `/api/auth/v1/cart/${itemId}`,
-      {}
+      '/api/auth/v1/cart',
+      {data: itemIds}
     );
     dispatch({
       type: REMOVE_CART_ITEM_SUCCESS,

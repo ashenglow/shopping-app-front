@@ -35,9 +35,8 @@
   box-sizing: border-box;
   margin: auto;
   color: white;
-  display: grid;
-  grid-template-columns: 4fr 1fr 1fr;
-  font: 300 0.7vmax "Roboto";
+  min-height: 3vmax;
+  display: block;
 }
 .cartHeader > p {
   margin: 10px;
@@ -182,6 +181,78 @@
   background-color: #ff5252;
 }
 
+.cartControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  margin: auto;
+  padding: 0.8vmax 0;
+}
+
+.selectAllLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5vmax;
+  cursor: pointer;
+  font: 300 0.9vmax "Noto Sans KR";
+}
+
+.selectAllLabel input[type="checkbox"] {
+  width: 1vmax;
+  height: 1vmax;
+  cursor: pointer;
+}
+
+.removeSelectedBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.4vmax;
+  padding: 0.5vmax 1vmax;
+  background-color: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  color: #666;
+  cursor: pointer;
+  font: 300 0.9vmax "Noto Sans KR";
+  transition: all 0.3s ease;
+}
+
+.removeSelectedBtn:hover {
+  background-color: #f5f5f5;
+  border-color: #bfbfbf;
+}
+
+.removeSelectedBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.removeSelectedBtn svg {
+  width: 0.9vmax;
+  height: 0.9vmax;
+}
+
+@media screen and (max-width: 600px) {
+  .selectAllLabel {
+    font: 300 1.8vmax "Roboto";
+  }
+
+  .selectAllLabel input[type="checkbox"] {
+    width: 1.8vmax;
+    height: 1.8vmax;
+  }
+
+  .removeSelectedBtn {
+    font: 300 1.8vmax "Roboto";
+    padding: 1vmax 2vmax;
+  }
+
+  .removeSelectedBtn svg {
+    width: 1.8vmax;
+    height: 1.8vmax;
+  }
+}
 
 @media screen and (max-width: 600px) {
   .cartPage {

@@ -77,7 +77,7 @@ export const cartReducer = (state = initialState, action) => {
         // ),
         // loading: false,
         ...state,
-        cartItems: state.cartItems.filter((i) => i.id !== action.payload),
+        cartItems: state.cartItems.filter((i) => !action.payload.includes(i.id)),
         loading: false,
       };
     case REMOVE_CART_ITEM_FAILURE:
