@@ -25,7 +25,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { setError } from "./errorAction";
 
 // Create Order
-export const createOrder = (memberId, orderItems) => async (dispatch) => {
+export const createOrder = (orderItems) => async (dispatch) => {
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -35,7 +35,7 @@ export const createOrder = (memberId, orderItems) => async (dispatch) => {
 
   try {
     const { data } = await axiosInstance.post(
-      `/api/auth/v1/order/new/${memberId}`,
+      '/api/auth/v1/order/new',
       orderItems,
       config
     );
