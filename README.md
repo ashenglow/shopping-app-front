@@ -1,70 +1,75 @@
-# Getting Started with Create React App
+<div align="center">
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<!-- logo -->
+<img src="https://user-images.githubusercontent.com/80824750/208554558-490845c9-959a-4823-9003-350ec4d221bf.png" width="400"/>
 
-## Available Scripts
+</div> 
 
-In the project directory, you can run:
+## 📝 소개
+전통주 판매를 주제로 한 E-commerce 플랫폼을 구현한 개인 프로젝트입니다.
+<br />
+Footer, About, Login 페이지에 테스트 로그인용 버튼이 있습니다
+<br />
+<br />
+### 화면 구성
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+|메인|
+|:---:|
+|<img src="https://i.ibb.co/N9Nr27F/2024-10-21-3-40-51.png" ><br /><img src="https://i.ibb.co/gt3wJkH/2024-12-06-4-57-24.png" >|
+|메인화면입니다. 아래의 Footer에서 테스트용 로그인이 가능합니다.|
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `npm test`
+|회원가입 & 로그인|
+|:---:|
+|<img src="https://i.ibb.co/cYDSQQQ/2024-12-06-4-31-17.png" >|
+|메뉴바를 선택하여 회원가입 혹은 로그인을 할 수 있습니다. <br />테스트용 로그인이 가능합니다.|
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+|상품 목록|
+|:---:|
+|<img src="https://i.ibb.co/pn3bqWL/2024-12-06-4-24-11.png" >|
+|상품을 종류, 가격, 별점으로 필터링하여 조회할 수 있습니다.|
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+|상품 상세|
+|:---:|
+|<img src="https://i.ibb.co/r6YM4JV/2024-12-06-4-25-06.png" >|
+|상품 장바구니에 추가, 리뷰 확인 및 작성이 가능합니다|
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+|장바구니|
+|:---:|
+|<img src="https://i.ibb.co/sqvtNKM/2024-12-06-4-23-46.png" >|
+|장바구니에서 상품 수량 변경과 선택 삭제가 가능합니다.<br />결제버튼을 누르면 카카오페이 테스트용 API로 결제할 수 있습니다.|
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+|결제|
+|:---:|
+|<img src="https://i.ibb.co/C6Ffvk6/2024-12-06-4-25-36.png" ><br /><img src="https://i.ibb.co/wCmLnMs/2024-12-06-4-27-11.png" >|
+|카카오페이 테스트 API로 결제 후 주문 완료 페이지로 이동합니다.|
 
-### `npm run eject`
+<br />
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## ⚙ 기술 스택
+> React, Redux, Aws, CouldFront, Github
+### Front-end
+<div>
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/React.png?raw=true" width="80">
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Redux.png?raw=true" width="80">
+</div>
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Infra
+<div>
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/AWSEC2.png?raw=true" width="80">
+</div>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Tools
+<div>
+<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Github.png?raw=true" width="80">
+</div>
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+<br />
 
-## Learn More
+## 🤔 기술적 이슈와 해결 과정
+- 장바구니 상태 관리 이슈
+    - [Optimistic Updates(긍정적 업데이트) 패턴 적용](https://www.notion.so/ashen-glow/Sool-STORE-E-commerce-546d42ae6c224cdbab478c47a6e7e139?pvs=4#129b54d8388680ec8a49e0670481a93a)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<br />
