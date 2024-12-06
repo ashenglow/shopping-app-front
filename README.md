@@ -13,6 +13,8 @@
 Footer, About, Login 페이지에 테스트 로그인용 버튼이 있습니다
 <br />
 <br />
+👉 [배포 페이지 바로가기](https://soolstore.r-e.kr/)
+<br />
 ### 화면 구성
 
 |메인|회원가입&로그인|
