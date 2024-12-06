@@ -3,6 +3,8 @@
 <!-- logo -->
 <img src="https://user-images.githubusercontent.com/80824750/208554558-490845c9-959a-4823-9003-350ec4d221bf.png" width="400"/>
 
+[<img src="https://img.shields.io/badge/-readme.md-important?style=flat&logo=google-chrome&logoColor=white" />]() [<img src="https://img.shields.io/badge/-project notion-blue?style=flat&logo=google-chrome&logoColor=white" />]() 
+
 </div> 
 
 ## 📝 소개
@@ -75,6 +77,6 @@ Footer, About, Login 페이지에 테스트 로그인용 버튼이 있습니다
 <br />
 
 ## 💁‍♂️ 프로젝트 링크
-[프로젝트 배포 페이지](https://soolstore.r-e.kr/)
-[프로젝트 소개 노션 페이지](https://ashen-glow.notion.site/Sool-STORE-E-commerce-546d42ae6c224cdbab478c47a6e7e139?pvs=4)
-[백엔드 Github](https://github.com/ashenglow/shopping-app)
+- [프로젝트 배포 페이지](https://soolstore.r-e.kr/)
+- [프로젝트 소개 노션 페이지](https://ashen-glow.notion.site/Sool-STORE-E-commerce-546d42ae6c224cdbab478c47a6e7e139?pvs=4)
+- [백엔드 Github](https://github.com/ashenglow/shopping-app)
