@@ -123,7 +123,7 @@ const UpdateProfile = ({ history, location }) => {
   }, [dispatch, alert, errorMessage, history, profile, isUpdated]);
 
   return (
-    <div className="container">
+    <>
       {loading ? (
         <Loader />
       ) : (
@@ -213,7 +213,7 @@ const UpdateProfile = ({ history, location }) => {
           </div>
         </Fragment>
       )}
-    </div>
+    </>
   );
 };
 
