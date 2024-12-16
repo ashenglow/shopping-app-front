@@ -78,10 +78,12 @@ const LoginSignUp = () => {
   const { loading, isAuthenticated } = useSelector((state) => state.user);
   const { message: errorMessage } = useSelector((state) => state.error);
   const [tabValue, setTabValue] = useState(0);
-  const [loginUser, setLoginUser] = useState({ username: '', password: '' });
+  const [loginUser, setLoginUser] = useState({ userId: '', password: '' });
   const [registerUser, setRegisterUser] = useState({
-    username: '',
+    userId: '',
+    nickname: '',
     password: '',
+    email: '',
     address: { city: '', street: '', zipcode: '' }
   });
 
@@ -141,19 +143,20 @@ const LoginSignUp = () => {
         </Tabs>
         {tabValue === 0 && (
           <StyledForm onSubmit={handleLoginSubmit}>
-            <TextField
+           <TextField
               variant="outlined"
               margin="normal"
               required
               fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
+              id="userId"
+              label="UserId"
+              name="userId"
+              autoComplete="userId"
               autoFocus
-              value={loginUser.username}
+              value={loginUser.userId}
               onChange={handleLoginChange}
             />
+          
             <TextField
               variant="outlined"
               margin="normal"
@@ -167,6 +170,7 @@ const LoginSignUp = () => {
               value={loginUser.password}
               onChange={handleLoginChange}
             />
+       
             <Button
               type="submit"
               fullWidth
@@ -185,12 +189,25 @@ const LoginSignUp = () => {
               margin="normal"
               required
               fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
+              id="userId"
+              label="UserId"
+              name="userId"
+              autoComplete="userId"
               autoFocus
-              value={registerUser.username}
+              value={registerUser.userId}
+              onChange={handleRegisterChange}
+            />
+             <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="nickname"
+              label="Nickname"
+              name="nickname"
+              autoComplete="nickname"
+              autoFocus
+              value={registerUser.nickname}
               onChange={handleRegisterChange}
             />
             <TextField
@@ -206,6 +223,21 @@ const LoginSignUp = () => {
               value={registerUser.password}
               onChange={handleRegisterChange}
             />
+
+             <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={registerUser.email}
+              onChange={handleRegisterChange}
+            />
+            
             <TextField
               variant="outlined"
               margin="normal"

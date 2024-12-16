@@ -79,7 +79,7 @@ export const login = (loginform) => async (dispatch) => {
 };
 
 export const loginForTestAdmin = () => async (dispatch) => {
-  const loginform = { username: "user1", password: "1234" };
+  const loginform = { userId: "user1", password: "1234" };
   try {
     dispatch({ type: LOGIN_REQUEST });
     const baseURL = process.env.REACT_APP_API_URL;
@@ -108,7 +108,7 @@ export const loginForTestAdmin = () => async (dispatch) => {
 };
 
 export const loginForTestUser = () => async (dispatch) => {
-  const loginform = { username: "user2", password: "1234" };
+  const loginform = { userId: "user2", password: "1234" };
   try {
     dispatch({ type: LOGIN_REQUEST });
     const baseURL = process.env.REACT_APP_API_URL;

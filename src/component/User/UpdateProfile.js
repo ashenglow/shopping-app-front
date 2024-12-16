@@ -21,7 +21,10 @@ const UpdateProfile = ({ history, location }) => {
   const { isUpdated, loading, profile } = useSelector((state) => state.profile);
   const [formData, setFormData] = useState({
     id: null,
+    userId: null,
+    nickname: "",
     password: "",
+    email: "",
     address: {
       city: "",
       street: "",
@@ -102,8 +105,10 @@ const UpdateProfile = ({ history, location }) => {
     } else {
       const newFormData = {
         id: null,
-        username: profile.username,
+        userId: null,
+        nickname: "",
         password: "",
+        email: "",
         address: {
           city: profile.address?.city || "",
           street: profile.address?.street || "",
@@ -141,10 +146,10 @@ const UpdateProfile = ({ history, location }) => {
                   <FaceIcon />
                   <input
                     type="text"
-                    placeholder="Username"
+                    placeholder="Nickname"
                     required
-                    name="username"
-                    value={formData.username}
+                    name="nickname"
+                    value={formData.nickname}
                     onChange={handleChange}
                   />
                 </div>
@@ -155,6 +160,17 @@ const UpdateProfile = ({ history, location }) => {
                     required
                     name="password"
                     value={formData.password}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="updateProfileName">
+                  <FaceIcon />
+                  <input
+                    type="text"
+                    placeholder="Email"
+                    required
+                    name="email"
+                    value={formData.email}
                     onChange={handleChange}
                   />
                 </div>

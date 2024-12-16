@@ -147,8 +147,10 @@ const profileInitialState = {
   isUpdated: false,
   profile: {
     id: null,
-    username: "",
+    userId: null,
+    nickname: "",
     password: "",
+    email: "",
     address: {
       city: "",
       street: "",
