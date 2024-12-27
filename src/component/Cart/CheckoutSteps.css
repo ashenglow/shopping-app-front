@@ -9,5 +9,5 @@
 
 .MuiStepConnector-active,
 .MuiStepConnector-completed {
-  background-color: var(--second-color);
+  background-color: var(--first-color);
 }

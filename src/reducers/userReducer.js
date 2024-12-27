@@ -75,6 +75,13 @@ export const userReducer = (state = userInitialState, action) => {
         loading: true,
       };
     case LOGIN_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        isAuthenticated: true,
+        role: action.payload.role,
+        accessToken: action.payload.accessToken,
+      };
     case LOAD_USER_SUCCESS:
       return {
         ...state,
@@ -147,8 +154,10 @@ const profileInitialState = {
   isUpdated: false,
   profile: {
     id: null,
-    username: "",
+    userId: null,
+    nickname: "",
     password: "",
+    email: "",
     address: {
       city: "",
       street: "",

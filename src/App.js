@@ -51,6 +51,7 @@ import FlexibleNotification from "./component/layout/MUI-comp/MuiNotification/Fl
 import Loader from "./component/layout/Loader/Loader.js";
 import NoAuthHeader from "./component/layout/Header/NoAuthHeader.js";
 import OrderPerformanceMetrics from "./component/Monitoring/OrderPerformanceMetrics.js";
+import OAuth2RedirectHandler from "./utils/OAuth2RedirectHandler.js";
 function App() {
   //test
   const { isAuthenticated, user, loading } = useSelector((state) => state.user);
@@ -136,6 +137,7 @@ return <Loader/>
         <Route exact path="/about" component={About} />
         
         {/* Auth Routes */}
+        <Route path="/oauth2/callback" component={OAuth2RedirectHandler} />
         <Route 
           exact 
           path="/login" 
