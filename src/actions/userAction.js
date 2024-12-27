@@ -66,8 +66,8 @@ export const login = (loginform) => async (dispatch) => {
       config
     );
     localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("userId", data.id);
-    localStorage.setItem("userName", data.name);
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("userName", data.nickname);
     dispatch({ type: LOGIN_SUCCESS, payload: data });
     dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {
@@ -95,8 +95,8 @@ export const loginForTestAdmin = () => async (dispatch) => {
       config
     );
     localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("userId", data.id);
-    localStorage.setItem("userName", data.name);
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("userName", data.nickname);
     dispatch({ type: LOGIN_SUCCESS, payload: data });
     dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {
@@ -124,8 +124,8 @@ export const loginForTestUser = () => async (dispatch) => {
       config
     );
     localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("userId", data.id);
-    localStorage.setItem("userName", data.name);
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("userName", data.nickname);
     dispatch({ type: LOGIN_SUCCESS, payload: data });
     dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {
