@@ -21,11 +21,11 @@ const Profile = ({ history }) => {
         <Loader />
       ) : (
         <Fragment>
-          <MetaData title={`${user.name}'s Profile`} />
+          <MetaData title={`${user.nickname}'s Profile`} />
           <div className="profileContainer">
             <div>
               <h1>My Profile</h1>
-              <img src={user.userImg} alt={user.name} />
+              <img src={user.userImg} alt={user.nickname} />
               <Link
                 to={{
                   pathname: "/member/update",
@@ -37,7 +37,7 @@ const Profile = ({ history }) => {
             </div>
             <div>
               <div>
-                <h4>{user.name}</h4>
+                <h4>{user.nickname}</h4>
               </div>
 
               <div>

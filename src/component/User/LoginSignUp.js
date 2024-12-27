@@ -17,47 +17,22 @@ import {
   Typography,
   Box,
   Avatar,
-  CircularProgress
+  CircularProgress,
+  IconButton
 } from '@mui/material';
+import GoogleIcon from '@mui/icons-material/Google';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useScrollToTopHistory } from '../../hooks/useScrollToTopHistory';
 import { margin, styled } from '@mui/system';
-const StyledButton = styled(Button)(({ theme }) => ({
-  '&&.MuiButton-root': {
-  border: '1px solid black',
-  color: 'white',
-  backgroundColor: 'black',
-  borderRadius: '20px',
-  padding: '6px 16px',
-  marginRight: theme.spacing(1),
-  marginLeft: theme.spacing(1),
-  marginBottom: theme.spacing(1),
-  marginTop: theme.spacing(2),
-  '&:hover': {
-    borderColor: theme.palette.primary.main,
-    color: 'black',
-    backgroundColor: 'rgba(255, 255, 255)',
-  }},
-}));
+import { StyledPaper, StyledButton, StyledForm, StyledAvatar, StyledButtonContainer,
+  StyledOutlinedButton, StyledDivider,
+  OAuthButtonContainer
+ } from "../layout/MUI-comp/MuiStyles";
+import { handleOAuth2Success } from "../../actions/oauth2Action";
+import axiosInstance from "../../utils/axiosInstance";
+import axios from "axios";
 
-
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  marginTop: theme.spacing(8),
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: theme.spacing(4),
-}));
-
-const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  margin: theme.spacing(1),
-  backgroundColor: 'black',
-}));
-
-const StyledForm = styled('form')(({ theme }) => ({
-  width: '100%',
-  marginTop: theme.spacing(1),
-}));
+const OAUTH2_BASE_URL = "http://localhost:8080";
 
 const LoginSignUp = () => {
   const dispatch = useDispatch();
@@ -73,19 +48,39 @@ const LoginSignUp = () => {
     .then(() => navigateAndScrollToTop("/"))
     
   };
+
+  const handleOAuth2Login = async (provider) => {
+    try{
+      //redirect to the authorization URL
+      window.location.href = `${OAUTH2_BASE_URL}/oauth2/authorization/${provider}`;
+    } catch (error) {
+      console.log("OAuth2 login failed: ", error);
+    }
+  }
+
   const alert = useAlert();
   const history = useHistory();
   const { loading, isAuthenticated } = useSelector((state) => state.user);
   const { message: errorMessage } = useSelector((state) => state.error);
   const [tabValue, setTabValue] = useState(0);
-  const [loginUser, setLoginUser] = useState({ username: '', password: '' });
+  const [loginUser, setLoginUser] = useState({ userId: '', password: '' });
   const [registerUser, setRegisterUser] = useState({
-    username: '',
+    userId: '',
+    nickname: '',
     password: '',
+    email: '',
     address: { city: '', street: '', zipcode: '' }
   });
 
+  
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if(token){
+      dispatch(handleOAuth2Success(token));
+      history.push('/');
+      return;
+    }
     if (errorMessage) {
       alert.error(errorMessage);
       dispatch(clearError());
@@ -94,6 +89,7 @@ const LoginSignUp = () => {
       history.push(tabValue === 0 ? '/account' : '/');
     }
   }, [dispatch, alert, history, errorMessage, isAuthenticated, tabValue]);
+
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -128,7 +124,7 @@ const LoginSignUp = () => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <StyledPaper>
+      <StyledPaper elevation={3}>
         <StyledAvatar>
           <LockOutlinedIcon />
         </StyledAvatar>
@@ -141,19 +137,20 @@ const LoginSignUp = () => {
         </Tabs>
         {tabValue === 0 && (
           <StyledForm onSubmit={handleLoginSubmit}>
-            <TextField
+           <TextField
               variant="outlined"
               margin="normal"
               required
               fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
+              id="userId"
+              label="UserId"
+              name="userId"
+              autoComplete="userId"
               autoFocus
-              value={loginUser.username}
+              value={loginUser.userId}
               onChange={handleLoginChange}
             />
+          
             <TextField
               variant="outlined"
               margin="normal"
@@ -167,15 +164,25 @@ const LoginSignUp = () => {
               value={loginUser.password}
               onChange={handleLoginChange}
             />
-            <Button
+       
+            <StyledButton
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
-              sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
             >
               {loading ? <CircularProgress size={24} /> : "Sign In"}
-            </Button>
+            </StyledButton>
+
+            <StyledDivider>or</StyledDivider>
+
+            <OAuthButtonContainer>
+              <IconButton onClick={() => handleOAuth2Login('google')}
+                size="large">
+                <GoogleIcon />
+              </IconButton>
+            </OAuthButtonContainer>
+
           </StyledForm>
         )}
         {tabValue === 1 && (
@@ -185,12 +192,25 @@ const LoginSignUp = () => {
               margin="normal"
               required
               fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
+              id="userId"
+              label="UserId"
+              name="userId"
+              autoComplete="userId"
               autoFocus
-              value={registerUser.username}
+              value={registerUser.userId}
+              onChange={handleRegisterChange}
+            />
+             <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="nickname"
+              label="Nickname"
+              name="nickname"
+              autoComplete="nickname"
+              autoFocus
+              value={registerUser.nickname}
               onChange={handleRegisterChange}
             />
             <TextField
@@ -206,6 +226,21 @@ const LoginSignUp = () => {
               value={registerUser.password}
               onChange={handleRegisterChange}
             />
+
+             <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={registerUser.email}
+              onChange={handleRegisterChange}
+            />
+            
             <TextField
               variant="outlined"
               margin="normal"
@@ -236,25 +271,24 @@ const LoginSignUp = () => {
               value={registerUser.address.zipcode}
               onChange={handleRegisterChange}
             />
-            <Button
+            <StyledButton
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
-              sx={{ mt: 3, mb: 2 }}
+    
             >
               {loading ? <CircularProgress size={24} /> : "Sign Up"}
-            </Button>
+           </StyledButton>
           </StyledForm>
         )}
       </StyledPaper>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <StyledButton variant="outlined" onClick={handleLoginAdmin}>
+            <StyledOutlinedButton onClick={handleLoginAdmin}>
                 LOGIN AS ADMIN
-              </StyledButton>
-              <StyledButton variant="outlined" onClick={handleLoginUser}>
+              </StyledOutlinedButton>
+              <StyledOutlinedButton onClick={handleLoginUser}>
                 LOGIN AS USER
-              </StyledButton>
+              </StyledOutlinedButton>
               </Box>
     </Container>
   );

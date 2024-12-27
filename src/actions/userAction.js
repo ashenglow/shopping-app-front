@@ -66,8 +66,8 @@ export const login = (loginform) => async (dispatch) => {
       config
     );
     localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("userId", data.id);
-    localStorage.setItem("userName", data.name);
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("userName", data.nickname);
     dispatch({ type: LOGIN_SUCCESS, payload: data });
     dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {
@@ -79,7 +79,7 @@ export const login = (loginform) => async (dispatch) => {
 };
 
 export const loginForTestAdmin = () => async (dispatch) => {
-  const loginform = { username: "user1", password: "1234" };
+  const loginform = { userId: "user1", password: "1234" };
   try {
     dispatch({ type: LOGIN_REQUEST });
     const baseURL = process.env.REACT_APP_API_URL;
@@ -95,8 +95,8 @@ export const loginForTestAdmin = () => async (dispatch) => {
       config
     );
     localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("userId", data.id);
-    localStorage.setItem("userName", data.name);
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("userName", data.nickname);
     dispatch({ type: LOGIN_SUCCESS, payload: data });
     dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {
@@ -108,7 +108,7 @@ export const loginForTestAdmin = () => async (dispatch) => {
 };
 
 export const loginForTestUser = () => async (dispatch) => {
-  const loginform = { username: "user2", password: "1234" };
+  const loginform = { userId: "user2", password: "1234" };
   try {
     dispatch({ type: LOGIN_REQUEST });
     const baseURL = process.env.REACT_APP_API_URL;
@@ -124,8 +124,8 @@ export const loginForTestUser = () => async (dispatch) => {
       config
     );
     localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("userId", data.id);
-    localStorage.setItem("userName", data.name);
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("userName", data.nickname);
     dispatch({ type: LOGIN_SUCCESS, payload: data });
     dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {

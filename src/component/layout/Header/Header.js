@@ -25,7 +25,7 @@ import Loader from '../Loader/Loader';
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: 'rgba(255, 255, 255, 0.7)',
   color: theme.palette.text.primary,
-  boxShadow: 'none',
+  boxShadow: 'none !important',
 }));
 
 const Logo = styled(Link)(({ theme }) => ({

@@ -87,7 +87,7 @@ const MyOrders = () => {
   }, [dispatch, errorMessage, alert]);
 
   return (
-    <div className="container">
+    <>
       {loading ? (
         <Loader />
       ) : (
@@ -110,7 +110,7 @@ const MyOrders = () => {
           </div>
         </Fragment>
       )}
-    </div>
+    </>
   );
 };
 
