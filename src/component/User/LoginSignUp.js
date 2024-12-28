@@ -32,7 +32,6 @@ import { handleOAuth2Success } from "../../actions/oauth2Action";
 import axiosInstance from "../../utils/axiosInstance";
 import axios from "axios";
 
-const OAUTH2_BASE_URL = "http://localhost:8080";
 
 const LoginSignUp = () => {
   const dispatch = useDispatch();
@@ -52,7 +51,7 @@ const LoginSignUp = () => {
   const handleOAuth2Login = async (provider) => {
     try{
       //redirect to the authorization URL
-      window.location.href = `${OAUTH2_BASE_URL}/oauth2/authorization/${provider}`;
+      window.location.href = `${process.env.REACT_APP_API_URL}/oauth2/authorization/${provider}`;
     } catch (error) {
       console.log("OAuth2 login failed: ", error);
     }
