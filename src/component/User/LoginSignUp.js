@@ -75,8 +75,10 @@ const LoginSignUp = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
+    const userId = urlParams.get('userId');
+    const userName = urlParams.get('nickname');
     if(token){
-      dispatch(handleOAuth2Success(token));
+      dispatch(handleOAuth2Success(token, userId, userName));
       history.push('/');
       return;
     }
