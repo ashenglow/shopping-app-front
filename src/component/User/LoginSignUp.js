@@ -1,7 +1,7 @@
 import React, { Fragment,  useState, useEffect } from "react";
 import "./LoginSignUp.css";
 import Loader from "../layout/Loader/Loader";
-import { useHistory, Redirect } from "react-router-dom";
+import { useHistory} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from '@mui/material/styles';
 import { login, register, loginForTestAdmin, loginForTestUser } from "../../actions/userAction";
@@ -71,21 +71,38 @@ const LoginSignUp = () => {
     address: { city: '', street: '', zipcode: '' }
   });
 
+  useEffect(() => {
+     //해시에서 파라미터 추출
+     const hash = window.location.hash;
+     if( hash.includes('oauth2/callback')){
+       // 해시에서 ? 이후 파라미터 추출
+       const params = new URLSearchParams(hash.split('?')[1]);
+ 
+       const token = params.get('token');
+       const userId = params.get('userId');
+     const userName = params.get('nickname');
+ 
+     if(token){
+       // redux action dispatch
+       dispatch(handleOAuth2Success(token, userId, userName))
+       .then(() => {
+         // URL에서 해시 제거하고 메인 페이지로 리다이렉트
+         window.history.replaceState(null, null, '/');
+            history.replace('/');
+       })
+       .catch((error) => {
+        console.error('OAuth2 처리 중 에러:', error);
+        history.replace('/login');
+       });
+     }else {
+      history.replace('/login');
+     }
+  
+     }
+  }, [dispatch, history]);
   
   useEffect(() => {
-    const hash = window.location.hash;
-    if( hash.includes('oauth2/callback')){
-      const params = new URLSearchParams(hash.split('?')[1]);
-      const token = params.get('token');
-      const userId = params.get('userId');
-    const userName = params.get('nickname');
-    if(token){
-      dispatch(handleOAuth2Success(token, userId, userName));
-      history.push('/');
-      return;
-    }
- 
-    }
+   
     if (errorMessage) {
       alert.error(errorMessage);
       dispatch(clearError());
