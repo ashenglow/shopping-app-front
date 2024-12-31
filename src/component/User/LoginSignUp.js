@@ -1,7 +1,7 @@
 import React, { Fragment,  useState, useEffect } from "react";
 import "./LoginSignUp.css";
 import Loader from "../layout/Loader/Loader";
-import { useHistory, useNavigate } from "react-router-dom";
+import { useHistory} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from '@mui/material/styles';
 import { login, register, loginForTestAdmin, loginForTestUser } from "../../actions/userAction";
@@ -34,7 +34,6 @@ import axios from "axios";
 
 
 const LoginSignUp = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useTheme();
   const navigateAndScrollToTop = useScrollToTopHistory();
@@ -89,18 +88,18 @@ const LoginSignUp = () => {
        .then(() => {
          // URL에서 해시 제거하고 메인 페이지로 리다이렉트
          window.history.replaceState(null, null, '/');
-         navigate('/', { replace: true });
+            history.replace('/');
        })
        .catch((error) => {
-         console.error('OAuth2 처리 중 에러:', error);
-         navigate('/login');
+        console.error('OAuth2 처리 중 에러:', error);
+        history.replace('/login');
        });
      }else {
-      navigate('/login');
+      history.replace('/login');
      }
   
      }
-  }, [dispatch, navigate]);
+  }, [dispatch, history]);
   
   useEffect(() => {
    
