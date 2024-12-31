@@ -73,14 +73,18 @@ const LoginSignUp = () => {
 
   
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
-    const userId = urlParams.get('userId');
-    const userName = urlParams.get('nickname');
+    const hash = window.location.hash;
+    if( hash.includes('oauth2/callback')){
+      const params = new URLSearchParams(hash.split('?')[1]);
+      const token = params.get('token');
+      const userId = params.get('userId');
+    const userName = params.get('nickname');
     if(token){
       dispatch(handleOAuth2Success(token, userId, userName));
       history.push('/');
       return;
+    }
+ 
     }
     if (errorMessage) {
       alert.error(errorMessage);
