@@ -24,7 +24,7 @@ const OAuth2RedirectHandler = () => {
     };
 
     handleOAuth2Redirect();
-    }, [dispatch]);
+    }, [dispatch, window.location.hash]);
     return (
         <Styledcontainer>
             <CircularProgress />
