@@ -47,19 +47,8 @@ if( cachedProducts[query] ){
 }
   try {
     dispatch({ type: ALL_PRODUCT_REQUEST });
-    const baseURL = process.env.REACT_APP_API_URL;
-    const config = {
-      baseURL: baseURL,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    
     let url = `/api/public/v1/products${query ? `?${query}` : ''}`;
-
-    const fullUrl = `${baseURL}${url}`;
-    const { data } = await axios.get(fullUrl, config);
+    const { data } = await axiosInstance.get(url);
 
     dispatch({
       type: ALL_PRODUCT_SUCCESS,
@@ -72,6 +61,9 @@ if( cachedProducts[query] ){
       pageSize: data.size,
       totalItems: data.totalElements,
     }))
+
+     // Cache the results
+     cachedProducts[query] = data;
   } catch (error) {
     const errorMessage =
       error.response?.data?.message || "Error getting products";
@@ -204,16 +196,7 @@ export const deleteProduct = (id) => async (dispatch) => {
 export const getProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
-    const baseURL = process.env.REACT_APP_API_URL;
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    let url = `/api/public/v1/product/${id}`;
-    const fullUrl = `${baseURL}${url}`;
-
-    const { data } = await axios.get(fullUrl);
+    const { data } = await axiosInstance.get(`/api/public/v1/product/${id}`);
 
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,

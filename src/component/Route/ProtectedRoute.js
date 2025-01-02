@@ -11,40 +11,57 @@ const ProtectedRoute = ({
   axiosInstance,
   ...rest
 }) => {
-  const { user, isAuthenticated, loading} = useSelector(
+  const { isAuthenticated, loading} = useSelector(
     (state) => state.user
   );
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
-
-    useEffect(() => {
-      if (!isAuthenticated && !loading && !refreshing) {
+  useEffect(() => {
+    // Attempt refresh if we have a token but aren't authenticated
+    const attemptRefresh = async () => {
+      if (!isAuthenticated && !loading && !refreshing && localStorage.getItem('accessToken')) {
         setRefreshing(true);
-        dispatch(refresh())
-          .catch(() => {})
-          .finally(() => setRefreshing(false));
+        try {
+          await dispatch(refresh());
+        } catch (error) {
+          console.log("Refresh failed:", error);
+          localStorage.removeItem("accessToken");
+        } finally {
+          setRefreshing(false);
+        }
       }
-    }, [dispatch, isAuthenticated, loading, refreshing]);
+    };
+  attemptRefresh();
+}, [dispatch, isAuthenticated, loading, refreshing]);
 
-  if (loading || refreshing) {
-    return <Loader />;
-  }
+
 
   return (
     <Fragment>
       <Route
       {...rest}
-      render={(props) => 
-        isAuthenticated ? (
-          <Component {...props} user={user} />
-        ) : (
-          <Redirect to={{
-            pathname: "/login",
-            state: { from: props.location }
-          }} />
-        )
-      }
+      render={(props) => {
+        // Show loader while checking auth or refreshing token
+        if (loading || refreshing) {
+          return <Loader />;
+        }
+
+        // Redirect to login if not authenticated and refresh failed
+        if (!isAuthenticated) {
+          return (
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: { from: props.location }
+              }}
+            />
+          );
+        }
+
+        // Render component if authenticated
+        return <Component {...props} />;
+      }}
     />
     </Fragment>
   );

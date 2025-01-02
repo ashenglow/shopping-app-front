@@ -13,6 +13,7 @@ import {
   useMediaQuery,
   useTheme,
   Box,
+  Skeleton
 } from '@mui/material';
 import { styled } from '@mui/system';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -21,6 +22,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PersonIcon from '@mui/icons-material/Person';
 import Loader from '../Loader/Loader';
+
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -71,7 +73,9 @@ const StyledLink = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
 }));
 
-const Header = ({isAuthenticated: isAuthenticated, loading: loading}) => {
+const Header = ({initialized}) => {
+  const { isAuthenticated, user } = useSelector((state) => state.user);
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -87,7 +91,10 @@ const Header = ({isAuthenticated: isAuthenticated, loading: loading}) => {
     { text: 'About', path: '/about' },
     { text: 'Contact', path: '/contact' },
   ];
-
+ if (!initialized) {
+    return <Skeleton variant="rectangular" height={64} />
+  }
+  
 
   return (
     <StyledAppBar position="static" elevation={1}>
