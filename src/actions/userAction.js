@@ -53,21 +53,12 @@ import { showNotification, hideNotification } from "./notificationAction";
 export const login = (loginform) => async (dispatch) => {
   try {
     dispatch({ type: LOGIN_REQUEST });
-    const baseURL = process.env.REACT_APP_API_URL;
-    const config = {
-      headers: { "Content-Type": "application/json" },
-      baseURL: baseURL,
-      withCredentials: true,
-    };
+    const { data } = await axiosInstance.post(`/api/v1/login`, loginform);
 
-    const { data } = await axios.post(
-      `${baseURL}/api/v1/login`,
-      loginform,
-      config
-    );
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("userId", data.userId);
     localStorage.setItem("userName", data.nickname);
+
     dispatch({ type: LOGIN_SUCCESS, payload: data });
     dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {
@@ -82,21 +73,12 @@ export const loginForTestAdmin = () => async (dispatch) => {
   const loginform = { userId: "user1", password: "1234" };
   try {
     dispatch({ type: LOGIN_REQUEST });
-    const baseURL = process.env.REACT_APP_API_URL;
-    const config = {
-      headers: { "Content-Type": "application/json" },
-      baseURL: baseURL,
-      withCredentials: true,
-    };
+    const { data } = await axiosInstance.post(`/api/v1/login`, loginform);
 
-    const { data } = await axios.post(
-      `${baseURL}/api/v1/login`,
-      loginform,
-      config
-    );
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("userId", data.userId);
     localStorage.setItem("userName", data.nickname);
+
     dispatch({ type: LOGIN_SUCCESS, payload: data });
     dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {
@@ -111,21 +93,12 @@ export const loginForTestUser = () => async (dispatch) => {
   const loginform = { userId: "user2", password: "1234" };
   try {
     dispatch({ type: LOGIN_REQUEST });
-    const baseURL = process.env.REACT_APP_API_URL;
-    const config = {
-      headers: { "Content-Type": "application/json" },
-      baseURL: baseURL,
-      withCredentials: true,
-    };
+    const { data } = await axiosInstance.post(`/api/v1/login`, loginform);
 
-    const { data } = await axios.post(
-      `${baseURL}/api/v1/login`,
-      loginform,
-      config
-    );
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("userId", data.userId);
     localStorage.setItem("userName", data.nickname);
+
     dispatch({ type: LOGIN_SUCCESS, payload: data });
     dispatch(showNotification("Login Successful", "success" ));
   } catch (error) {
@@ -140,17 +113,7 @@ export const loginForTestUser = () => async (dispatch) => {
 export const register = (userData) => async (dispatch) => {
   try {
     dispatch({ type: REGISTER_USER_REQUEST });
-    const baseURL = process.env.REACT_APP_API_URL;
-    const config = {
-      headers: { "Content-Type": "application/json" },
-      baseURL: baseURL,
-    };
-
-    const { data } = await axios.post(
-      `${baseURL}/api/v1/register`,
-      userData,
-      config
-    );
+    const { data } = await axiosInstance.post(`/api/v1/register`, userData);
 
     dispatch({ type: REGISTER_USER_SUCCESS, payload: data });
     dispatch(showNotification("Register Successful", "success" ));

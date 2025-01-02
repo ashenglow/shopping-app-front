@@ -66,13 +66,11 @@ function App() {
     }
     setInitialized(true);
   };
-
-  if (!initialized) {
     initAuth();
-  }
-}, [dispatch, initialized]);
+  
+}, [dispatch]);
 
-if(loading){
+if(!initialized){
 return <Loader/>
 }
 
@@ -96,7 +94,7 @@ return <Loader/>
         <Route>
           <>
 
-              <Header isAuthenticated={isAuthenticated} user={user}/>   
+              <Header initialized={initialized} />   
             <Switch>
             {/* Public Routes */}
         <Route exact path="/" component={Home} />
@@ -117,14 +115,14 @@ return <Loader/>
         />
 
         {/* Protected Routes */}
-        <ProtectedRoute exact path="/cart" component={Cart} />
-        <ProtectedRoute exact path="/account" component={Profile} />
-        <ProtectedRoute exact path="/member/update" component={UpdateProfile} />
-        <ProtectedRoute exact path="/shipping" component={Shipping} />
-        <ProtectedRoute exact path="/success" component={OrderSuccess} />
-        <ProtectedRoute exact path="/orders" component={MyOrders} />
-        <ProtectedRoute exact path="/order/confirm" component={ConfirmOrder} />
-        <ProtectedRoute exact path="/order/:id" component={OrderDetails} />
+        <ProtectedRoute path="/cart" component={Cart} />
+        <ProtectedRoute path="/account" component={Profile} />
+        <ProtectedRoute path="/member/update" component={UpdateProfile} />
+        <ProtectedRoute path="/shipping" component={Shipping} />
+        <ProtectedRoute path="/success" component={OrderSuccess} />
+        <ProtectedRoute path="/orders" component={MyOrders} />
+        <ProtectedRoute path="/order/confirm" component={ConfirmOrder} />
+        <ProtectedRoute path="/order/:id" component={OrderDetails} />
         <Route component={NotFound} />
 
               <Route
