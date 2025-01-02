@@ -10,6 +10,8 @@ import { showNotification } from "../actions/notificationAction";
 import { refresh } from "../actions/userAction";
 import { ref } from "joi";
 const baseURL = process.env.REACT_APP_API_URL;
+const frontendURL = process.env.REACT_APP_FRONTEND_URL;
+
 const axiosInstance = axios.create({
   baseURL: baseURL,
   withCredentials: true, //크로스 도메인 요청 시 쿠키 전송 허용
@@ -17,13 +19,27 @@ const axiosInstance = axios.create({
 let isRefreshing = false;
 let failedQueue = [];
 
-// Add a flag to identify public routes
-const isPublicRoute = (url) => {
-  return url.includes('/api/public/') || 
-         url.includes('/v1/login') || 
-         url.includes('/v1/register');
+
+const publicEndpoints = ['/api/public/', '/v1/login', '/v1/register'];
+// Authentication-related routes that should not trigger refresh attempts
+const authRoutes = [
+  '/api/v1/login',
+  '/api/v1/register',
+  '/api/v1/refresh',
+  '/api/v1/logout'
+];
+
+const isPublicEndpoint = (url) => {
+  return publicEndpoints.some(endpoint => url.includes(endpoint));
+}
+const isAuthRoute = (url) => {
+  return authRoutes.some(route => url.includes(route));
 };
 
+const isAuthPage = () => {
+  const authPages = ['/login', '/register'];
+  return authPages.some(page => window.location.pathname.includes(page));
+};
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
@@ -35,21 +51,18 @@ const processQueue = (error, token = null) => {
   });
   failedQueue = [];
 };
-const logout = () => {
-  removeAccessTokenFromStorage();
 
-    history.push("/login");
- 
-};
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Only add token for non-public routes
-    if (!isPublicRoute(config.url)) {
-      const accessToken = getAccessTokenFromStorage();
+    // don't add token for public endpoints
+    if(isPublicEndpoint(config.url)){
+      return config;
+    }
+    // all other endpoints, try to add token if it exists
+   const accessToken = getAccessTokenFromStorage();
       if (accessToken) {
         config.headers["Authorization"] = `Bearer ${accessToken}`;
       }
-    }
     return config;
   },
   (error) => {
@@ -59,7 +72,12 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   //응답 데이터 처리
-  (response) => response,
+  (response) => {
+    if(response.config.url.includes('/api/v1/logout')){
+      return response;
+    }
+    return response;
+  },
   //응답 에러 처리
   async (error) => {
   
@@ -70,8 +88,18 @@ axiosInstance.interceptors.response.use(
         store.dispatch(showNotification("Network Error. Please check your network.", "error" ));
         return Promise.reject(error);
       }
-      // Handle 401 Unauthorized errors
-      if (!isPublicRoute(originalRequest.url) && 
+
+      // if it's a public endpoint, just return the error
+      if(isPublicEndpoint(originalRequest.url)){
+        return Promise.reject(error);
+      }
+
+      if(originalRequest.url.includes('/api/v1/logout')){
+        return Promise.reject(error);
+      }
+
+      // don't attempt refresh for auth routes or if we're already retrying
+      if (!isAuthRoute(originalRequest.url) && 
       error.response?.status === 401 && 
       !originalRequest._retry) {
         console.log("refresh token call");
@@ -102,13 +130,13 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-   
-      if (!isPublicRoute(originalRequest.url)) {
-        store.dispatch(showNotification("Session expired. Please log in again.", "error"));
-        removeAccessTokenFromStorage();
-        history.push('/login');
-      }
-      logout();
+
+        // handle refresh token failure - only redirect if not on auth page
+     if(refreshError.response?.status === 401 && !isAuthPage()){
+       store.dispatch(showNotification("Session expired. Please log in again.", "error"));
+       removeAccessTokenFromStorage();
+       history.push('/login');
+     }   
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

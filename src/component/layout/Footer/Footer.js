@@ -84,7 +84,8 @@ const Footer = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logout())
+    .then(() => navigateAndScrollToTop("/"))
   };
 
   useEffect(() => {
