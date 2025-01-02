@@ -5,13 +5,14 @@ import { CircularProgress } from "@mui/material";
 import { Styledcontainer } from "../component/layout/MUI-comp/MuiStyles"; 
 import { handleOAuth2Success } from "../actions/oauth2Action";
 
+
 const OAuth2RedirectHandler = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const location = useLocation();
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
+        const params = new URLSearchParams(window.location.search);
         const token = params.get("token");
         const userId = params.get("userId");
         const userName = params.get("nickname");
@@ -19,14 +20,15 @@ const OAuth2RedirectHandler = () => {
         if (token && userId) {
             dispatch(handleOAuth2Success(token, userId, userName))
                 .then(() => {
-                    history.replace("/");
+                    history.push("/");
+                    
                 })
                 .catch((error) => {
                     console.error(error);
-                    history.replace("/login");
+                    history.push("/login");
                 });
         } else {
-            history.replace("/login");
+            history.push("/login");
         }
     }, [dispatch, history, location]);
     return (
