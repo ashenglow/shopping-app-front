@@ -16,10 +16,12 @@ export const handleOAuth2Success = (token, userId, userName) => (dispatch) => {
             } 
         });
         dispatch(showNotification("Login Successful", "success" ));
-   
+        return Promise.resolve();
+        
         
     }catch(error){
         dispatch(setError("OAuth2 login failed", LOGIN_FAIL));
+        return Promise.reject();
      
 }
 };
