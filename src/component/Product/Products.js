@@ -4,7 +4,7 @@ import Loader from "../layout/Loader/Loader";
 import ProductCard from "../Home/ProductCard";
 import { useAlert } from "react-alert";
 import MetaData from "../layout/MetaData";
-import { Accordion, AccordionSummary, AccordionDetails, ToggleButton, ToggleButtonGroup, Box,Chip, Divider, Typography, Slider, Grid, Container, useMediaQuery } from "@mui/material";
+import { Box,Chip, Divider, Typography, Grid, Container, useMediaQuery } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { getProduct } from "../../actions/productAction";
 import { clearError } from "../../actions/errorAction";
