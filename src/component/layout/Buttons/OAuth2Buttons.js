@@ -36,13 +36,14 @@ export const OAuth2LoginButtonContainer = ({providers}) => {
     // { name: string, imgUrl: string, onClick: function, alt?: string }
     return (
        <div className="flex flex-wrap justify-center items-center gap-4 mt-4">
-        {providers.map((provider) => (
+        {providers.map((provider, index) => (
             <OAuthIconButton 
-            key={provider.name}
+            key={provider.name || index}
             onClick={provider.onClick}
             imgUrl={provider.imgUrl}
             alt={provider.alt}
             providerName={provider.name}
+            Icon={provider.Icon}
             />
         ))}
 
