@@ -29,9 +29,8 @@ import { StyledPaper, StyledButton, StyledForm, StyledAvatar, StyledButtonContai
   OAuthButtonContainer
  } from "../layout/MUI-comp/MuiStyles";
 import { handleOAuth2Success } from "../../actions/oauth2Action";
-import axiosInstance from "../../utils/axiosInstance";
-import axios from "axios";
-
+import OAuth2ButtonContainer from "../layout/Buttons/OAuth2Buttons";
+import createOAuthProviders from "../../utils/oauthProviders";
 
 const LoginSignUp = () => {
   const dispatch = useDispatch();
@@ -70,7 +69,7 @@ const LoginSignUp = () => {
     email: '',
     address: { city: '', street: '', zipcode: '' }
   });
-
+  const oauthProviders = createOAuthProviders(handleOAuth2Login);
  
   useEffect(() => {
    
@@ -170,10 +169,7 @@ const LoginSignUp = () => {
             <StyledDivider>or</StyledDivider>
 
             <OAuthButtonContainer>
-              <IconButton onClick={() => handleOAuth2Login('google')}
-                size="large">
-                <GoogleIcon />
-              </IconButton>
+              <OAuth2ButtonContainer proviers={oauthProviders} />
             </OAuthButtonContainer>
 
           </StyledForm>
