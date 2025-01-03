@@ -1,5 +1,5 @@
 import GoogleIcon from '@mui/icons-material/Google';
-import { handleOAuth2Login } from "./oauth2";
+
 const createOAuthProviders = ( handleOAuth2Login ) => [
     {
         name: "google",
