@@ -169,7 +169,7 @@ const LoginSignUp = () => {
             <StyledDivider>or</StyledDivider>
 
             <OAuthButtonContainer>
-              <OAuth2LoginButtonContainer proviers={oauthProviders} />
+              <OAuth2LoginButtonContainer providers={oauthProviders} />
             </OAuthButtonContainer>
 
           </StyledForm>
@@ -285,3 +285,4 @@ const LoginSignUp = () => {
 
 
 export default LoginSignUp;
+

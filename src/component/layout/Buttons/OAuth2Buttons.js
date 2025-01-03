@@ -1,53 +1,73 @@
-import { Button } from "@mui/material"
-import { IconButton } from "@mui/material";
+import { IconButton, Box, useTheme } from "@mui/material";
+import { styled } from "@mui/styles";
+import React from "react";
 
-const OAuthIconButton = ({ onClick, imgUrl, alt, providerName, Icon}) => {
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+    padding: '12px',
+    '& img': {
+      width: '24px',
+      height: '24px',
+      objectFit: 'contain'
+    }
+  }));
+  const ButtonContainer = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: theme.spacing(2),
+    marginTop: theme.spacing(2)
+  }));
+const OAuthIconButton = ({ onClick, imgSrc, alt, providerName, Icon}) => {
     if(Icon) {
         return (
-            <IconButton
-            onClick={onClick}
-            size="large"
-            aria-label={`Login with ${providerName}`}
-            className="mx-2"
-            >
-                <Icon />
-            </IconButton>
+            <StyledIconButton 
+        onClick={onClick}
+        size="large"
+        aria-label={`Login with ${providerName}`}
+      >
+        <Icon />
+      </StyledIconButton>
         )
     }
     
     
     return (
-        <Button
+        <StyledIconButton
         onClick={onClick}
-        className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center hover:opacity-80 transition-opacity duration-200 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mx-2"
-        type="button"
-        area-label={`Login with ${providerName}`}
-        >
-         <img
-         src={imgUrl}
-         alt={alt || `${providerName} Login`}
-         className="w-6 h-6 object-contain"
-         />       
-        </Button>
+        size="large"
+        aria-label={`Login with ${providerName}`}
+      >
+        <img 
+          src={imgSrc} 
+          alt={alt || `${providerName} login`}
+        />
+      </StyledIconButton>
     )
 }
 
-export const OAuth2LoginButtonContainer = ({providers}) => {
-    // { name: string, imgUrl: string, onClick: function, alt?: string }
-    return (
-       <div className="flex flex-wrap justify-center items-center gap-4 mt-4">
-        {providers.map((provider, index) => (
-            <OAuthIconButton 
-            key={provider.name || index}
-            onClick={provider.onClick}
-            imgUrl={provider.imgUrl}
-            alt={provider.alt}
-            providerName={provider.name}
-            Icon={provider.Icon}
+export const OAuth2LoginButtonContainer = ({providers = []}) => {
+    const theme = useTheme();
+    // { name: string, imgSrc: string, onClick: function, alt?: string }
+    if (!Array.isArray(providers)) {
+        console.warn('OAuth2ButtonContainer: providers prop must be an array');
+        return null;
+      }
+    
+      return (
+        <ButtonContainer>
+          {providers.map((provider, index) => (
+            <OAuthIconButton
+              key={provider.name || index}
+              onClick={provider.onClick}
+              imgSrc={provider.imgSrc}
+              alt={provider.alt}
+              providerName={provider.name}
+              Icon={provider.Icon}
             />
-        ))}
-
-        </div>     
-    )
+          ))}
+        </ButtonContainer>
+      );
 }
+
 
