@@ -29,7 +29,7 @@ import { StyledPaper, StyledButton, StyledForm, StyledAvatar, StyledButtonContai
   OAuthButtonContainer
  } from "../layout/MUI-comp/MuiStyles";
 import { handleOAuth2Success } from "../../actions/oauth2Action";
-import OAuth2ButtonContainer from "../layout/Buttons/OAuth2Buttons";
+import { OAuth2LoginButtonContainer } from "../layout/Buttons/OAuth2Buttons";
 import createOAuthProviders from "../../utils/oauthProviders";
 
 const LoginSignUp = () => {
@@ -169,7 +169,7 @@ const LoginSignUp = () => {
             <StyledDivider>or</StyledDivider>
 
             <OAuthButtonContainer>
-              <OAuth2ButtonContainer proviers={oauthProviders} />
+              <OAuth2LoginButtonContainer proviers={oauthProviders} />
             </OAuthButtonContainer>
 
           </StyledForm>

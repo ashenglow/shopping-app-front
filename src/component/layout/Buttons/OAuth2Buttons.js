@@ -32,7 +32,7 @@ const OAuthIconButton = ({ onClick, imgUrl, alt, providerName, Icon}) => {
     )
 }
 
-const OAuth2LoginButtonContainer = ({providers}) => {
+export const OAuth2LoginButtonContainer = ({providers}) => {
     // { name: string, imgUrl: string, onClick: function, alt?: string }
     return (
        <div className="flex flex-wrap justify-center items-center gap-4 mt-4">
@@ -50,4 +50,3 @@ const OAuth2LoginButtonContainer = ({providers}) => {
     )
 }
 
-export default OAuth2ButtonContainer;
