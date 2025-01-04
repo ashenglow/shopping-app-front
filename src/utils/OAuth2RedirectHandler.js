@@ -13,9 +13,9 @@ const OAuth2RedirectHandler = () => {
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        const token = params.get("token");
-        const userId = params.get("userId");
-        const userName = params.get("nickname");
+        const token = decodeURIComponent(params.get("token"));
+        const userId = decodeURIComponent(params.get("userId"));
+        const userName = decodeURIComponent(params.get("nickname"));
 
         if (token && userId) {
             dispatch(handleOAuth2Success(token, userId, userName))
