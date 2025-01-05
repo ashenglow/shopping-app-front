@@ -3,7 +3,7 @@ import "./UpdateProfile.css";
 import Loader from "../layout/Loader/Loader";
 import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import FaceIcon from "@material-ui/icons/Face";
-import CloseIcon from "@mmui/icons-material/Close";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Container, 
   Paper,
@@ -42,7 +42,7 @@ const StyledForm = styled('form')({
   width: '100%',
 });
 
-const UpdateProfile = ({ history, location }) => {
+const UpdateProfile = ({  location }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const alert = useAlert();
@@ -50,16 +50,25 @@ const UpdateProfile = ({ history, location }) => {
     (state) => state.error
   );
   const { isUpdated, loading, profile } = useSelector((state) => state.profile);
+
+  // Track which fields have been modified by the user
+  const [modifiedFields, setModifiedFields] = useState({
+    nickname: false,
+    password: false,
+    email: false,
+    address: {
+      detailAddress: false
+    }
+  });
   const [formData, setFormData] = useState({
+    userId:"",
     nickname: "",
     password: "",
     email: "",
     address: {
       zipcode: "",
-      address1: "",
-      address2: "",
-      roadAddress: "",
-      jibunAddress: "",
+      baseAddress: "",
+      detailAddress: "",
     },
   });
   const [showAddressDialog, setShowAddressDialog] = useState(false);
@@ -95,33 +104,52 @@ const UpdateProfile = ({ history, location }) => {
   }, [dispatch, alert, errorMessage, history, isUpdated]);
 
   useEffect(() => {
+    dispatch(getProfileEdit());
+  }, []);
+
+  useEffect(() => {
     if (profile) {
+      console.log('Setting form data with profile:', profile);
       setFormData({
-       ...profile,
-        password: "", // don't show existing password
+        nickname: profile.nickname || '',
+        email: profile.email || '',
+        userId: profile.userId || '',
+        password: '',
+        address: {
+          zipcode: profile.address?.zipcode || '',
+          baseAddress: profile.address?.baseAddress || '',
+          detailAddress: profile.address?.detailAddress || '',
+        }
       });
-      setAvatarPreview(profile.avatar.url);
-    } else {
-      dispatch(getProfileEdit());
     }
-  }, [profile, dispatch]);
+  }, [profile]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if( name. startsWith("address.")) {
       const addressField = name.split(".")[1];
-      setFormData({
+      setFormData(prev => ({
         ...prev,
         address: {
           ...prev.address,
           [addressField]: value,
         },
-      });
+      }));
+      setModifiedFields(prev => ({
+         ...prev, 
+         address: {
+          ...prev.address,
+          [addressField]: true
+         } }));
     } else {
       setFormData(prev => ({
         ...prev,
         [name]: value,
       }));
+      setModifiedFields(prev => ({
+        ...prev,
+        [name]: true
+      }))
     }
   };
     
@@ -133,19 +161,56 @@ const UpdateProfile = ({ history, location }) => {
           address: {
             ...prev.address,
             zipcode: data.zonecode,
-            address1: data.roadAddress || data.jibunAddress,
-            roadAddress: data.roadAddress,
-            jibunAddress: data.jibunAddress,
+            baseAddress: data.roadAddress,
+            detailAddress: prev.address.detailAddress,
           },
         }));
-        setShowAddressDialog(false);
+        setModifiedFields(prev => ({
+          ...prev,
+          address: {
+            ...prev.address,
+            zipcode: true,
+            baseAddress: true,
+          }
+        }))
       }
     }).open();
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateProfile(formData));
+
+    const updateData = {
+      userId: profile.userId,
+    }
+
+    // Only include modified fields
+    if (modifiedFields.nickname) updateData.nickname = formData.nickname || profile.nickname;
+    if (modifiedFields.email) updateData.email = formData.email || profile.email;
+    if (formData.password.trim()) updateData.password = formData.password;
+
+ // Handle address updates
+ if (formData.address.zipcode || 
+  formData.address.baseAddress || 
+  modifiedFields.address.detailAddress) {
+updateData.address = {
+  zipcode: formData.address.zipcode || profile.address.zipcode,
+  baseAddress: formData.address.baseAddress || profile.address.baseAddress,
+  detailAddress: modifiedFields.address.detailAddress 
+    ? formData.address.detailAddress 
+    : profile.address.detailAddress
+};
+}
+
+    dispatch(updateProfile(updateData));
+  }
+
+  if(loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+        <CircularProgress />
+      </Box>
+    )
   }
 
   return (
@@ -194,7 +259,7 @@ const UpdateProfile = ({ history, location }) => {
               fullWidth
               label="Zipcode"
               name="address.zipcode"
-              value={formData.address.zipcode}
+              value={formData.address?.zipcode}
               InputProps={{ readOnly: true }}
             />
             <Button 
@@ -210,8 +275,8 @@ const UpdateProfile = ({ history, location }) => {
             <TextField
               fullWidth
               label="Address"
-              name="address.address1"
-              value={formData.address.address1}
+              name="address.baseAddress"
+              value={formData.address?.baseAddress}
               InputProps={{ readOnly: true }}
             />
           </Grid>
@@ -220,9 +285,10 @@ const UpdateProfile = ({ history, location }) => {
             <TextField
               fullWidth
               label="Detailed Address"
-              name="address.address2"
-              value={formData.address.address2}
+              name="address.detailAddress"
+              value={formData.address?.detailAddress}
               onChange={handleChange}
+              placeholder="Apartment number, studio, floor, etc.(optional)" 
             />
           </Grid>
 
@@ -233,6 +299,7 @@ const UpdateProfile = ({ history, location }) => {
               variant="contained"
               color="primary"
               disabled={loading}
+              sx={{ mt: 2 }}
             >
               {loading ? <CircularProgress size={24} /> : 'Update Profile'}
             </Button>
