@@ -194,9 +194,17 @@ export const updateProfile = (userData) => async (dispatch) => {
 
     const config = { headers: { "Content-Type": "application/json" } };
 
+    const transformedData = {
+      ...userData,
+      address: {
+        zipcode: userData.address.zipcode,
+        baseAddress: userData.address.baseAddress,
+        detailAddress: userData.address.detailAddress,
+      }
+    }
     const { data } = await axiosInstance.post(
       `/api/auth/v1/member/update`,
-      JSON.stringify(userData),
+      JSON.stringify(transformedData),
       config
     );
 

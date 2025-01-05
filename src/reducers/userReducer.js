@@ -152,18 +152,7 @@ export const userReducer = (state = userInitialState, action) => {
 const profileInitialState = {
   loading: false,
   isUpdated: false,
-  profile: {
-    id: null,
-    userId: null,
-    nickname: "",
-    password: "",
-    email: "",
-    address: {
-      city: "",
-      street: "",
-      zipcode: "",
-    },
-  },
+  profile: null,
   error: null,
 };
 
@@ -186,10 +175,7 @@ export const profileReducer = (state = profileInitialState, action) => {
         ...state,
         loading: false,
         isUpdated: action.type === UPDATE_PROFILE_SUCCESS,
-        profile: {
-          ...action.payload,
-          address: action.payload.address || state.profile.address,
-        },
+        profile: action.payload,
       };
     case DELETE_USER_SUCCESS:
       return {
@@ -216,6 +202,7 @@ export const profileReducer = (state = profileInitialState, action) => {
       return {
         ...state,
         isUpdated: false,
+        error: null,
       };
 
     case DELETE_USER_RESET:
