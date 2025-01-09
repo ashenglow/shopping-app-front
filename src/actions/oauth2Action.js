@@ -4,24 +4,28 @@ import { setError } from "./errorAction";
 
 export const handleOAuth2Success = (token, userId, userName) => (dispatch) => {
     try{
-        localStorage.setItem("accessToken", token);
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("userName", userName);
-
         dispatch({ 
             type: LOGIN_SUCCESS, 
             payload:{
+                isAuthenticated: true,
+                loading: false,
                 accessToken: token,
+                userId,
+                userName,
                 role: 'USER'
             } 
         });
+
         dispatch(showNotification("Login Successful", "success" ));
         return Promise.resolve();
         
-        
     }catch(error){
+        dispatch({ 
+            type: LOGIN_FAIL, 
+            payload: error.message ||"OAuth2 login failed" });
         dispatch(setError("OAuth2 login failed", LOGIN_FAIL));
-        return Promise.reject();
+        dispatch(showNotification("OAuth2 login failed", "error" ));
+        return Promise.reject(error);
      
 }
 };
