@@ -52,6 +52,7 @@ import {
 const userInitialState = {
   user: {},
   loading: false, // Set loading to true initially
+  initialized: false, //for initialization loading
   isAuthenticated: false, // Set isAuthenticated to false initially
   role: null,
   accessToken: null,
@@ -64,80 +65,74 @@ export const userReducer = (state = userInitialState, action) => {
     case REGISTER_USER_REQUEST:
     case LOAD_USER_REQUEST:
     case REFRESH_TOKEN_REQUEST:
-      return {
-        ...state,
-        loading: true,
-        isAuthenticated: false,
-      };
     case LOGOUT_REQUEST:
       return {
         ...state,
         loading: true,
       };
+
     case LOGIN_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        isAuthenticated: true,
-        role: action.payload.role,
-        accessToken: action.payload.accessToken,
-      };
     case LOAD_USER_SUCCESS:
       return {
         ...state,
         loading: false,
+        initialized: true,
         isAuthenticated: true,
         user: action.payload,
         role: action.payload.role,
         accessToken: action.payload.accessToken,
-      };
-    case REGISTER_USER_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        isAuthenticated: true,
-      };
-    case REFRESH_TOKEN_SUCCESS:
-      return {
-        ...state,
-        user: action.payload,
-        loading: false,
-        isAuthenticated: true,
-        accessToken: action.payload.accessToken,
-        role: action.payload.role,
       };
 
-    case LOGOUT_SUCCESS:
+      case REGISTER_USER_SUCCESS:
       return {
-        ...userInitialState,
+        ...state,
+        loading: false,
+        initialized: true,
+        isAuthenticated: true,
       };
+      case REFRESH_TOKEN_SUCCESS:
+        return {
+            ...state,
+            user: action.payload,
+            loading: false,
+            isAuthenticated: true,
+            accessToken: action.payload.accessToken,
+            role: action.payload.role,
+          };  
     case LOGIN_FAIL:
+    case LOAD_USER_FAIL:  
     case REGISTER_USER_FAIL:
+          return {
+            ...state,
+            loading: false,
+            initialized: true,
+            isAuthenticated: false,
+            user: null,
+            error: action.payload,
+          };  
+       
     case REFRESH_TOKEN_FAIL:
-      return {
-        ...state,
-        loading: false,
-        isAuthenticated: false,
-        user: null,
-        error: action.payload,
-      };
+              return {
+                ...state,
+                loading: false,
+                isAuthenticated: false,
+                user: null,
+                error: action.payload,
+              };       
+    
+     case LOGOUT_SUCCESS:
+        return {
+          ...userInitialState,
+          initialized: true,
+        };
 
-    case LOAD_USER_FAIL:
-      return {
-        ...state,
-        loading: false,
-        isAuthenticated: false,
-        user: null,
-        error: action.payload,
-      };
 
-    case LOGOUT_FAIL:
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
-
+        case LOGOUT_FAIL:
+          return {
+            ...state,
+            loading: false,
+            error: action.payload,
+          };    
     case CLEAR_ERRORS:
       return {
         ...state,
