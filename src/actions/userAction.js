@@ -44,28 +44,44 @@ import {
   USER_DETAILS_FAIL,
   CLEAR_ERRORS,
 } from "../constants/userConstants";
-import axiosInstance from "../utils/axiosInstance";
-import axios from "axios";
+import { getAccessTokenFromStorage } from "../hooks/accessTokenHook";
+import axiosInstance, { clearAuthState } from "../utils/axiosInstance";
 import { setError } from "./errorAction";
 import { showNotification, hideNotification } from "./notificationAction";
+
+const handleAuthSuccess = ( dispatch, data ) => {
+  localStorage.setItem("accessToken", data.accessToken);
+  localStorage.setItem("userId", data.userId);
+  localStorage.setItem("userName", data.nickname);
+
+  dispatch({ type: LOGIN_SUCCESS, payload: data });
+  dispatch(showNotification("Login Successful", "success" ));
+}
+
+export const initializeAuth = () => async (dispatch) => {
+  const token = getAccessTokenFromStorage();
+  if(!token){
+    dispatch({ type: LOAD_USER_FAIL});
+    return;
+  }
+  try {
+    await dispatch(loadUser());
+  }catch(error){
+    clearAuthState(true);
+    dispatch({ type: LOAD_USER_FAIL});
+  }
+};
 
 // Login
 export const login = (loginform) => async (dispatch) => {
   try {
     dispatch({ type: LOGIN_REQUEST });
     const { data } = await axiosInstance.post(`/api/v1/login`, loginform);
-
-    localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("userId", data.userId);
-    localStorage.setItem("userName", data.nickname);
-
-    dispatch({ type: LOGIN_SUCCESS, payload: data });
-    dispatch(showNotification("Login Successful", "success" ));
+    handleAuthSuccess(dispatch, data);
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Login failed";
     dispatch({ type: LOGIN_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, LOGIN_FAIL));
- 
   }
 };
 
@@ -74,13 +90,7 @@ export const loginForTestAdmin = () => async (dispatch) => {
   try {
     dispatch({ type: LOGIN_REQUEST });
     const { data } = await axiosInstance.post(`/api/v1/login`, loginform);
-
-    localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("userId", data.userId);
-    localStorage.setItem("userName", data.nickname);
-
-    dispatch({ type: LOGIN_SUCCESS, payload: data });
-    dispatch(showNotification("Login Successful", "success" ));
+    handleAuthSuccess(dispatch, data);
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Login failed";
     dispatch({ type: LOGIN_FAIL, payload: errorMessage });
@@ -94,13 +104,7 @@ export const loginForTestUser = () => async (dispatch) => {
   try {
     dispatch({ type: LOGIN_REQUEST });
     const { data } = await axiosInstance.post(`/api/v1/login`, loginform);
-
-    localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("userId", data.userId);
-    localStorage.setItem("userName", data.nickname);
-
-    dispatch({ type: LOGIN_SUCCESS, payload: data });
-    dispatch(showNotification("Login Successful", "success" ));
+    handleAuthSuccess(dispatch, data);
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Login failed";
     dispatch({ type: LOGIN_FAIL, payload: errorMessage });
@@ -129,14 +133,14 @@ export const register = (userData) => async (dispatch) => {
 export const loadUser = () => async (dispatch) => {
   try {
     dispatch({ type: LOAD_USER_REQUEST });
-
     const { data } = await axiosInstance.get(`/api/auth/v1/me`);
-
     dispatch({ type: LOAD_USER_SUCCESS, payload: data });
+    return data;
   } catch (error) {
     const errorMessage =  "Error loading user";
     dispatch({ type: LOAD_USER_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, LOAD_USER_FAIL));
+    throw error;
   }
 };
 
@@ -151,20 +155,16 @@ export const refresh = () => async (dispatch) => {
        "Error refreshing token";
       dispatch({ type: REFRESH_TOKEN_FAIL, payload: errorMessage });
     dispatch(setError(errorMessage, REFRESH_TOKEN_FAIL));
+    throw error;
   }
 };
 // Logout User
 export const logout = () => async (dispatch) => {
   try {
  dispatch({ type: LOGOUT_REQUEST });
-    const { data } = await axiosInstance.post(`/api/v1/logout`);
-
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userName");
-    // Clear the axiosInstance defaults headers
-    delete axiosInstance.defaults.headers.common["Authorization"];
-    dispatch({ type: LOGOUT_SUCCESS, payload: data });
+   await axiosInstance.post(`/api/v1/logout`);
+    clearAuthState(true);
+    dispatch({ type: LOGOUT_SUCCESS });
   } catch (error) {
     dispatch({ type: LOGOUT_FAIL, payload: error.response?.data?.message || "Logout failed" });
 

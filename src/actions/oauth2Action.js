@@ -11,7 +11,7 @@ export const handleOAuth2Success = (token, userId, userName) => (dispatch) => {
                 loading: false,
                 accessToken: token,
                 userId,
-                userName,
+                nickname: userName,
                 role: 'USER'
             } 
         });

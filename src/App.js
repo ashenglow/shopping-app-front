@@ -32,10 +32,12 @@ import FlexibleNotification from "./component/layout/MUI-comp/MuiNotification/Fl
 import Loader from "./component/layout/Loader/Loader.js";
 import OrderPerformanceMetrics from "./component/Monitoring/OrderPerformanceMetrics.js";
 import OAuth2RedirectHandler from "./utils/OAuth2RedirectHandler.js";
+import { getAccessTokenFromStorage } from "./hooks/accessTokenHook.js";
+import { LOAD_USER_FAIL } from "./constants/userConstants.js";
+import { clearAuthState } from "./utils/axiosInstance.js";
 function App() {
   //test
-  const { isAuthenticated, user, loading } = useSelector((state) => state.user);
-  const [initialized, setInitialized] = useState(false);
+  const { isAuthenticated, loading, initialized } = useSelector((state) => state.user);
   const dispatch = useDispatch();
  
 
@@ -57,18 +59,21 @@ function App() {
  // Silent auth check on app load
  useEffect(() => {
   const initAuth = async () => {
-    if (localStorage.getItem('accessToken')) {
-      try {
-        await dispatch(loadUser());
-      } catch (error) {
-        console.log("Failed to load user:", error);
-      }
+    const token = getAccessTokenFromStorage();
+    if(!token){
+      dispatch({ type: LOAD_USER_FAIL })
+      return;
     }
-    setInitialized(true);
+    try {
+      await dispatch(loadUser());
+    }catch (error) {
+      clearAuthState(true);
+    }
   };
+  if (!initialized){
     initAuth();
-  
-}, [dispatch]);
+  }
+}, [dispatch, initialized]);
 
 if(!initialized){
 return <Loader/>

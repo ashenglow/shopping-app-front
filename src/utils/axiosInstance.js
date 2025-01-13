@@ -8,7 +8,6 @@ import {
 import { history } from "./history";
 import { showNotification } from "../actions/notificationAction";
 import { refresh } from "../actions/userAction";
-import { ref } from "joi";
 const baseURL = process.env.REACT_APP_API_URL;
 const frontendURL = process.env.REACT_APP_FRONTEND_URL;
 
@@ -20,25 +19,36 @@ let isRefreshing = false;
 let failedQueue = [];
 
 
-const publicEndpoints = ['/api/public/', '/v1/login', '/v1/register'];
-// Authentication-related routes that should not trigger refresh attempts
-const authRoutes = [
+// Paths that require authentication
+const AUTH_PATHS = ['/api/auth/', '/api/admin/'];
+
+// Paths that handle authentication or are public
+const UNPROTECTED_PATHS = [
   '/api/v1/login',
   '/api/v1/register',
   '/api/v1/refresh',
-  '/api/v1/logout'
+  '/api/v1/logout',
+  '/oauth2/authorization',
+  '/login/oauth2/code',
+  '/api/public/'
 ];
 
-const isPublicEndpoint = (url) => {
-  return publicEndpoints.some(endpoint => url.includes(endpoint));
+export const clearAuthState = (silent = false) => {
+  removeAccessTokenFromStorage();
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userName");
+  delete axiosInstance.defaults.headers.common["Authorization"];
+
+  if(!silent){
+    store.dispatch(showNotification("Session expired. Please log in again.", "error"));
+  }
 }
-const isAuthRoute = (url) => {
-  return authRoutes.some(route => url.includes(route));
+const isAuthRequired = (url) => {
+  return AUTH_PATHS.some((path) => url.includes(path));
 };
 
-const isAuthPage = () => {
-  const authPages = ['/login', '/register'];
-  return authPages.some(page => window.location.pathname.includes(page));
+const isUnprotectedPath = (url) => {
+  return UNPROTECTED_PATHS.some((path) => url.includes(path));
 };
 
 const processQueue = (error, token = null) => {
@@ -55,7 +65,7 @@ const processQueue = (error, token = null) => {
 axiosInstance.interceptors.request.use(
   (config) => {
     // don't add token for public endpoints
-    if(isPublicEndpoint(config.url)){
+    if(isUnprotectedPath(config.url)){
       return config;
     }
     // all other endpoints, try to add token if it exists
@@ -72,12 +82,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   //응답 데이터 처리
-  (response) => {
-    if(response.config.url.includes('/api/v1/logout')){
-      return response;
-    }
-    return response;
-  },
+  (response) => response,
   //응답 에러 처리
   async (error) => {
   
@@ -90,19 +95,17 @@ axiosInstance.interceptors.response.use(
       }
 
       // if it's a public endpoint, just return the error
-      if(isPublicEndpoint(originalRequest.url)){
-        return Promise.reject(error);
-      }
-
-      if(originalRequest.url.includes('/api/v1/logout')){
+      if(isUnprotectedPath(originalRequest.url)){
         return Promise.reject(error);
       }
 
       // don't attempt refresh for auth routes or if we're already retrying
-      if (!isAuthRoute(originalRequest.url) && 
-      error.response?.status === 401 && 
+      if (error.response?.status === 401 && 
       !originalRequest._retry) {
-        console.log("refresh token call");
+        console.log("refresh token called");
+          if(!isAuthRequired(originalRequest.url)){
+            return Promise.reject(error);
+          }
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
@@ -119,30 +122,26 @@ axiosInstance.interceptors.response.use(
         isRefreshing = true;
 
         try {
-        const response = await refresh();
+        const response = await store.dispatch(refresh());
         const { accessToken } = response.data;
 
         setAccessTokenToStorage(accessToken);
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
-
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`; 
         processQueue(null, accessToken);
+
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-
-        // handle refresh token failure - only redirect if not on auth page
-     if(refreshError.response?.status === 401 && !isAuthPage()){
-       store.dispatch(showNotification("Session expired. Please log in again.", "error"));
-       removeAccessTokenFromStorage();
-       history.push('/login');
-     }   
+        if (isAuthRequired(originalRequest.url)) {
+          history.push('/login');
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
-  
+
+        // handle refresh token failure - only redirect if not on auth page
       if (error.response.status >= 400 && error.response.status < 500) {
         store.dispatch(showNotification(error.response?.data?.message || "An error occurred", "error"));
       } else if (error.response.status >= 500) {
