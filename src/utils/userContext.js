@@ -36,7 +36,7 @@ export const UserInfoProvider = ({ children }) => {
   useEffect(() => {
    if (!loading) {
     const storedUserId = localStorage.getItem('userId');
-    const storedUserName = localStorage.getItem('userName');
+    const storedUserName = localStorage.getItem('nickname');
     setUserInfo((prevState) => ({
       ...prevState,
       id: user?.id || storedUserId ? storedUserId : null, 

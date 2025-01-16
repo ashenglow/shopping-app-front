@@ -8,6 +8,7 @@ import {
 import { history } from "./history";
 import { showNotification } from "../actions/notificationAction";
 import { refresh } from "../actions/userAction";
+import { LOAD_USER_FAIL } from "../constants/userConstants";
 const baseURL = process.env.REACT_APP_API_URL;
 const frontendURL = process.env.REACT_APP_FRONTEND_URL;
 
@@ -27,7 +28,6 @@ const UNPROTECTED_PATHS = [
   '/api/v1/login',
   '/api/v1/register',
   '/api/v1/refresh',
-  '/api/v1/logout',
   '/oauth2/authorization',
   '/login/oauth2/code',
   '/api/public/'
@@ -36,13 +36,27 @@ const UNPROTECTED_PATHS = [
 export const clearAuthState = (silent = false) => {
   removeAccessTokenFromStorage();
   localStorage.removeItem("userId");
-  localStorage.removeItem("userName");
-  delete axiosInstance.defaults.headers.common["Authorization"];
+  localStorage.removeItem("nickname");
+  delete axios.defaults.headers.common["Authorization"];
 
   if(!silent){
     store.dispatch(showNotification("Session expired. Please log in again.", "error"));
   }
 }
+
+export const validateInitialToken  = async () => {
+  const token = getAccessTokenFromStorage();
+  if(!token) return false;
+  try {
+    //try to make a request to validate the token
+    await axiosInstance.get('/api/auth/v1/me');
+    return true;
+} catch (error) {
+  clearAuthState(true);
+  return false;
+}
+}
+
 const isAuthRequired = (url) => {
   return AUTH_PATHS.some((path) => url.includes(path));
 };
@@ -62,6 +76,10 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
+const getToken = () => {
+  const token = getAccessTokenFromStorage() || store.getState().user.accessToken;
+  return token; 
+}
 axiosInstance.interceptors.request.use(
   (config) => {
     // don't add token for public endpoints
@@ -103,7 +121,14 @@ axiosInstance.interceptors.response.use(
       if (error.response?.status === 401 && 
       !originalRequest._retry) {
         console.log("refresh token called");
+        // Clear auth state immediately for invalid tokens
+      if (error.response?.data?.message?.includes("Invalid token") || 
+      error.response?.data?.message?.includes("Token is expired")) {
+    clearAuthState(true);
+    return Promise.reject(error);
+  }
           if(!isAuthRequired(originalRequest.url)){
+            clearAuthState(true);
             return Promise.reject(error);
           }
         if (isRefreshing) {
@@ -127,6 +152,7 @@ axiosInstance.interceptors.response.use(
 
         setAccessTokenToStorage(accessToken);
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`; 
+        originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
         processQueue(null, accessToken);
 
         return axiosInstance(originalRequest);

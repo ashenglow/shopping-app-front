@@ -52,7 +52,7 @@ import { showNotification, hideNotification } from "./notificationAction";
 const handleAuthSuccess = ( dispatch, data ) => {
   localStorage.setItem("accessToken", data.accessToken);
   localStorage.setItem("userId", data.userId);
-  localStorage.setItem("userName", data.nickname);
+  localStorage.setItem("nickname", data.nickname);
 
   dispatch({ type: LOGIN_SUCCESS, payload: data });
   dispatch(showNotification("Login Successful", "success" ));
