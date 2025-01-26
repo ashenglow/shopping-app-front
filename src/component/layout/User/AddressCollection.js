@@ -75,8 +75,6 @@ const handleSubmit =  (e) => {
         .catch((error) => {
             console.error("Failed to update address", error)
         });
-        
-   
 }
 
 

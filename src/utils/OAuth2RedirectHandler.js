@@ -40,30 +40,16 @@ const StyledAlert = styled(Alert)(({ theme }) => ({
 const OAuth2RedirectHandler = () => {
     const dispatch = useDispatch();
     const history = useHistory();
-    const location = useLocation();
     const [alertOpen, setAlertOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const [showAddressForm, setShowAddressForm] = useState(false);
-    const [oAuth2UserData, setOAuth2UserData] = useState(null);
 
-   const onAddressSubmitted = async () => {
-    if(!oAuth2UserData) return;
-try {
-  await dispatch(handleOAuth2Success(oAuth2UserData));
-  history.push('/');
-} catch (error) {
-  setAlertMessage("Failed to complete registration")
-  setAlertOpen(true);
-}
-  };
     useEffect(() => {
       const params = new URLSearchParams(window.location.search);
       const errorType = params.get("errorType");
       const token = params.get("token") ? decodeURIComponent(params.get("token")) : null;
       const userId = params.get("userId") ? decodeURIComponent(params.get("userId")) : null;
       const nickname = params.get("nickname") ? decodeURIComponent(params.get("nickname")) : null;
-      const isNewUser = params.get("isNewUser") === "true";
 
         if(errorType){
             setAlertMessage(OAUTH2_ERROR_MESSAGES[errorType] || OAUTH2_ERROR_MESSAGES.GENERIC_ERROR);
@@ -84,14 +70,7 @@ try {
          localStorage.setItem("userId", userId);
           localStorage.setItem("nickname", nickname);
 
-        if(isNewUser){
-          setOAuth2UserData({
-            accessToken: token, userId, nickname
-          });
-          setShowAddressForm(true);
-          setIsLoading(false);
-          
-        }else {
+       
          dispatch(handleOAuth2Success({
           accessToken: token,
                 userId,
@@ -106,7 +85,7 @@ try {
          .finally(() => {
            setIsLoading(false);
          });
-        }
+        
    
    }, [dispatch, history]);
 
@@ -115,12 +94,7 @@ try {
         setAlertOpen(false);
     };
 
-    if (showAddressForm && oAuth2UserData) {
-      return <AddressCollection
-      oAuthUserData={oAuth2UserData}
-      onSubmitComplete={onAddressSubmitted}
-       />;
-    }
+    
     return (
        <>
     {isLoading && (
