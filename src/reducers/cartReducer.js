@@ -19,12 +19,15 @@ import {
   CLEAR_CART_FAILURE,
   SELECT_ALL_CART_ITEMS,
   UNSELECT_ALL_CART_ITEMS,
+
 } from "../constants/cartConstants";
 const initialState = {
   cartItems: [],
-  delivery: {},
-  updatingItems: {},
+  selectedItems: [], // Added for checkout process
+  shippingAddress: null,
   loading: false,
+  error: null,
+  updatingItems: {}
 };
 export const cartReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -87,25 +90,6 @@ export const cartReducer = (state = initialState, action) => {
         error: action.payload,
       };
 
-    case SAVE_SHIPPING_INFO_REQUEST:
-      return {
-        ...state,
-        loading: true,
-      };
-    case SAVE_SHIPPING_INFO_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        delivery: action.payload,
-      };
-
-    case SAVE_SHIPPING_INFO_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
-
     case UPDATE_CART_ITEM_OPTIMISTIC:
       //action.payload is updatedItem from frontend
       return {
@@ -150,9 +134,8 @@ export const cartReducer = (state = initialState, action) => {
         },
         error: action.payload.error,
       };
-
-    default:
-      return state;
+    
+   
       case CLEAR_CART_REQUEST:
         return {
           ...state,
@@ -160,9 +143,7 @@ export const cartReducer = (state = initialState, action) => {
         };
       case CLEAR_CART_SUCCESS:
         return {
-          ...state,
-          loading: false,
-          cartItems: []
+          ...initialState
         };
       case CLEAR_CART_FAILURE:
         return {
@@ -179,6 +160,9 @@ export const cartReducer = (state = initialState, action) => {
         return {
           ...state,
           selectedItems: [],
-        };
+        };  
+    default:
+      return state;
+      
   }
 };

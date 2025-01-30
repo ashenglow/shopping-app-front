@@ -12,7 +12,7 @@ const ReviewCard = ({ review }) => {
   return (
     <div className="reviewCard">
       <img src={reviewUserImg} alt="User" />
-      <p>{review.username}</p>
+      <p>{review.nickname}</p>
       <Rating {...options} />
       <span className="reviewCardComment">{review.comment}</span>
     </div>

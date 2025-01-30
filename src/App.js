@@ -10,8 +10,7 @@ import ProductDetails from "./component/Product/ProductDetails";
 import Products from "./component/Product/Products";
 import Search from "./component/Product/Search";
 import LoginSignUp from "./component/User/LoginSignUp";
-import cd from "./store";
-import { loadUser } from "./actions/userAction";
+import { initializeAuth, loadUser } from "./actions/userAction";
 import { useSelector, useDispatch } from "react-redux";
 import Profile from "./component/User/Profile";
 import ProtectedRoute from "./component/Route/ProtectedRoute";
@@ -35,12 +34,42 @@ import OAuth2RedirectHandler from "./utils/OAuth2RedirectHandler.js";
 import { getAccessTokenFromStorage } from "./hooks/accessTokenHook.js";
 import { LOAD_USER_FAIL } from "./constants/userConstants.js";
 import { clearAuthState } from "./utils/axiosInstance.js";
+import { validateInitialToken } from "./utils/axiosInstance.js";
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min.js";
+
+// Define public routes
+const PUBLIC_ROUTES = [
+  { path: "/", component: Home },
+  { path: "/products", component: Products },
+  { path: "/product/:id", component: ProductDetails },
+  { path: "/search", component: Search },
+  { path: "/contact", component: Contact },
+  { path: "/about", component: About },
+  { path: "/login", component: LoginSignUp },
+  { path: "/oauth2/callback", component: OAuth2RedirectHandler },
+  { path: "/api-docs", component: SwaggerDocs },
+];
+
+// Define protected routes
+const PROTECTED_ROUTES = [
+  { path: "/cart", component: Cart },
+  { path: "/account", component: Profile },
+  { path: "/member/update", component: UpdateProfile },
+  { path: "/shipping", component: Shipping },
+  { path: "/success", component: OrderSuccess },
+  { path: "/orders", component: MyOrders },
+  { path: "/order/confirm", component: ConfirmOrder },
+  { path: "/order/:id", component: OrderDetails },
+];
+
+
 function App() {
   //test
   const { isAuthenticated, loading, initialized } = useSelector((state) => state.user);
   const dispatch = useDispatch();
- 
-
+  const location = useLocation();
+ const [isValidatingToken, setIsValidatingToken] = useState(true);
+const isPublicRoute = PUBLIC_ROUTES.some((route) => route.path === location.pathname);
   useEffect(() => {
     WebFont.load({
       google: {
@@ -57,27 +86,13 @@ function App() {
     });
   }, []);
  // Silent auth check on app load
- useEffect(() => {
-  const initAuth = async () => {
-    const token = getAccessTokenFromStorage();
-    if(!token){
-      dispatch({ type: LOAD_USER_FAIL })
-      return;
-    }
-    try {
-      await dispatch(loadUser());
-    }catch (error) {
-      clearAuthState(true);
-    }
-  };
-  if (!initialized){
-    initAuth();
+useEffect(() => {
+  if(!initialized){
+    dispatch(initializeAuth());
   }
-}, [dispatch, initialized]);
+}, [initialized, dispatch]);
 
-if(!initialized){
-return <Loader/>
-}
+
 
   window.addEventListener("contextmenu", (e) => e.preventDefault());
 
@@ -91,23 +106,30 @@ return <Loader/>
           component={OrderPerformanceMetrics} 
         />
         {/* API Docs Route */}
-        <Route exact path="/api-docs">
-          <SwaggerDocs />
-        </Route>
+        <Route exact path="/api-docs" component={SwaggerDocs} />
+         
 
         {/* All other routes */}
         <Route>
           <>
 
-              <Header initialized={initialized} />   
+              <Header/>   
             <Switch>
             {/* Public Routes */}
-        <Route exact path="/" component={Home} />
-        <Route exact path="/products" component={Products} />
-        <Route exact path="/product/:id" component={ProductDetails} />
-        <Route exact path="/search" component={Search} />
-        <Route exact path="/contact" component={Contact} />
-        <Route exact path="/about" component={About} />
+            {PUBLIC_ROUTES.map(({ path, component: Component }) => (
+                <Route 
+                  exact 
+                  key={path} 
+                  path={path} 
+                  render={(props) => 
+                    path === "/login" && isAuthenticated ? (
+                      <Redirect to="/" />
+                    ) : (
+                      <Component {...props} />
+                    )
+                  }
+                />
+              ))}
         
         {/* Auth Routes */}
         <Route path="/oauth2/callback" component={OAuth2RedirectHandler} />
@@ -119,30 +141,36 @@ return <Loader/>
           }
         />
 
-        {/* Protected Routes */}
-        <ProtectedRoute path="/cart" component={Cart} />
-        <ProtectedRoute path="/account" component={Profile} />
-        <ProtectedRoute path="/member/update" component={UpdateProfile} />
-        <ProtectedRoute path="/shipping" component={Shipping} />
-        <ProtectedRoute path="/success" component={OrderSuccess} />
-        <ProtectedRoute path="/orders" component={MyOrders} />
-        <ProtectedRoute path="/order/confirm" component={ConfirmOrder} />
-        <ProtectedRoute path="/order/:id" component={OrderDetails} />
-        <Route component={NotFound} />
-
-              <Route
-                component={
-                  window.location.pathname === "/process/payment"
-                    ? null
-                    : NotFound
-                }
-              />
-              <Redirect to="/" />
+        {/* Protected Routes - Only accessible when authenticated */}
+        {PROTECTED_ROUTES.map(({ path, component: Component }) => (
+                <Route
+                  exact
+                  key={path}
+                  path={path}
+                  render={(props) =>
+                    !isAuthenticated ? (
+                      <Redirect
+                        to={{
+                          pathname: "/login",
+                          state: { from: props.location }
+                        }}
+                      />
+                    ) : isValidatingToken || loading ? (
+                      <Loader />
+                    ) : (
+                      <Component {...props} />
+                    )
+                  }
+                />
+              ))}
+              {/* Fallback route */}
+              <Route component={NotFound} />
             </Switch>
 
           </>
         </Route>
       </Switch>
+        {/* Render Footer except for login page */}
       <Route render={({location}) => {return location.pathname !== '/login' && <Footer />}} />
 <FlexibleNotification />
     </Router>

@@ -8,6 +8,7 @@ import {
   updateCartItem,
   clearCart,
 } from "../../actions/cartAction";
+import { initiateCheckout } from "../../actions/checkoutAction";
 import { Typography } from "@material-ui/core";
 import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
 import { Link } from "react-router-dom";
@@ -60,7 +61,7 @@ const Cart = ({ history }) => {
   };
 
   const deleteCartItems = (itemId) => {
-    dispatch(removeItemsFromCart(itemId));
+    dispatch(removeItemsFromCart([itemId]));
   };
 
   const checkoutHandler = () => {
@@ -69,16 +70,13 @@ const Cart = ({ history }) => {
     }
     const selectedItemsData = selectedItems.map((item) => ({
       itemId: item.id,
-      itemName: item.name,
+      name: item.name,
       count: item.count,
-      stockQuantity: item.stockQuantity,
-      image: item.images[0].url,
+      thumbnailUrl: item.images[0].url,
       price: item.price,
     }));
-    history.push({
-      pathname: "/order/confirm",
-      state: { selectedItems: selectedItemsData},
-    });
+    dispatch(initiateCheckout(selectedItemsData));
+    history.push("/shipping")
   };
 
   const handleItemSelection = (item) => {

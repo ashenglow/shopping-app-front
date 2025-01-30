@@ -52,7 +52,7 @@ import { showNotification, hideNotification } from "./notificationAction";
 const handleAuthSuccess = ( dispatch, data ) => {
   localStorage.setItem("accessToken", data.accessToken);
   localStorage.setItem("userId", data.userId);
-  localStorage.setItem("userName", data.nickname);
+  localStorage.setItem("nickname", data.nickname);
 
   dispatch({ type: LOGIN_SUCCESS, payload: data });
   dispatch(showNotification("Login Successful", "success" ));
@@ -137,9 +137,7 @@ export const loadUser = () => async (dispatch) => {
     dispatch({ type: LOAD_USER_SUCCESS, payload: data });
     return data;
   } catch (error) {
-    const errorMessage =  "Error loading user";
-    dispatch({ type: LOAD_USER_FAIL, payload: errorMessage });
-    dispatch(setError(errorMessage, LOAD_USER_FAIL));
+    dispatch({ type: LOAD_USER_FAIL });
     throw error;
   }
 };
@@ -151,10 +149,8 @@ export const refresh = () => async (dispatch) => {
     localStorage.setItem("accessToken", data.accessToken);
     dispatch({ type: REFRESH_TOKEN_SUCCESS, payload: data });
   } catch (error) {
-    const errorMessage =
-       "Error refreshing token";
-      dispatch({ type: REFRESH_TOKEN_FAIL, payload: errorMessage });
-    dispatch(setError(errorMessage, REFRESH_TOKEN_FAIL));
+
+      dispatch({ type: REFRESH_TOKEN_FAIL });
     throw error;
   }
 };

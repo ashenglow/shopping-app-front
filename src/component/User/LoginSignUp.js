@@ -67,7 +67,10 @@ const LoginSignUp = () => {
     nickname: '',
     password: '',
     email: '',
-    address: { city: '', street: '', zipcode: '' }
+    address: { 
+      zipcode: '', 
+      baseAddress: '', 
+      detailAddress: '' }
   });
   const oauthProviders = createOAuthProviders(handleOAuth2Login);
  
@@ -113,7 +116,35 @@ const LoginSignUp = () => {
     }
   };
 
+// Add useEffect for loading Daum Postcode script
+useEffect(() => {
+  const script = document.createElement('script');
+  script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+  script.async = true;
+  document.body.appendChild(script);
 
+  return () => {
+    document.body.removeChild(script);
+  };
+}, []);
+
+
+// Add handleAddressSearch function
+const handleAddressSearch = () => {
+  new window.daum.Postcode({
+    oncomplete: (data) => {
+      setRegisterUser(prev => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          zipcode: data.zonecode,
+          baseAddress: data.roadAddress,
+          detailAddress: prev.address.detailAddress,
+        }
+      }));
+    }
+  }).open();
+};
   return (
     <Container component="main" maxWidth="xs">
       <StyledPaper elevation={3}>
@@ -231,35 +262,45 @@ const LoginSignUp = () => {
             />
             
             <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="address.city"
-              label="City"
-              value={registerUser.address.city}
-              onChange={handleRegisterChange}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="address.street"
-              label="Street"
-              value={registerUser.address.street}
-              onChange={handleRegisterChange}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="address.zipcode"
-              label="Zipcode"
-              value={registerUser.address.zipcode}
-              onChange={handleRegisterChange}
-            />
+      variant="outlined"
+      margin="normal"
+      required
+      fullWidth
+      name="address.zipcode"
+      label="Zipcode"
+      value={registerUser.address.zipcode}
+      InputProps={{ readOnly: true }}
+    />
+    <Button 
+      variant="outlined" 
+      onClick={handleAddressSearch}
+      sx={{ mt: 1, mb: 2 }}
+    >
+      Search Address
+    </Button>
+
+    <TextField
+      variant="outlined"
+      margin="normal"
+      required
+      fullWidth
+      name="address.baseAddress"
+      label="Address"
+      value={registerUser.address.baseAddress}
+      InputProps={{ readOnly: true }}
+    />
+
+    <TextField
+      variant="outlined"
+      margin="normal"
+      fullWidth
+      name="address.detailAddress"
+      label="Detailed Address"
+      value={registerUser.address.detailAddress}
+      onChange={handleRegisterChange}
+      placeholder="Apartment number, studio, floor, etc.(optional)"
+    />
+
             <StyledButton
               type="submit"
               fullWidth

@@ -70,7 +70,7 @@ const ProductDetails = ({ match }) => {
   const reviewSubmitHandler = useCallback(() => {
     const formData = {
       userId: null,
-      username: "",
+      nickname: "",
       rating,
       comment,
       productId: match.params.id,

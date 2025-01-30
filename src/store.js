@@ -31,6 +31,7 @@ import authReducer from "./reducers/authReducer";
 import { errorReducer } from "./reducers/errorReducer";
 import { paymentReducer } from "./reducers/paymentReducer";
 import { notificationReducer } from "./reducers/notificationReducer";
+import { checkoutReducer } from "./reducers/checkoutReducer";
 
 const reducer = combineReducers({
   products: productsReducer,
@@ -55,7 +56,7 @@ const reducer = combineReducers({
   payment: paymentReducer,
   auth: authReducer,
   notification: notificationReducer,
-
+  checkout: checkoutReducer,
 });
 
 let initialState = {
