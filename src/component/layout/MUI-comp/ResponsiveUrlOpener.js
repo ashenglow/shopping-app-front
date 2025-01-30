@@ -1,6 +1,5 @@
 import React from "react";
 import useResponsiveDesign from "../../../hooks/useResponsiveDesign";
-import { is } from "core-js/core/object";
 
 const ResponsiveUrlOpener = ({ urls, onOpen, 
     windowFeatures = 'width=800,height=600', children }) => {

@@ -33,6 +33,8 @@ const UNPROTECTED_PATHS = [
   '/api/public/'
 ];
 
+
+
 export const clearAuthState = (silent = false) => {
   removeAccessTokenFromStorage();
   localStorage.removeItem("userId");
@@ -65,6 +67,19 @@ const isUnprotectedPath = (url) => {
   return UNPROTECTED_PATHS.some((path) => url.includes(path));
 };
 
+// Check if current path is public
+const isPublicPath = () => {
+  const publicPaths = ['/products', '/product', '/search', '/contact', '/about', '/login', '/oauth2/callback', '/api-docs'];
+  const pathname = window.location.pathname;
+  
+  // Exact match for root path
+  if (pathname === '/') return true;
+  
+  // For other paths, check if it starts with the path and is followed by end or /
+  return publicPaths.some(path => pathname.startsWith(path + '/') || pathname === path);
+};
+
+
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
@@ -83,14 +98,13 @@ const getToken = () => {
 axiosInstance.interceptors.request.use(
   (config) => {
     // don't add token for public endpoints
-    if(isUnprotectedPath(config.url)){
-      return config;
-    }
     // all other endpoints, try to add token if it exists
-   const accessToken = getAccessTokenFromStorage();
+    if(!isUnprotectedPath(config.url)){
+      const accessToken = getAccessTokenFromStorage();
       if (accessToken) {
         config.headers["Authorization"] = `Bearer ${accessToken}`;
       }
+    }
     return config;
   },
   (error) => {
@@ -105,10 +119,13 @@ axiosInstance.interceptors.response.use(
   async (error) => {
   
       const originalRequest = error.config;
+      const isPublic = isPublicPath();
 
       // Handle network errors
       if (!error.response) {
-        store.dispatch(showNotification("Network Error. Please check your network.", "error" ));
+        if(!isPublic){
+          store.dispatch(showNotification("Network Error. Please check your network.", "error" ));  
+        }
         return Promise.reject(error);
       }
 
@@ -121,16 +138,20 @@ axiosInstance.interceptors.response.use(
       if (error.response?.status === 401 && 
       !originalRequest._retry) {
         console.log("refresh token called");
+        const isTokenError = error.response?.data?.message?.includes("Invalid token") || 
+                          error.response?.data?.message?.includes("Token is expired");
         // Clear auth state immediately for invalid tokens
-      if (error.response?.data?.message?.includes("Invalid token") || 
-      error.response?.data?.message?.includes("Token is expired")) {
+      if (isTokenError) {
     clearAuthState(true);
+    store.dispatch({ type: LOAD_USER_FAIL });
+     
+    if(!isPublic){
+      history.push('/login');
+      store.dispatch(showNotification("Session expired. Please log in again.", "error"));
+    }
     return Promise.reject(error);
   }
-          if(!isAuthRequired(originalRequest.url)){
-            clearAuthState(true);
-            return Promise.reject(error);
-          }
+        
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
@@ -158,8 +179,12 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-        if (isAuthRequired(originalRequest.url)) {
+        clearAuthState(true);
+        store.dispatch({ type: LOAD_USER_FAIL });
+
+        if (!isPublic) {
           history.push('/login');
+          store.dispatch(showNotification("Session expired. Please log in again.", "error"));
         }
         return Promise.reject(refreshError);
       } finally {
@@ -168,11 +193,9 @@ axiosInstance.interceptors.response.use(
     }
 
         // handle refresh token failure - only redirect if not on auth page
-      if (error.response.status >= 400 && error.response.status < 500) {
+      if (error.response.status >= 400 && !isPublic) {
         store.dispatch(showNotification(error.response?.data?.message || "An error occurred", "error"));
-      } else if (error.response.status >= 500) {
-        store.dispatch(showNotification("Server error. Please try again later.", "error"));
-      }
+      } 
 
       return Promise.reject(error);
     } 

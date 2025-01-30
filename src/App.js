@@ -10,8 +10,7 @@ import ProductDetails from "./component/Product/ProductDetails";
 import Products from "./component/Product/Products";
 import Search from "./component/Product/Search";
 import LoginSignUp from "./component/User/LoginSignUp";
-import cd from "./store";
-import { loadUser } from "./actions/userAction";
+import { initializeAuth, loadUser } from "./actions/userAction";
 import { useSelector, useDispatch } from "react-redux";
 import Profile from "./component/User/Profile";
 import ProtectedRoute from "./component/Route/ProtectedRoute";
@@ -36,6 +35,7 @@ import { getAccessTokenFromStorage } from "./hooks/accessTokenHook.js";
 import { LOAD_USER_FAIL } from "./constants/userConstants.js";
 import { clearAuthState } from "./utils/axiosInstance.js";
 import { validateInitialToken } from "./utils/axiosInstance.js";
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min.js";
 
 // Define public routes
 const PUBLIC_ROUTES = [
@@ -67,8 +67,9 @@ function App() {
   //test
   const { isAuthenticated, loading, initialized } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const location = useLocation();
  const [isValidatingToken, setIsValidatingToken] = useState(true);
-
+const isPublicRoute = PUBLIC_ROUTES.some((route) => route.path === location.pathname);
   useEffect(() => {
     WebFont.load({
       google: {
@@ -85,27 +86,11 @@ function App() {
     });
   }, []);
  // Silent auth check on app load
- useEffect(() => {
-  const initAuth = async () => {
-    try {
-    const isTokenValid = await validateInitialToken();
-    if(isTokenValid){
-      await dispatch(loadUser());
-    }else {
-      dispatch({ type: LOAD_USER_FAIL });
-      return;
-    }
-  }catch(error){
-    console.error('Auth initialization failed:', error);
-    clearAuthState(true);
-  }finally{
-    setIsValidatingToken(false);
+useEffect(() => {
+  if(!initialized){
+    dispatch(initializeAuth());
   }
-  };
-  if (!initialized){
-    initAuth();
-  }
-}, [dispatch, initialized]);
+}, [initialized, dispatch]);
 
 
 
@@ -128,7 +113,7 @@ function App() {
         <Route>
           <>
 
-              <Header initialized={initialized} />   
+              <Header/>   
             <Switch>
             {/* Public Routes */}
             {PUBLIC_ROUTES.map(({ path, component: Component }) => (
