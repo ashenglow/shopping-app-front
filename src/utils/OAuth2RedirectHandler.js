@@ -6,8 +6,11 @@ import { Styledcontainer } from "../component/layout/MUI-comp/MuiStyles";
 import { handleOAuth2Success } from "../actions/oauth2Action";
 import { showNotification } from "../actions/notificationAction";
 import { OAUTH2_ERROR_MESSAGES } from "../constants/oAuth2ErrorConstants";
-import LoginSignUp from "../component/User/LoginSignUp";
+import AddressCollection from "../component/layout/User/AddressCollection";
 import { styled } from '@mui/material/styles';
+import { setError } from "../actions/errorAction";
+
+
 
 const StyledAlert = styled(Alert)(({ theme }) => ({
     position: 'fixed',
@@ -37,17 +40,16 @@ const StyledAlert = styled(Alert)(({ theme }) => ({
 const OAuth2RedirectHandler = () => {
     const dispatch = useDispatch();
     const history = useHistory();
-    const location = useLocation();
     const [alertOpen, setAlertOpen] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const errorType = params.get("errorType");
-        const encodedToken = params.get("token");
-        const encodedUserId = params.get("userId");
-        const encodedUserName = params.get("nickname");
+      const params = new URLSearchParams(window.location.search);
+      const errorType = params.get("errorType");
+      const token = params.get("token") ? decodeURIComponent(params.get("token")) : null;
+      const userId = params.get("userId") ? decodeURIComponent(params.get("userId")) : null;
+      const nickname = params.get("nickname") ? decodeURIComponent(params.get("nickname")) : null;
 
         if(errorType){
             setAlertMessage(OAUTH2_ERROR_MESSAGES[errorType] || OAUTH2_ERROR_MESSAGES.GENERIC_ERROR);
@@ -55,42 +57,46 @@ const OAuth2RedirectHandler = () => {
             setIsLoading(false);
             return;
         }
-        
-        const token = encodedToken ? decodeURIComponent(encodedToken) : null;
-        const userId = encodedUserId ? decodeURIComponent(encodedUserId) : null;
-        const userName = encodedUserName ? decodeURIComponent(encodedUserName) : null;
+
+        if(!token || !userId){
+          setAlertMessage("Login failed. Required information is missing.");
+          setAlertOpen(true);
+          setIsLoading(false);
+          return;
+        }
+
+         // Store token immediately for subsequent requests
+         localStorage.setItem("accessToken", token);
+         localStorage.setItem("userId", userId);
+          localStorage.setItem("nickname", nickname);
 
        
-        if (token && userId) {
-        localStorage.setItem("accessToken", token);
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("userName", userName);
+         dispatch(handleOAuth2Success({
+          accessToken: token,
+                userId,
+                nickname
+         }))
+         .then(() => {
+          history.push("/")})
+         .catch((error) => {
+           setAlertMessage("OAuth2 login failed.")
+           setAlertOpen(true);
+         })
+         .finally(() => {
+           setIsLoading(false);
+         });
+        
+   
+   }, [dispatch, history]);
 
-            dispatch(handleOAuth2Success(token, userId, userName))
-                .then(() => {
-                    history.replace("/");
-                    
-                })
-                .catch(() => {
-                    setAlertMessage(OAUTH2_ERROR_MESSAGES.GENERIC_ERROR);
-                    setAlertOpen(true);
-                })
-                .finally(() => {
-                    setIsLoading(false);
-                });
-        } else {
-            setAlertMessage("Login failed. Required information is missing.");
-            setAlertOpen(true);
-            setIsLoading(false);
-        }
-    }, [dispatch, history, location]);
-
+  
     const handleCloseAlert = () => {
         setAlertOpen(false);
     };
+
+    
     return (
        <>
-    <LoginSignUp /> 
     {isLoading && (
       <LoadingOverlay>
         <CircularProgress />
@@ -105,5 +111,6 @@ const OAuth2RedirectHandler = () => {
     
                 );
 }
+
 
 export default OAuth2RedirectHandler;

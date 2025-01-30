@@ -11,29 +11,29 @@ const ProtectedRoute = ({
   axiosInstance,
   ...rest
 }) => {
-  const { isAuthenticated, loading} = useSelector(
+  const { isAuthenticated, loading, initialized} = useSelector(
     (state) => state.user
   );
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    // Attempt refresh if we have a token but aren't authenticated
-    const attemptRefresh = async () => {
-      if (!isAuthenticated && !loading && !refreshing && localStorage.getItem('accessToken')) {
-        setRefreshing(true);
-        try {
-          await dispatch(refresh());
-        } catch (error) {
-          console.log("Refresh failed:", error);
-          localStorage.removeItem("accessToken");
-        } finally {
-          setRefreshing(false);
-        }
-      }
-    };
-  attemptRefresh();
-}, [dispatch, isAuthenticated, loading, refreshing]);
+//   useEffect(() => {
+//     // Attempt refresh if we have a token but aren't authenticated
+//     const attemptRefresh = async () => {
+//       if (!isAuthenticated && !loading && !refreshing && localStorage.getItem('accessToken')) {
+//         setRefreshing(true);
+//         try {
+//           await dispatch(refresh());
+//         } catch (error) {
+//           console.log("Refresh failed:", error);
+//           localStorage.removeItem("accessToken");
+//         } finally {
+//           setRefreshing(false);
+//         }
+//       }
+//     };
+//   attemptRefresh();
+// }, [dispatch, isAuthenticated, loading, refreshing]);
 
 
 
@@ -43,7 +43,7 @@ const ProtectedRoute = ({
       {...rest}
       render={(props) => {
         // Show loader while checking auth or refreshing token
-        if (loading || refreshing) {
+        if (!initialized || loading) {
           return <Loader />;
         }
 

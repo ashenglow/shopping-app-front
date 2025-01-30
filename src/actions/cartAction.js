@@ -18,7 +18,7 @@ import {
   CLEAR_CART_SUCCESS,
   CLEAR_CART_FAILURE,
   SELECT_ALL_CART_ITEMS,
-  UNSELECT_ALL_CART_ITEMS
+  UNSELECT_ALL_CART_ITEMS,
 } from "../constants/cartConstants";
 import axiosInstance from "../utils/axiosInstance";
 import { setError } from "./errorAction";
@@ -80,19 +80,6 @@ export const removeItemsFromCart = (itemIds) => async (dispatch) => {
   }
 };
 
-// SAVE SHIPPING INFO
-export const saveShippingInfo = (data) => async (dispatch) => {
-  dispatch({ type: SAVE_SHIPPING_INFO_REQUEST });
-  try {
-    dispatch({
-      type: SAVE_SHIPPING_INFO_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || "Error saving info";
-    dispatch(setError(errorMessage, SAVE_SHIPPING_INFO_FAILURE));
-  }
-};
 
 // UPDATE CART ITEM
 export const updateCartItem =

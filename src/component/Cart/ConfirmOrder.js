@@ -5,7 +5,7 @@ import CheckoutSteps from "../Cart/CheckoutSteps";
 import { useSelector } from "react-redux";
 import MetaData from "../layout/MetaData";
 import { Link } from "react-router-dom";
-import { Typography } from "@material-ui/core";
+import { Typography, Box, Grid, Button } from "@mui/material";
 import { createOrder, clearOrderState } from "../../actions/orderAction";
 import { useDispatch } from "react-redux";
 import { useAlert } from "react-alert";
@@ -18,30 +18,34 @@ import {
 } from "../../actions/paymentAction";
 import PaymentPopup from "../layout/PaymentPopup/PaymentPopup";
 import { clearCart } from "../../actions/cartAction";
+import { resetCheckout } from "../../actions/checkoutAction";
 
 const ConfirmOrder = () => {
+  const { selectedItems, shippingAddress } = useSelector((state) => state.checkout);
   const { loading: orderLoading, error: orderError,isUpdated, orderId } = useSelector((state) => state.newOrder);
   const { loading: paymentLoading, error: paymentError, paymentUrls, paymentResult } = useSelector(
     (state) => state.payment
   );
+
   const dispatch = useDispatch();
   const alert = useAlert();
   const history = useHistory();
-  const location = useLocation();
-  const { selectedItems} = location.state || {};
-  const orderItems = selectedItems.map((item) => ({
-    itemId: item.itemId,
-    count: item.count,
-    price: item.price,
-  }));
+  
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
   const [isPaymentInitiated, setIsPaymentInitiated] = useState(false);
-  const [isOrderCreated, setIsOrderCreated] = useState(false);
+
   const subtotal = selectedItems.reduce(
     (acc, item) => acc + item.count * item.price,
     0
   );
-
+useEffect(() => {
+    if (!selectedItems?.length) {
+      history.push("/cart");
+    }
+    if(!shippingAddress){
+      history.push("/shipping")
+    }
+  }, [selectedItems, shippingAddress, history]);
   // const shippingCharges = subtotal > 1000 ? 0 : 200;
 
   // const tax = subtotal * 0.18;
@@ -64,18 +68,15 @@ const ConfirmOrder = () => {
           : selectedItems[0].itemId,
       itemName:
         selectedItems.length > 1
-          ? `${selectedItems[0].itemName}외 ${selectedItems.length - 1}건`
-          : selectedItems[0].itemName,
+          ? `${selectedItems[0].name}외 ${selectedItems.length - 1}건`
+          : selectedItems[0].name,
       quantity: selectedItems.reduce((acc, item) => acc + item.count, 0),
-      totalAmount: selectedItems.reduce(
-        (acc, item) => acc + item.price * item.count,
-        0
-      ),
+      totalAmount: subtotal,
     };
     dispatch(initiatePayment(paymentInfo));
     setIsPaymentInitiated(true);
     setShowPaymentPopup(true);
-  }, [dispatch, selectedItems, isPaymentInitiated]);
+  }, [dispatch, selectedItems, subtotal,isPaymentInitiated]);
 
   const handlePaymentApproval = useCallback(
     (approvalUrl) => {
@@ -100,26 +101,25 @@ const ConfirmOrder = () => {
 
 
   useEffect(() => {
-    if (paymentResult ) {
-      const orderItems = selectedItems.map((item) => ({
-        itemId: item.itemId,
-        count: item.count,
-        price: item.price,
-      }));
-      dispatch(createOrder(orderItems));
-
-    }
-  }, [paymentResult, dispatch, selectedItems ]);
+    if ( paymentResult ) {
+      const orderData = {
+        orderItems: selectedItems,
+        shippingAddress,
+      }
+      dispatch(createOrder(orderData));
+      } 
+  }, [paymentResult, dispatch, selectedItems, shippingAddress]); 
 
   useEffect(() => {
     if (isUpdated && orderId) {
       alert.success("Order created successfully");
       setShowPaymentPopup(false);
+      dispatch(resetCheckout());
       dispatch(clearCart());
-      history.push(`/order/${orderId}`);
       dispatch(clearPaymentState());
       dispatch(clearOrderState());
       localStorage.removeItem("transactionId");
+      history.push(`/order/${orderId}`);
     }
   }, [isUpdated, history, orderId, alert, dispatch]);
 
@@ -145,81 +145,66 @@ const ConfirmOrder = () => {
         <Fragment>
           <MetaData title="Confirm Order" />
           <CheckoutSteps activeStep={1} />
-          <div className="confirmOrderPage">
-            <div>
-              <div className="confirmshippingArea">
-                <Typography>Shipping Info</Typography>
-                <div className="confirmshippingAreaBox">
-                  <div>
-                    {/* <p>Name:</p>
-                <span>{userInfo.name}</span> */}
-                  </div>
-                  {/* <div>
-                <p>Phone:</p>
-                <span>{shippingInfo.phoneNo}</span>
-              </div> */}
-                  {/* <div>
-                <p>Address:</p>
-                <span>{address}</span>
-              </div> */}
-                </div>
-              </div>
-              <div className="confirmCartItems">
-                <Typography>Your Cart Items:</Typography>
-                <div className="confirmCartItemsContainer">
-                  {selectedItems &&
-                    selectedItems.map((item) => (
-                      <div key={item.itemId}>
-                        <img src={item.image} alt="Product" />
-                        <Link to={`/product/${item.itemId}`}>
-                          {item.itemName}
-                        </Link>{" "}
-                        <span>
-                          {item.count} X ₹{item.price} ={" "}
-                          <b>₹{item.price * item.count}</b>
-                        </span>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            </div>
-            {/*  */}
-            <div>
-              <div className="orderSummary">
-                <Typography>Order Summery</Typography>
-                <div>
-                  <div>
-                    <p>Subtotal:</p>
-                    <span>₹{subtotal}</span>
-                  </div>
-                  {/* <div>
-                <p>Shipping Charges:</p>
-                <span>₹{shippingCharges}</span>
-              </div>
-              <div>
-                <p>GST:</p>
-                <span>₹{tax}</span>
-              </div> */}
-                </div>
+          <Box maxWidth="lg" mx="auto" p={3}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={8}>
+            {/* Shipping Details */}
+            <Typography variant="h6" gutterBottom>
+              Shipping Address
+            </Typography>
+            <Box mb={3}>
+              <Typography>
+                {shippingAddress.baseAddress}
+                {shippingAddress.detailAddress && `, ${shippingAddress.detailAddress}`}
+              </Typography>
+              <Typography>
+                Zipcode: {shippingAddress.zipcode}
+              </Typography>
+            </Box>
 
-                <div className="orderSummaryTotal">
-                  <p>
-                    <b>Total:</b>
-                  </p>
-                  <span>₹{totalPrice}</span>
-                </div>
+            {/* Order Items */}
+            <Typography variant="h6" gutterBottom>
+              Order Items
+            </Typography>
+            {selectedItems.map((item) => (
+              <Box key={item.id} mb={2} display="flex" alignItems="center">
+                <img 
+                  src={item.thumbnailUrl} 
+                  alt={item.name} 
+                  style={{ width: 50, marginRight: 16 }}
+                />
+                <Box flex={1}>
+                  <Typography>{item.name}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {item.count} x ₩{item.price} = ₩{item.count * item.price}
+                  </Typography>
+                </Box>
+              </Box>
+            ))}
+          </Grid>
 
-                <button
-                  onClick={handlePayment}
-                  disabled={loading || isPaymentInitiated}
-                >
-                  {isPaymentInitiated
-                    ? "Payment Processing..."
-                    : "Proceed To Payment"}
-                </button>
-              </div>
-            </div>
-          </div>
+          <Grid item xs={12} md={4}>
+            <Box border={1} borderColor="grey.300" p={2}>
+              <Typography variant="h6" gutterBottom>
+                Order Summary
+              </Typography>
+              <Box display="flex" justifyContent="space-between" mb={2}>
+                <Typography>Subtotal:</Typography>
+                <Typography>₩{subtotal}</Typography>
+              </Box>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={handlePayment}
+                disabled={loading || isPaymentInitiated}
+              >
+                {isPaymentInitiated ? "Processing..." : "Proceed to Payment"}
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
           {showPaymentPopup && (
             <PaymentPopup
               paymentUrls={paymentUrls}

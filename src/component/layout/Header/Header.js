@@ -73,9 +73,14 @@ const StyledLink = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
 }));
 
-const Header = ({initialized}) => {
-  const { isAuthenticated, user } = useSelector((state) => state.user);
+const AuthState = {
+  AUTHENTICATED: 'authenticated',
+  PUBLIC: 'public',
+  LOADING: 'loading',
+}
 
+const Header = () => {
+  const { isAuthenticated, initialized, loading } = useSelector((state) => state.user);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -91,10 +96,10 @@ const Header = ({initialized}) => {
     { text: 'About', path: '/about' },
     { text: 'Contact', path: '/contact' },
   ];
- if (!initialized) {
+ if (!initialized && loading) {
     return <Skeleton variant="rectangular" height={64} />
   }
-  
+
 
   return (
     <StyledAppBar position="static" elevation={1}>
