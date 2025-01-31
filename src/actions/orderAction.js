@@ -123,7 +123,6 @@ export const getOrderDetails = (orderId) => async (dispatch) => {
     dispatch({ type: ORDER_DETAILS_REQUEST });
 
     const { data } = await axiosInstance.get(`/api/auth/v1/order/${orderId}`);
-    console.log(data);
     dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data });
   } catch (error) {
     const errorMessage = error.response?.data?.message || "Error getting order";

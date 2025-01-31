@@ -99,6 +99,7 @@ export const userReducer = (state = userInitialState, action) => {
             ...state,
             user: action.payload,
             loading: false,
+            initialized: true,
             isAuthenticated: true,
             accessToken: action.payload.accessToken,
             role: action.payload.role,

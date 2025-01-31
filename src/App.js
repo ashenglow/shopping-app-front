@@ -34,7 +34,6 @@ import OAuth2RedirectHandler from "./utils/OAuth2RedirectHandler.js";
 import { getAccessTokenFromStorage } from "./hooks/accessTokenHook.js";
 import { LOAD_USER_FAIL } from "./constants/userConstants.js";
 import { clearAuthState } from "./utils/axiosInstance.js";
-import { validateInitialToken } from "./utils/axiosInstance.js";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min.js";
 
 // Define public routes
@@ -68,7 +67,6 @@ function App() {
   const { isAuthenticated, loading, initialized } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const location = useLocation();
- const [isValidatingToken, setIsValidatingToken] = useState(true);
 const isPublicRoute = PUBLIC_ROUTES.some((route) => route.path === location.pathname);
   useEffect(() => {
     WebFont.load({
@@ -143,26 +141,13 @@ useEffect(() => {
 
         {/* Protected Routes - Only accessible when authenticated */}
         {PROTECTED_ROUTES.map(({ path, component: Component }) => (
-                <Route
-                  exact
-                  key={path}
-                  path={path}
-                  render={(props) =>
-                    !isAuthenticated ? (
-                      <Redirect
-                        to={{
-                          pathname: "/login",
-                          state: { from: props.location }
-                        }}
-                      />
-                    ) : isValidatingToken || loading ? (
-                      <Loader />
-                    ) : (
-                      <Component {...props} />
-                    )
-                  }
-                />
-              ))}
+  <ProtectedRoute
+    exact
+    key={path}
+    path={path}
+    component={Component}
+  />
+))}
               {/* Fallback route */}
               <Route component={NotFound} />
             </Switch>

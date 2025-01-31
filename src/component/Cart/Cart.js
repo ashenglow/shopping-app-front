@@ -14,12 +14,10 @@ import RemoveShoppingCartIcon from "@material-ui/icons/RemoveShoppingCart";
 import { Link } from "react-router-dom";
 import Loader from "../layout/Loader/Loader";
 import { clearError } from "../../actions/errorAction";
-import { getUserId } from "../../hooks/getUserInfo";
 import CloseIcon from '@material-ui/icons/Close';
 
 const Cart = ({ history }) => {
   const dispatch = useDispatch();
-  const userId = getUserId();
   const { message: errorMessage, type: errorType } = useSelector(
     (state) => state.error
   );
@@ -109,16 +107,9 @@ const Cart = ({ history }) => {
   };
 
   useEffect(() => {
-    if(userId){
-      dispatch(getCartItems(userId));
-    } else {
-      history.push("/login");
-    }
-  }, [dispatch, userId, history]);
+      dispatch(getCartItems());
+  }, [dispatch]);
 
-  useEffect(() => {
-    console.log("updatingItems:", updatingItems);
-  }, [updatingItems]);
 
   useEffect(() => {
     if (errorMessage) {

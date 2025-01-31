@@ -43,7 +43,7 @@ const ProtectedRoute = ({
       {...rest}
       render={(props) => {
         // Show loader while checking auth or refreshing token
-        if (!initialized || loading) {
+        if (!initialized) {
           return <Loader />;
         }
 
@@ -58,7 +58,6 @@ const ProtectedRoute = ({
             />
           );
         }
-
         // Render component if authenticated
         return <Component {...props} />;
       }}
