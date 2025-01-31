@@ -20,7 +20,6 @@ const Shipping = ({ history }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
   const { selectedItems } = useSelector((state) => state.checkout);
-  console.log('Checkout State Items:', selectedItems);
 const { profile, loading } = useSelector((state) => state.profile);
   const [address, setAddress] = useState({
     zipcode: "",
