@@ -138,19 +138,17 @@ axiosInstance.interceptors.response.use(
       if (error.response?.status === 401 && 
       !originalRequest._retry) {
         console.log("refresh token called");
-        const isTokenError = error.response?.data?.message?.includes("Invalid token") || 
-                          error.response?.data?.message?.includes("Token is expired");
-        // Clear auth state immediately for invalid tokens
-      if (isTokenError) {
-    clearAuthState(true);
-    store.dispatch({ type: LOAD_USER_FAIL });
-     
-    if(!isPublic){
-      history.push('/login');
-      store.dispatch(showNotification("Session expired. Please log in again.", "error"));
-    }
-    return Promise.reject(error);
-  }
+       
+        if (originalRequest.url.includes('/api/v1/refresh')) {
+          clearAuthState(true);
+          store.dispatch({ type: LOAD_USER_FAIL });
+          
+          if(!isPublic) {
+            history.push('/login');
+            store.dispatch(showNotification("Session expired. Please log in again.", "error"));
+          }
+          return Promise.reject(error);
+        }
         
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
