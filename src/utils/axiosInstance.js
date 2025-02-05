@@ -117,73 +117,64 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   //응답 에러 처리
   async (error) => {
-  
-      const originalRequest = error.config;
-      const isPublic = isPublicPath();
+    const originalRequest = error.config;
+    const isPublic = isPublicPath();
 
-      // Handle network errors
-      if (!error.response) {
-        if(!isPublic){
-          store.dispatch(showNotification("Network Error. Please check your network.", "error" ));  
-        }
-        return Promise.reject(error);
+    if (!error.response) {
+      if(!isPublic){
+        store.dispatch(showNotification("Network Error. Please check your network.", "error" ));  
       }
+      return Promise.reject(error);
+    }
 
-      // if it's a public endpoint, just return the error
-      if(isUnprotectedPath(originalRequest.url)){
-        return Promise.reject(error);
-      }
+    if (isUnprotectedPath(originalRequest.url)){
+      return Promise.reject(error);
+    }
 
-      // don't attempt refresh for auth routes or if we're already retrying
-      if (error.response?.status === 401 && 
-      !originalRequest._retry) {
-        console.log("refresh token called");
-       
-        if (originalRequest.url.includes('/api/v1/refresh')) {
-          clearAuthState(true);
-          store.dispatch({ type: LOAD_USER_FAIL });
-          
-          if(!isPublic) {
-            history.push('/login');
-            store.dispatch(showNotification("Session expired. Please log in again.", "error"));
-          }
-          return Promise.reject(error);
-        }
-        
-        if (isRefreshing) {
-          return new Promise((resolve, reject) => {
-            failedQueue.push({ resolve, reject });
-          }).then((token) => {
-            originalRequest.headers["Authorization"] = `Bearer ${token}`;
-            return axiosInstance(originalRequest);
-          }).catch((err) => {
-            return Promise.reject(err);
-          });
-        }
-        
-
-        originalRequest._retry = true;
-        isRefreshing = true;
-
+    // Only handle 401 errors for protected routes
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log("401 error detected, originalRequest:", originalRequest.url);
+      originalRequest._retry = true;
+      // Don't retry if it's a refresh token request
+      // Check if currently refreshing
+      if (isRefreshing) {
         try {
-        const response = await store.dispatch(refresh());
-        const { accessToken } = response.data;
+            // Wait for the refresh to complete
+            return new Promise((resolve) => {
+                failedQueue.push((token) => {
+                    originalRequest.headers['Authorization'] = `Bearer ${token}`;
+                    resolve(axiosInstance(originalRequest));
+                });
+            });
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    }
 
-        setAccessTokenToStorage(accessToken);
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`; 
-        originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
+    isRefreshing = true;
+
+      // Handle refresh token for other requests
+      try {
         
-        // failed requests re-try
-        failedQueue.forEach(({ resolve, originalRequest}) => {
-          originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
-          resolve(axiosInstance(originalRequest));
-        })
+         // Dispatch refresh action and get the data directly
+         const tokenData = await axiosInstance.get('/api/v1/refresh');
+         console.log("Token refresh response:", tokenData);
+ 
+         if (!tokenData || !tokenData.data.accessToken) {
+           throw new Error("No access token received from refresh");
+         }
+ 
+         // Update token in storage and headers
+         const newToken = tokenData.data.accessToken;
+         setAccessTokenToStorage(newToken);
+         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+ 
+         console.log("Retrying original request with new token");
+         return axiosInstance(originalRequest);
 
-        failedQueue = []; // clear queue after processing
-
-        return axiosInstance(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError, null);
+        console.error("Refresh token failed:", refreshError);
         clearAuthState(true);
         store.dispatch({ type: LOAD_USER_FAIL });
 
@@ -192,18 +183,16 @@ axiosInstance.interceptors.response.use(
           store.dispatch(showNotification("Session expired. Please log in again.", "error"));
         }
         return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
       }
     }
 
-        // handle refresh token failure - only redirect if not on auth page
-      if (error.response.status >= 400 && !isPublic) {
-        store.dispatch(showNotification(error.response?.data?.message || "An error occurred", "error"));
-      } 
-
-      return Promise.reject(error);
+    // Handle other errors
+    if (error.response.status >= 400 && !isPublic) {
+      store.dispatch(showNotification(error.response?.data?.message || "An error occurred", "error"));
     } 
+
+    return Promise.reject(error);
+  }
   
 );
 
