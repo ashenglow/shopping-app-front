@@ -172,7 +172,14 @@ axiosInstance.interceptors.response.use(
         setAccessTokenToStorage(accessToken);
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`; 
         originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
-        processQueue(null, accessToken);
+        
+        // failed requests re-try
+        failedQueue.forEach(({ resolve, originalRequest}) => {
+          originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
+          resolve(axiosInstance(originalRequest));
+        })
+
+        failedQueue = []; // clear queue after processing
 
         return axiosInstance(originalRequest);
       } catch (refreshError) {
