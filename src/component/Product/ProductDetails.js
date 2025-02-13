@@ -20,7 +20,7 @@ import { NEW_REVIEW_RESET } from "../../constants/productConstants";
 import { loadUser } from "../../actions/userAction";
 import ConfirmPopup from "../layout/ConfirmPopup/ConfirmPopup";
 import { clearError } from "../../actions/errorAction";
-
+import OptimizedImage from "../../components/common/OptimizedImage.js";
 const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
   const alert = useAlert();
@@ -113,12 +113,13 @@ const ProductDetails = ({ match }) => {
               <Carousel>
                 {product.images &&
                   product.images.map((item, i) => (
-                    <img
-                      className="CarouselImage"
-                      key={i}
-                      src={item.url}
-                      alt={`${i} Slide`}
-                    />
+                    <OptimizedImage
+  src={item.url}
+  alt={`${i} Slide`}
+  width={600}  // Larger size for detail view
+  quality={85} // Higher quality for detail view
+  className="CarouselImage"
+/>
                   ))}
               </Carousel>
             </div>
