@@ -6,6 +6,7 @@ import { Rating,
   CardMedia,
   Typography,
   Box, } from "@mui/material";
+  import OptimizedImage from "../../components/common/OptimizedImage";
 
 const ProductCard = ({ product }) => {
   const options = {
@@ -27,15 +28,19 @@ const ProductCard = ({ product }) => {
       },
     }}
   >
-    <CardMedia
-      component="img"
-      image={product.images[0].url}
-      alt={product.name}
-      sx={{
-      // 16:9 aspect ratio
-        objectFit: "cover",
-      }}
-    />
+   <CardMedia
+  sx={{
+    position: 'relative',
+
+  }}
+>
+  <OptimizedImage
+    src={product.images[0].url}
+    alt={product.name}
+    width={300}
+    quality={75}
+  />
+</CardMedia>
     <CardContent sx={{ flexGrow: 1 }}>
       <Typography gutterBottom variant="h6" component="div" noWrap>
         {product.name}
