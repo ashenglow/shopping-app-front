@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles';
-import { Paper, Button, Avatar } from '@mui/material';
+import { Paper, Button, Avatar, Box, Tooltip } from '@mui/material';
 
 export const StyledPaper = styled(Paper)(({ theme }) => ({
     marginTop: theme.spacing(8),
@@ -61,4 +61,25 @@ export const Styledcontainer = styled('div')(({ theme }) => ({
     justifyContent: 'center',
     alignItems: 'center',
     height: '100vh'
-}))
+}));
+
+export const TestLoginSection = styled(Box)(({ theme }) => ({
+    marginBottom: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(2),
+  }));
+  
+  export const StyledTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    '& .MuiTooltip-tooltip': {
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary,
+      border: `1px solid ${theme.palette.divider}`,
+      boxShadow: theme.shadows[1],
+      fontSize: '0.875rem',
+      padding: theme.spacing(1.5),
+      maxWidth: 300,
+    },
+  }));
