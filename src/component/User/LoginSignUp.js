@@ -22,11 +22,13 @@ import {
 } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import PersonIcon from '@mui/icons-material/Person';
 import { useScrollToTopHistory } from '../../hooks/useScrollToTopHistory';
 import { margin, styled } from '@mui/system';
 import { StyledPaper, StyledButton, StyledForm, StyledAvatar, StyledButtonContainer,
   StyledOutlinedButton, StyledDivider,
-  OAuthButtonContainer
+  OAuthButtonContainer, TestLoginSection, StyledTooltip
  } from "../layout/MUI-comp/MuiStyles";
 import { handleOAuth2Success } from "../../actions/oauth2Action";
 import { OAuth2LoginButtonContainer } from "../layout/Buttons/OAuth2Buttons";
@@ -196,7 +198,24 @@ const handleAddressSearch = () => {
             >
               {loading ? <CircularProgress size={24} /> : "Sign In"}
             </StyledButton>
-
+            <TestLoginSection>
+  {/* <Typography variant="p" align="center" sx={{ mt: 1, mb: 1 }}>
+    Test Account Login
+  </Typography> */}
+  <StyledDivider sx={{ mt: 1, mb: 1 }}>Test Account Login</StyledDivider>
+  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <StyledOutlinedButton 
+            onClick={handleLoginAdmin}
+            startIcon={<AdminPanelSettingsIcon />}>
+                LOGIN AS ADMIN
+              </StyledOutlinedButton>
+              <StyledOutlinedButton 
+              onClick={handleLoginUser}
+              startIcon={<PersonIcon />}>
+                LOGIN AS USER
+              </StyledOutlinedButton>
+              </Box>
+</TestLoginSection>
             <StyledDivider>or</StyledDivider>
 
             <OAuthButtonContainer>
@@ -312,14 +331,7 @@ const handleAddressSearch = () => {
           </StyledForm>
         )}
       </StyledPaper>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <StyledOutlinedButton onClick={handleLoginAdmin}>
-                LOGIN AS ADMIN
-              </StyledOutlinedButton>
-              <StyledOutlinedButton onClick={handleLoginUser}>
-                LOGIN AS USER
-              </StyledOutlinedButton>
-              </Box>
+      
     </Container>
   );
 };

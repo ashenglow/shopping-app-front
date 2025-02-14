@@ -1,6 +1,7 @@
 import { IconButton, Box, useTheme } from "@mui/material";
 import { styled } from "@mui/styles";
 import React from "react";
+import { StyledTooltip } from "../MUI-comp/MuiStyles";
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
     padding: '12px',
@@ -29,6 +30,26 @@ const OAuthIconButton = ({ onClick, imgSrc, alt, providerName, Icon}) => {
         <Icon />
       </StyledIconButton>
         )
+    }
+    if(providerName === "Naver"){
+      return (
+        <StyledTooltip
+        title="네이버 정책에 따라 개발 환경에서는 미리 등록된 테스트 계정만 접근할 수 있습니다."
+        placement="top"
+        arrow
+        >
+          <StyledIconButton
+        onClick={onClick}
+        size="large"
+        aria-label={`Login with ${providerName}`}
+      >
+        <img 
+          src={imgSrc} 
+          alt={alt || `${providerName} login`}
+        />
+      </StyledIconButton>
+      </StyledTooltip>
+      )
     }
     
     
