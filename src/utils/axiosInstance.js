@@ -69,7 +69,7 @@ const isUnprotectedPath = (url) => {
 
 // Check if current path is public
 const isPublicPath = () => {
-  const publicPaths = ['/products', '/product', '/search', '/contact', '/about', '/login', '/oauth2/callback', '/api-docs'];
+  const publicPaths = ['/products', '/product', '/search', '/contact', '/about', '/login', '/oauth2/callback', '/api-docs','/monitoring'];
   const pathname = window.location.pathname;
   
   // Exact match for root path

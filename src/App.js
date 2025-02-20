@@ -28,12 +28,8 @@ import SwaggerDocs from "./component/Swagger/SwaggerDocs";
 import { history } from "./utils/history";
 import ScrollToTop from "./utils/ScrollToTop.js";
 import FlexibleNotification from "./component/layout/MUI-comp/MuiNotification/FlexibleNotification.js";
-import Loader from "./component/layout/Loader/Loader.js";
-import OrderPerformanceMetrics from "./component/Monitoring/OrderPerformanceMetrics.js";
+import UnifiedDashboard from "./component/Monitoring/UnifiedDashboard.js";
 import OAuth2RedirectHandler from "./utils/OAuth2RedirectHandler.js";
-import { getAccessTokenFromStorage } from "./hooks/accessTokenHook.js";
-import { LOAD_USER_FAIL } from "./constants/userConstants.js";
-import { clearAuthState } from "./utils/axiosInstance.js";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min.js";
 
 // Define public routes
@@ -101,7 +97,7 @@ useEffect(() => {
       <Route 
           exact 
           path="/monitoring" 
-          component={OrderPerformanceMetrics} 
+          component={UnifiedDashboard} 
         />
         {/* API Docs Route */}
         <Route exact path="/api-docs" component={SwaggerDocs} />
